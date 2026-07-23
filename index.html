@@ -25,7 +25,7 @@
       --bg:#0a0a0a;
       --bg-alt:#0e0e0e;
       --text:#f0efe9;
-      --accent:#c4a668;
+      --accent:#b8b8b8;
       --muted:rgba(240,239,233,.35);
       --muted-dim:rgba(240,239,233,.15);
       --border:rgba(240,239,233,.08);
@@ -161,7 +161,7 @@
       width:100%;height:100dvh;
       display:flex;flex-direction:column;justify-content:center;align-items:center;
       text-align:center;padding:2rem;
-      background:radial-gradient(ellipse at 50% 100%,rgba(196,166,104,.04),transparent 60%),var(--bg)
+      background:radial-gradient(ellipse at 50% 100%,rgba(184,184,184,.03),transparent 60%),var(--bg)
     }
     .hero-label{
       font-size:.75rem;letter-spacing:.3em;font-weight:500;
@@ -211,7 +211,7 @@
     }
     .timeline-line-fill{
       position:absolute;top:0;left:0;height:100%;width:0%;
-      background:linear-gradient(90deg,var(--accent),rgba(196,166,104,.3))
+      background:linear-gradient(90deg,var(--accent),rgba(184,184,184,.3))
     }
     .step{flex:1;text-align:center;position:relative;padding-top:24px}
     .step-dot{
@@ -221,7 +221,7 @@
     }
     .step:hover .step-dot,.step.active .step-dot{
       background:var(--accent);border-color:var(--accent);
-      box-shadow:0 0 20px rgba(196,166,104,.3);
+      box-shadow:0 0 20px rgba(184,184,184,.25);
       transform:translateX(-50%) scale(1.4)
     }
     .step-label{
@@ -272,7 +272,7 @@
     }
     .gallery-heading__line{
       display:block;height:1px;width:0%;
-      background:linear-gradient(90deg,rgba(196,166,104,.5),rgba(196,166,104,.08))
+      background:linear-gradient(90deg,rgba(184,184,184,.4),rgba(184,184,184,.06))
     }
     /* Pin (ScrollTrigger) handles sticky behavior — more reliable than CSS sticky with smooth scroll */
     .sticky-track{
@@ -390,7 +390,7 @@
       .timeline-line{top:0;bottom:0;left:6px;width:1px;height:auto;right:auto}
       .timeline-line-fill{
         width:100%!important;height:0%;
-        background:linear-gradient(180deg,var(--accent),rgba(196,166,104,.3))
+        background:linear-gradient(180deg,var(--accent),rgba(184,184,184,.3))
       }
       .step{text-align:left;padding-left:2.5rem;padding-top:0}
       .step-dot{left:0;top:4px;transform:none}
@@ -720,10 +720,11 @@
     var lenis = null;
     if (typeof Lenis !== 'undefined') {
       lenis = new Lenis({
-        duration: 1.2,
+        duration: 1.6,
         easing: function (t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
         smoothWheel: true,
-        touchMultiplier: 2
+        touchMultiplier: 2,
+        wheelMultiplier: 0.8
       });
       if (typeof ScrollTrigger !== 'undefined') {
         lenis.on('scroll', ScrollTrigger.update);
@@ -920,7 +921,7 @@
           trigger: document.body,
           start: 'top top',
           end: function () { return window.innerHeight * 0.9; },
-          scrub: 0.8
+          scrub: 1.2
         }
       })
         .to(['.hero-name', '.hero-role', '.hero-label', '#scroll-cue', '.hero-location'], {
@@ -1067,10 +1068,9 @@
             start: 'top top',
             end: function () { return '+=' + getPinScrollLength(); },
             pin: true,
-            scrub: 0.5,
+            scrub: 1,
             invalidateOnRefresh: true,
-            anticipatePin: 1,
-            fastScrollEnd: true
+            anticipatePin: 1
           }
         });
 
@@ -1083,7 +1083,7 @@
             trigger: stickyTrack,
             start: 'top top',
             end: function () { return '+=' + getPinScrollLength(); },
-            scrub: 0.5,
+            scrub: 1,
             invalidateOnRefresh: true
           }
         });
