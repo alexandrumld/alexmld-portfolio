@@ -34,14 +34,15 @@
       --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
     }
 
-    html{overflow-x:hidden;scroll-behavior:auto;overscroll-behavior:none}
+    /* overflow-x:clip (not hidden) — hidden forces overflow-y:auto and breaks position:sticky */
+    html{overflow-x:clip;scroll-behavior:auto;overscroll-behavior:none}
     html.lenis,html.lenis body{height:auto}
     .lenis.lenis-smooth{scroll-behavior:auto!important}
     .lenis.lenis-stopped{overflow:hidden}
 
     body{
       background:var(--bg);color:var(--text);font-family:var(--font);
-      font-weight:400;line-height:1.6;overflow-x:hidden;
+      font-weight:400;line-height:1.6;overflow-x:clip;
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
       text-rendering:optimizeLegibility;-webkit-tap-highlight-color:transparent;
     }
@@ -253,11 +254,13 @@
     .about-text em{color:var(--accent);font-style:normal}
 
     /* ── WORK / HORIZONTAL GALLERY ── */
+    /* Desktop height is set by JS (pin spacing / dynamic). Fallback keeps layout stable pre-JS. */
     .gallery-wrapper{
-      position:relative;z-index:3;height:500vh;background:var(--bg)
+      position:relative;z-index:3;background:var(--bg);
+      height:auto;min-height:100vh
     }
     .gallery-heading{
-      position:sticky;top:0;z-index:5;
+      position:relative;z-index:5;
       display:flex;align-items:center;gap:2rem;
       padding:2.5rem 6rem;pointer-events:none;opacity:0;
       backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
@@ -271,12 +274,14 @@
       display:block;height:1px;width:0%;
       background:linear-gradient(90deg,rgba(196,166,104,.5),rgba(196,166,104,.08))
     }
+    /* Pin (ScrollTrigger) handles sticky behavior — more reliable than CSS sticky with smooth scroll */
     .sticky-track{
-      position:sticky;top:0;height:100vh;width:100%;
+      position:relative;height:100vh;width:100%;
       overflow:hidden;display:flex;align-items:center
     }
     .track{
-      display:flex;gap:2.5rem;padding:0 6rem;will-change:transform
+      display:flex;gap:2.5rem;padding:0 6rem;
+      width:max-content;flex-shrink:0;will-change:transform
     }
     .project-panel{
       flex-shrink:0;height:70vh;aspect-ratio:3/4;overflow:hidden;
@@ -291,15 +296,15 @@
       transform-style:preserve-3d;border-radius:4px
     }
     .project-panel__img{
-      width:100%;height:110%;object-fit:cover;
-      position:absolute;top:-5%;left:0;
+      width:100%;height:115%;object-fit:cover;
+      position:absolute;top:-7.5%;left:0;
       will-change:transform;filter:grayscale(100%);
       transition:filter .6s ease;border-radius:4px
     }
     .project-panel:hover .project-panel__img,
     .project-panel.is-hovered .project-panel__img{filter:grayscale(0%)}
     .project-panel__placeholder{
-      width:100%;height:110%;position:absolute;top:-5%;left:0;
+      width:100%;height:115%;position:absolute;top:-7.5%;left:0;
       background:linear-gradient(145deg,#0d1a2a 0%,#1a2a3a 40%,#0a1520 100%);
       filter:grayscale(100%);transition:filter .6s ease
     }
@@ -578,8 +583,8 @@
           </div>
         </article>
 
-        <!-- 03 FRIENDBY (CSS gradient placeholder) -->
-        <article class="project-panel" tabindex="0" aria-label="Friendby project">
+        <!-- 03 FRIENDBY (CSS gradient placeholder) — no live URL yet, not focusable as a link -->
+        <article class="project-panel" aria-label="Friendby project">
           <div class="project-panel__number">03 / 05</div>
           <div class="project-panel__img-wrap">
             <div class="project-panel__placeholder" role="img" aria-label="Friendby abstract gradient"></div>
@@ -591,8 +596,8 @@
           </div>
         </article>
 
-        <!-- 04 WHUMPLE -->
-        <article class="project-panel" tabindex="0" aria-label="Whumple project">
+        <!-- 04 WHUMPLE — no live URL yet, not focusable as a link -->
+        <article class="project-panel" aria-label="Whumple project">
           <div class="project-panel__number">04 / 05</div>
           <div class="project-panel__img-wrap">
             <img class="project-panel__img" src="assets/projects/whumple.jpg" alt="Whumple website screenshot" loading="lazy" width="900" height="1200">
@@ -639,7 +644,9 @@
 
     var prm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    var isMobile = function () { return window.innerWidth <= 768; };
+    /* Match CSS @media(max-width:768px) and GSAP matchMedia breakpoints exactly */
+    var mqMobile = window.matchMedia('(max-width: 768px)');
+    var isMobile = function () { return mqMobile.matches; };
 
     function showAllContent() {
       document.querySelectorAll('.reveal').forEach(function (e) {
@@ -666,7 +673,12 @@
       document.querySelectorAll('.nav a').forEach(function (l) {
         l.addEventListener('click', function (e) {
           e.preventDefault();
-          var t = document.querySelector(l.getAttribute('href'));
+          var href = l.getAttribute('href');
+          if (href === '#home') {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            return;
+          }
+          var t = document.querySelector(href);
           if (t) t.scrollIntoView({ behavior: 'auto' });
         });
       });
@@ -724,7 +736,14 @@
     document.querySelectorAll('.nav a').forEach(function (l) {
       l.addEventListener('click', function (e) {
         e.preventDefault();
-        var t = document.querySelector(l.getAttribute('href'));
+        var href = l.getAttribute('href');
+        /* #home is position:fixed — scroll to document top instead of the fixed node */
+        if (href === '#home') {
+          if (lenis) lenis.scrollTo(0, { offset: 0 });
+          else window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        var t = document.querySelector(href);
         if (!t) return;
         if (lenis) lenis.scrollTo(t, { offset: 0 });
         else t.scrollIntoView({ behavior: 'smooth' });
@@ -841,7 +860,8 @@
     }
 
     /* ── Initial states ── */
-    gsap.set(allChars, { yPercent: 110, opacity: 0, filter: 'blur(12px)' });
+    /* blur(8px) — lighter than 12px for multi-char GPU cost while still soft */
+    gsap.set(allChars, { yPercent: 110, opacity: 0, filter: 'blur(8px)' });
     gsap.set('.reveal', { y: 60, opacity: 0 });
     gsap.set('.hero-label', { opacity: 0, y: 20 });
     gsap.set('.hero-role', { opacity: 0, y: 20 });
@@ -928,27 +948,49 @@
       var pathSection = document.querySelector('.path');
 
       if (timelineFill && pathSection) {
-        var fillProps = isMobile()
-          ? { height: '100%' }
-          : { width: '100%' };
-        gsap.to(timelineFill, Object.assign(fillProps, {
-          ease: 'none',
-          scrollTrigger: {
-            trigger: pathSection,
-            start: 'top 70%',
-            end: 'bottom 50%',
-            scrub: 0.6
-          }
-        }));
+        /* matchMedia so orientation / resize swaps width↔height correctly */
+        var tlMm = gsap.matchMedia();
+        tlMm.add('(max-width: 768px)', function () {
+          gsap.set(timelineFill, { width: '100%', height: '0%' });
+          var tw = gsap.to(timelineFill, {
+            height: '100%',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: pathSection,
+              start: 'top 70%',
+              end: 'bottom 50%',
+              scrub: 0.6
+            }
+          });
+          return function () { tw.kill(); gsap.set(timelineFill, { clearProps: 'height,width' }); };
+        });
+        tlMm.add('(min-width: 769px)', function () {
+          gsap.set(timelineFill, { height: '100%', width: '0%' });
+          var tw = gsap.to(timelineFill, {
+            width: '100%',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: pathSection,
+              start: 'top 70%',
+              end: 'bottom 50%',
+              scrub: 0.6
+            }
+          });
+          return function () { tw.kill(); gsap.set(timelineFill, { clearProps: 'height,width' }); };
+        });
       }
 
-      /* Activate steps on scroll */
-      gsap.utils.toArray('.step').forEach(function (step, i) {
+      /* Activate steps on scroll — always allow leave-back so state stays honest.
+         Touch auto-cycle (below) only runs when no step is scroll-active nearby. */
+      gsap.utils.toArray('.step').forEach(function (step) {
         ScrollTrigger.create({
           trigger: step,
           start: 'top 80%',
+          end: 'bottom 20%',
           onEnter: function () { step.classList.add('active'); },
-          onLeaveBack: function () { if (!isTouch) step.classList.remove('active'); }
+          onEnterBack: function () { step.classList.add('active'); },
+          onLeave: function () { step.classList.remove('active'); },
+          onLeaveBack: function () { step.classList.remove('active'); }
         });
       });
     }
@@ -958,6 +1000,7 @@
     var galleryHeading = document.getElementById('gallery-heading');
     var galleryHeadingLine = document.getElementById('gallery-heading-line');
     var track = document.getElementById('track');
+    var stickyTrack = galleryWrap ? galleryWrap.querySelector('.sticky-track') : null;
 
     if (typeof ScrollTrigger !== 'undefined' && galleryHeading && galleryWrap) {
       var headingTL = gsap.timeline({
@@ -981,49 +1024,67 @@
         );
       }
 
-      /* Fade heading deeper into gallery (desktop sticky context) */
-      if (!isMobile()) {
-        gsap.to(galleryHeading, {
+      /* Fade heading as the pinned track takes over (desktop) */
+      gsap.matchMedia().add('(min-width: 769px)', function () {
+        var fadeTw = gsap.to(galleryHeading, {
           opacity: 0, y: -10, ease: 'none',
           scrollTrigger: {
-            trigger: galleryWrap,
+            trigger: stickyTrack || galleryWrap,
             start: 'top top',
-            end: '15% top',
+            end: 'top -15%',
             scrub: 0.4
           }
         });
-      }
+        return function () { fadeTw.kill(); };
+      });
     }
 
-    /* ── Horizontal scroll gallery (desktop) ── */
-    if (typeof ScrollTrigger !== 'undefined' && track && galleryWrap) {
+    /* ── Horizontal scroll gallery (desktop) ──
+       Root cause of the shortfall bug: overflow-x:hidden on html/body broke
+       position:sticky, so the track scrolled away vertically before X finished.
+       Fix: overflow-x:clip + ScrollTrigger pin with end === |x| distance so
+       the last panel always reaches full visibility. */
+    if (typeof ScrollTrigger !== 'undefined' && track && galleryWrap && stickyTrack) {
       gsap.matchMedia().add('(min-width: 769px)', function () {
+        /* Distance to translate so the track's right edge aligns with the viewport's right edge.
+           scrollWidth includes track padding (6rem sides), so last panel ends with breathing room. */
         function getScrollDistance() {
-          return -(track.scrollWidth - window.innerWidth);
+          var dist = track.scrollWidth - window.innerWidth;
+          return dist > 0 ? -dist : 0;
+        }
+
+        function getPinScrollLength() {
+          /* 1:1 mapping: vertical scroll distance equals horizontal travel.
+             Small minimum so short tracks still feel intentional. */
+          return Math.max(Math.abs(getScrollDistance()), window.innerWidth * 0.35);
         }
 
         var horizontalTween = gsap.to(track, {
           x: getScrollDistance,
           ease: 'none',
           scrollTrigger: {
-            trigger: galleryWrap,
+            trigger: stickyTrack,
             start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1.2,
-            invalidateOnRefresh: true
+            end: function () { return '+=' + getPinScrollLength(); },
+            pin: true,
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+            fastScrollEnd: true
           }
         });
 
-        /* Parallax on project images */
+        /* Parallax on project images (yPercent kept modest — img is 115% tall) */
         var panelImgs = document.querySelectorAll('.project-panel__img, .project-panel__placeholder');
-        gsap.to(panelImgs, {
-          yPercent: 10,
+        var parallaxTween = gsap.to(panelImgs, {
+          yPercent: 8,
           ease: 'none',
           scrollTrigger: {
-            trigger: galleryWrap,
+            trigger: stickyTrack,
             start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1.2
+            end: function () { return '+=' + getPinScrollLength(); },
+            scrub: 0.5,
+            invalidateOnRefresh: true
           }
         });
 
@@ -1031,7 +1092,7 @@
         panels.forEach(function (panel) {
           gsap.set(panel, { clipPath: 'inset(100% 0% 0% 0%)', opacity: 0, y: 60 });
         });
-        gsap.to(panels, {
+        var entranceTween = gsap.to(panels, {
           clipPath: 'inset(0% 0% 0% 0%)',
           opacity: 1,
           y: 0,
@@ -1045,8 +1106,33 @@
           }
         });
 
+        /* Lazy images can alter scrollWidth after decode — refresh ST when they load */
+        function refreshGallery() {
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        }
+        var galleryImgs = track.querySelectorAll('img');
+        var pending = 0;
+        galleryImgs.forEach(function (img) {
+          if (img.complete) return;
+          pending++;
+          var done = function () {
+            pending--;
+            if (pending <= 0) refreshGallery();
+          };
+          img.addEventListener('load', done, { once: true });
+          img.addEventListener('error', done, { once: true });
+        });
+        window.addEventListener('load', refreshGallery, { once: true });
+
         return function () {
+          if (horizontalTween.scrollTrigger) horizontalTween.scrollTrigger.kill();
+          horizontalTween.kill();
+          if (parallaxTween.scrollTrigger) parallaxTween.scrollTrigger.kill();
+          parallaxTween.kill();
+          if (entranceTween.scrollTrigger) entranceTween.scrollTrigger.kill();
+          entranceTween.kill();
           gsap.set(track, { clearProps: 'transform' });
+          gsap.set(panelImgs, { clearProps: 'transform' });
           panels.forEach(function (panel) {
             gsap.set(panel, { clearProps: 'clipPath,opacity,transform' });
           });
@@ -1055,8 +1141,9 @@
 
       /* Mobile stacked reveals */
       gsap.matchMedia().add('(max-width: 768px)', function () {
+        var mobileTweens = [];
         panels.forEach(function (panel) {
-          gsap.from(panel, {
+          mobileTweens.push(gsap.from(panel, {
             y: 40, opacity: 0,
             duration: 1.2, ease: 'power3.out',
             scrollTrigger: {
@@ -1064,8 +1151,14 @@
               start: 'top 85%',
               toggleActions: 'play none none reverse'
             }
-          });
+          }));
         });
+        return function () {
+          mobileTweens.forEach(function (tw) {
+            if (tw.scrollTrigger) tw.scrollTrigger.kill();
+            tw.kill();
+          });
+        };
       });
     }
 
@@ -1108,21 +1201,28 @@
     function navigateWithWipe(url) {
       if (!url) return;
       if (transitionOverlay && typeof gsap !== 'undefined') {
+        gsap.set(transitionOverlay, { transformOrigin: 'bottom', scaleY: 0 });
         gsap.to(transitionOverlay, {
           scaleY: 1,
           duration: 0.7,
           ease: 'power4.inOut',
           onComplete: function () {
-            window.open(url, '_blank', 'noopener');
-            /* Reset wipe so returning to tab still works */
-            gsap.set(transitionOverlay, { scaleY: 0, transformOrigin: 'top' });
-            requestAnimationFrame(function () {
-              gsap.set(transitionOverlay, { transformOrigin: 'bottom' });
+            window.open(url, '_blank', 'noopener,noreferrer');
+            /* Cover stays up briefly, then wipes away so the tab never flashes mid-reset */
+            gsap.set(transitionOverlay, { transformOrigin: 'top' });
+            gsap.to(transitionOverlay, {
+              scaleY: 0,
+              duration: 0.45,
+              ease: 'power3.inOut',
+              delay: 0.08,
+              onComplete: function () {
+                gsap.set(transitionOverlay, { transformOrigin: 'bottom', scaleY: 0 });
+              }
             });
           }
         });
       } else {
-        window.open(url, '_blank', 'noopener');
+        window.open(url, '_blank', 'noopener,noreferrer');
       }
     }
 
@@ -1155,7 +1255,7 @@
       });
     }
 
-    /* ── Contact footer: gold hover already CSS; .reveal handles entrance ── */
+    /* ── Contact link stagger (parent .reveal already faded in the block) ── */
     if (typeof ScrollTrigger !== 'undefined') {
       var contactSection = document.getElementById('contact');
       if (contactSection) {
@@ -1165,16 +1265,25 @@
             trigger: contactSection,
             start: 'top 70%',
             toggleActions: 'play none none none'
-          }
+          },
+          /* Avoid fighting the parent .reveal opacity tween mid-flight */
+          immediateRender: false
         });
       }
     }
 
-    /* ── Touch: timeline auto-cycle ── */
+    /* ── Touch: timeline auto-cycle when path is off-screen ── */
     if (isTouch) {
       var steps = document.querySelectorAll('.step');
+      var pathForCycle = document.querySelector('.path');
       var cur = 0;
       var cycle = function () {
+        if (pathForCycle) {
+          var r = pathForCycle.getBoundingClientRect();
+          var pathInView = r.top < window.innerHeight * 0.9 && r.bottom > window.innerHeight * 0.1;
+          /* While path is on screen, ScrollTrigger owns .active — don't fight it */
+          if (pathInView) return;
+        }
         steps.forEach(function (s) { s.classList.remove('active'); });
         if (steps[cur]) steps[cur].classList.add('active');
         cur = (cur + 1) % steps.length;
@@ -1183,14 +1292,18 @@
       setInterval(cycle, 3000);
     }
 
-    /* ── Resize refresh ── */
+    /* ── Resize / visualViewport refresh (mobile URL bar, rotation) ── */
     var resizeTimer;
-    window.addEventListener('resize', function () {
+    function scheduleRefresh() {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
         if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
       }, 250);
-    });
+    }
+    window.addEventListener('resize', scheduleRefresh);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', scheduleRefresh);
+    }
 
   })();
   </script>
