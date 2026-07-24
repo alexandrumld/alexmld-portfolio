@@ -193,30 +193,45 @@
     /* ── PRELOADER ── */
     .preloader{
       position:fixed;inset:0;background:var(--bg);z-index:10000;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.75rem;
+      overflow:hidden
     }
     .preloader::before{
       content:'';position:absolute;inset:0;pointer-events:none;
       background:
-        radial-gradient(ellipse 48% 38% at 50% 48%,rgba(184,184,184,.055),transparent 68%),
-        radial-gradient(ellipse 100% 100% at 50% 100%,rgba(0,0,0,.45),transparent 55%)
+        radial-gradient(ellipse 52% 42% at 50% 46%,rgba(184,184,184,.07),transparent 68%),
+        radial-gradient(ellipse 100% 100% at 50% 100%,rgba(0,0,0,.5),transparent 55%)
+    }
+    .preloader-count{
+      font-size:clamp(.625rem,1.2vw,.75rem);font-weight:500;
+      letter-spacing:.42em;color:var(--accent);text-transform:uppercase;
+      font-variant-numeric:tabular-nums;position:relative;z-index:1;
+      opacity:0
     }
     .preloader-name{
-      font-size:clamp(.75rem,1.7vw,.9rem);font-weight:500;
-      letter-spacing:.48em;color:var(--text);text-transform:uppercase;
-      position:relative;padding-left:.48em
+      font-size:clamp(.8rem,1.9vw,1rem);font-weight:500;
+      letter-spacing:.52em;color:var(--text);text-transform:uppercase;
+      position:relative;padding-left:.52em;z-index:1;
+      overflow:hidden
+    }
+    .preloader-name .pre-char{
+      display:inline-block;will-change:transform,opacity;
+      opacity:0;transform:translateY(110%)
     }
     .preloader-bar{
-      width:168px;height:1px;background:rgba(240,239,233,.1);
-      overflow:hidden;position:relative
+      width:min(200px,42vw);height:1px;background:rgba(240,239,233,.1);
+      overflow:hidden;position:relative;z-index:1
     }
     .preloader-bar-inner{
-      width:0%;height:100%;background:var(--accent);position:relative;overflow:hidden
+      width:0%;height:100%;
+      background:linear-gradient(90deg,rgba(184,184,184,.55),var(--accent),rgba(240,239,233,.95));
+      position:relative;overflow:hidden;
+      box-shadow:0 0 12px rgba(184,184,184,.35)
     }
     .preloader-bar-inner::after{
-      content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
-      background:linear-gradient(90deg,transparent,rgba(240,239,233,.55),transparent);
-      animation:shimmer 1.15s ease-in-out infinite
+      content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(240,239,233,.7),transparent);
+      animation:shimmer 1.1s ease-in-out infinite
     }
     @keyframes shimmer{0%{left:-100%}100%{left:200%}}
 
@@ -287,71 +302,137 @@
         max(var(--pad-x),var(--safe-left));
       background:var(--bg);overflow:hidden
     }
+    /* Cinematic multi-layer light: core bloom + corner washes + floor falloff + slow drift */
     .hero-glow{
       position:absolute;inset:0;pointer-events:none;z-index:0;
       background:
-        radial-gradient(ellipse 72% 52% at 50% 52%,rgba(184,184,184,.07) 0%,transparent 58%),
-        radial-gradient(ellipse 42% 32% at 18% 78%,rgba(184,184,184,.04) 0%,transparent 52%),
-        radial-gradient(ellipse 38% 28% at 82% 22%,rgba(184,184,184,.035) 0%,transparent 52%),
-        radial-gradient(ellipse 100% 80% at 50% 120%,rgba(0,0,0,.7) 0%,transparent 55%)
+        radial-gradient(ellipse 58% 44% at 50% 46%,rgba(184,184,184,.13) 0%,rgba(184,184,184,.04) 38%,transparent 62%),
+        radial-gradient(ellipse 36% 28% at 16% 76%,rgba(184,184,184,.055) 0%,transparent 55%),
+        radial-gradient(ellipse 32% 24% at 84% 20%,rgba(184,184,184,.045) 0%,transparent 55%),
+        radial-gradient(ellipse 100% 70% at 50% 115%,rgba(0,0,0,.75) 0%,transparent 52%)
+    }
+    .hero-glow::before{
+      content:'';position:absolute;inset:-8%;
+      background:
+        radial-gradient(ellipse 42% 36% at 48% 42%,rgba(240,239,233,.06) 0%,transparent 58%),
+        radial-gradient(ellipse 28% 22% at 62% 58%,rgba(184,184,184,.04) 0%,transparent 60%);
+      animation:heroDrift 16s ease-in-out infinite alternate;
+      will-change:transform,opacity
     }
     .hero-glow::after{
       content:'';position:absolute;inset:0;
-      background:radial-gradient(circle at 50% 48%,transparent 0%,transparent 32%,rgba(7,7,7,.45) 100%);
-      animation:heroBreathe 12s ease-in-out infinite alternate
+      background:
+        radial-gradient(circle at 50% 46%,transparent 0%,transparent 28%,rgba(7,7,7,.35) 72%,rgba(7,7,7,.62) 100%);
+      animation:heroBreathe 11s ease-in-out infinite alternate
     }
     @keyframes heroBreathe{
-      0%{opacity:.55;transform:scale(1)}
-      100%{opacity:1;transform:scale(1.05)}
+      0%{opacity:.5;transform:scale(1)}
+      100%{opacity:1;transform:scale(1.06)}
+    }
+    @keyframes heroDrift{
+      0%{transform:translate(-2.5%,1.5%) scale(1);opacity:.7}
+      50%{transform:translate(1.5%,-2%) scale(1.04);opacity:1}
+      100%{transform:translate(2.5%,1%) scale(1.02);opacity:.85}
     }
     .hero-label,.hero-name,.hero-role{position:relative;z-index:1}
     .hero-bottom{z-index:1}
     .hero-label{
-      font-size:var(--label-size);letter-spacing:.4em;font-weight:500;
-      color:var(--accent);margin-bottom:clamp(2rem,4vh,3.25rem);
-      text-transform:uppercase;display:flex;align-items:center;gap:1.25rem
+      font-size:var(--label-size);letter-spacing:.42em;font-weight:500;
+      color:var(--accent);margin-bottom:clamp(1.65rem,3.5vh,2.85rem);
+      text-transform:uppercase;display:flex;align-items:center;gap:1.35rem
     }
     .hero-label::before,.hero-label::after{
-      content:'';display:block;width:clamp(1.75rem,4.5vw,3.25rem);height:1px;
-      background:linear-gradient(90deg,transparent,var(--accent))
+      content:'';display:block;width:clamp(2rem,5vw,3.75rem);height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent));
+      transform-origin:right center;transform:scaleX(0);
+      transition:transform 1.15s var(--ease)
     }
-    .hero-label::after{background:linear-gradient(90deg,var(--accent),transparent)}
+    .hero-label::after{
+      background:linear-gradient(90deg,var(--accent),transparent);
+      transform-origin:left center
+    }
+    .hero-label.is-drawn::before,.hero-label.is-drawn::after{transform:scaleX(1)}
+    /* Statement scale — fluid vw with room so letters never clip at edges */
     .hero-name{
-      font-size:clamp(3.75rem,15.5vw,12.5rem);font-weight:800;
-      letter-spacing:-.048em;line-height:.82;
-      text-shadow:0 0 100px rgba(184,184,184,.08),0 0 40px rgba(184,184,184,.04)
+      font-size:clamp(4rem,16.2vw,18.75rem);font-weight:800;
+      letter-spacing:-.056em;line-height:.78;color:var(--text);
+      text-shadow:
+        0 0 120px rgba(184,184,184,.12),
+        0 0 48px rgba(184,184,184,.06),
+        0 2px 0 rgba(0,0,0,.15)
     }
-    .hero-name .line{display:block;overflow:hidden;white-space:nowrap}
+    .hero-name .line{
+      display:block;overflow:hidden;white-space:nowrap;
+      padding-bottom:.04em;margin-bottom:-.04em; /* anti-clip descenders / optical air */
+      perspective:800px;transform-style:preserve-3d
+    }
+    /* Per-char silver falloff — only after JS split; parent stays solid for noscript/RM */
+    .hero-name .char{
+      display:inline-block;will-change:transform,opacity;
+      background:linear-gradient(180deg,#f7f6f2 0%,#f0efe9 48%,#c2c2be 100%);
+      -webkit-background-clip:text;background-clip:text;
+      -webkit-text-fill-color:transparent;
+      color:var(--text)
+    }
+    @supports not (background-clip:text){
+      .hero-name .char{color:var(--text);background:none;-webkit-text-fill-color:unset}
+    }
     .hero-role{
-      margin-top:clamp(1.85rem,3.6vh,2.75rem);
-      font-size:clamp(1.1rem,2.5vw,1.65rem);font-weight:300;
-      color:var(--muted);height:1.6em;overflow:hidden;position:relative;
-      letter-spacing:.015em
+      margin-top:clamp(1.65rem,3.2vh,2.5rem);
+      font-size:clamp(1.15rem,2.6vw,1.75rem);font-weight:300;
+      color:var(--muted);height:1.55em;overflow:hidden;position:relative;
+      letter-spacing:.02em
     }
-    .role-text{display:inline-block;will-change:transform,opacity}
+    .role-mask{
+      display:block;overflow:hidden;height:1.55em;line-height:1.55em
+    }
+    .role-text{
+      display:block;will-change:transform,opacity;
+      background:linear-gradient(90deg,rgba(240,239,233,.72),rgba(184,184,184,.95));
+      -webkit-background-clip:text;background-clip:text;
+      -webkit-text-fill-color:transparent
+    }
+    @supports not (background-clip:text){
+      .role-text{color:var(--muted);background:none;-webkit-text-fill-color:unset}
+    }
     .hero-bottom{
       position:absolute;bottom:0;left:0;right:0;z-index:1;
       display:flex;flex-direction:column;align-items:center;
-      padding-bottom:max(clamp(1.85rem,4.5vh,3rem),calc(var(--safe-bottom) + 1rem));gap:1rem
+      padding-bottom:max(clamp(1.85rem,4.5vh,3rem),calc(var(--safe-bottom) + 1rem));gap:1.15rem
     }
     .hero-location{
-      font-size:var(--label-size);letter-spacing:.26em;color:var(--muted);
-      white-space:nowrap;text-transform:uppercase
+      font-size:var(--label-size);letter-spacing:.28em;color:var(--muted);
+      white-space:nowrap;text-transform:uppercase;
+      display:flex;align-items:center;gap:.85rem
     }
+    .hero-location::before,.hero-location::after{
+      content:'';display:block;width:1.25rem;height:1px;
+      background:linear-gradient(90deg,transparent,rgba(184,184,184,.45));
+      opacity:.7
+    }
+    .hero-location::after{background:linear-gradient(90deg,rgba(184,184,184,.45),transparent)}
     .scroll-hint{text-align:center;display:flex;flex-direction:column;align-items:center}
     .scroll-hint span{
-      font-size:.5625rem;letter-spacing:.4em;color:var(--muted-dim);
+      font-size:.5rem;letter-spacing:.48em;color:var(--muted-dim);
       font-weight:500;text-transform:uppercase
     }
     .scroll-line{
-      width:1px;height:56px;background:linear-gradient(180deg,var(--muted-dim),transparent);
-      margin:16px auto 0;position:relative;overflow:hidden
+      width:1px;height:52px;
+      background:linear-gradient(180deg,rgba(184,184,184,.35),rgba(184,184,184,.08),transparent);
+      margin:14px auto 0;position:relative;overflow:hidden
     }
     .scroll-line::after{
-      content:'';position:absolute;top:0;left:0;width:100%;height:38%;
-      background:var(--accent);animation:scrollLine 2.4s ease-in-out infinite
+      content:'';position:absolute;top:0;left:0;width:100%;height:32%;
+      background:linear-gradient(180deg,transparent,var(--accent),rgba(240,239,233,.9));
+      animation:scrollLine 2.6s cubic-bezier(.45,0,.2,1) infinite;
+      box-shadow:0 0 8px rgba(184,184,184,.4)
     }
-    @keyframes scrollLine{0%{transform:translateY(-120%)}100%{transform:translateY(280%)}}
+    @keyframes scrollLine{
+      0%{transform:translateY(-130%);opacity:0}
+      12%{opacity:1}
+      88%{opacity:1}
+      100%{transform:translateY(320%);opacity:0}
+    }
 
     /* Spacer so content scrolls under fixed hero — must match .hero height */
     .hero-spacer{height:100vh;height:100dvh;height:100svh;pointer-events:none}
@@ -689,19 +770,23 @@
           var(--pad-x)
           max(4.25rem,calc(var(--safe-bottom) + 2.5rem))
       }
-      .hero-label{font-size:.625rem;letter-spacing:.28em;gap:.85rem;margin-bottom:1.85rem}
-      .hero-label::before,.hero-label::after{width:1.4rem}
-      /* Mobile: 17.5vw > desktop 15.5vw — statement-scale display type */
+      .hero-label{font-size:.625rem;letter-spacing:.3em;gap:.85rem;margin-bottom:1.65rem}
+      .hero-label::before,.hero-label::after{width:1.5rem}
+      /* Mobile: full-bleed statement type with a hair of side air */
       .hero-name{
-        font-size:clamp(3.25rem,17.5vw,5.75rem);
-        letter-spacing:-.052em;line-height:.84
+        font-size:clamp(3.2rem,17.2vw,5.75rem);
+        letter-spacing:-.056em;line-height:.8
       }
-      .hero-role{font-size:clamp(1.15rem,4.5vw,1.3rem);margin-top:1.65rem}
-      .hero-bottom{padding-bottom:max(1.65rem,calc(var(--safe-bottom) + .75rem));gap:.75rem}
-      .hero-location{font-size:.625rem;letter-spacing:.16em}
+      .hero-role{font-size:clamp(1.15rem,4.5vw,1.3rem);margin-top:1.5rem}
+      .hero-bottom{padding-bottom:max(1.65rem,calc(var(--safe-bottom) + .75rem));gap:.85rem}
+      .hero-location{font-size:.625rem;letter-spacing:.14em;gap:.55rem}
+      .hero-location::before,.hero-location::after{width:.85rem}
       .scroll-hint{pointer-events:none}
-      .scroll-hint span{font-size:.55rem;letter-spacing:.32em}
-      .scroll-line{height:40px;margin-top:12px}
+      .scroll-hint span{font-size:.5rem;letter-spacing:.36em}
+      .scroll-line{height:42px;margin-top:12px}
+      .preloader{gap:1.35rem}
+      .preloader-bar{width:148px}
+      .preloader-name{letter-spacing:.36em;font-size:.75rem;padding-left:.36em}
 
       .path{padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.1)}
       .path .section-label{margin-bottom:clamp(2.75rem,8vw,3.25rem)}
@@ -793,17 +878,15 @@
       .contact-links a{min-height:44px;padding:.55rem .35rem}
       .contact-footer{margin-top:3.5rem}
 
-      /* Lighter preloader chrome on mobile (faster perceived start) */
-      .preloader{gap:1.5rem}
-      .preloader-bar{width:132px}
     }
 
     /* Small phones (≤380px — covers classic 320 CSS px + compact modern) */
     @media(max-width:380px){
       :root{--pad-x:1.05rem}
-      .hero-name{font-size:clamp(2.85rem,17.5vw,3.9rem)}
+      .hero-name{font-size:clamp(2.85rem,16.8vw,3.85rem);line-height:.8}
       .hero-role{font-size:clamp(1.05rem,4.8vw,1.2rem)}
-      .hero-location{letter-spacing:.12em;font-size:.5625rem}
+      .hero-location{letter-spacing:.1em;font-size:.5625rem}
+      .hero-location::before,.hero-location::after{display:none}
       .nav{gap:.55rem;font-size:.55rem;letter-spacing:.08em}
       .nav a{padding:.5rem .08rem}
       .about-text{font-size:clamp(1.28rem,7.4vw,1.7rem)}
@@ -844,6 +927,7 @@
       .grain,.vignette{display:none!important}
       .scroll-line::after{display:none}
       .hero-name .char{transform:none!important;opacity:1!important;filter:none!important}
+      .preloader-name .pre-char{transform:none!important;opacity:1!important}
       .about-line__inner,.email-char{transform:none!important;opacity:1!important;filter:none!important}
       .project-panel__img,.project-panel__placeholder{filter:grayscale(0%)!important}
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
@@ -852,7 +936,9 @@
       .project-panel.is-pressed{transform:none!important}
       .gallery-heading{opacity:1!important}
       .gallery-heading__line{width:100%!important}
-      .hero-glow::after{animation:none!important}
+      .hero-glow::before,.hero-glow::after{animation:none!important}
+      .hero-label::before,.hero-label::after{transform:scaleX(1)!important}
+      .role-text{-webkit-text-fill-color:unset!important;background:none!important;color:var(--muted)!important}
       body.cursor--idle .cursor-ring{animation:none!important}
       /* Stacked gallery — no pin / horizontal track motion */
       .gallery-wrapper{height:auto!important}
@@ -868,6 +954,8 @@
       .preloader{display:none!important}
       .cursor-ring,.cursor-dot{display:none!important}
       .hero-name .char,.hero-name .line{transform:none!important;opacity:1!important;filter:none!important}
+      .hero-label,.hero-role,.hero-location,#scroll-cue,.nav,.hero-glow{opacity:1!important;transform:none!important}
+      .hero-label::before,.hero-label::after{transform:scaleX(1)!important}
       .about-line__inner,.email-char{transform:none!important;opacity:1!important}
       .gallery-heading{opacity:1!important}
       .gallery-heading__line{width:100%!important}
@@ -897,7 +985,8 @@
 
   <!-- PRELOADER -->
   <div class="preloader" id="preloader" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
-    <div class="preloader-name">ALEX MOLDOVAN</div>
+    <div class="preloader-count" id="preloader-count" aria-hidden="true">00</div>
+    <div class="preloader-name" id="preloader-name">ALEX MOLDOVAN</div>
     <div class="preloader-bar" aria-hidden="true">
       <div class="preloader-bar-inner" id="preloader-bar"></div>
     </div>
@@ -914,12 +1003,14 @@
   <!-- HERO -->
   <section id="home" class="hero" aria-label="Hero">
     <div class="hero-glow" aria-hidden="true"></div>
-    <div class="hero-label">DESIGNER · DEVELOPER · BUILDER</div>
+    <div class="hero-label" id="hero-label">DESIGNER · DEVELOPER · BUILDER</div>
     <h1 class="hero-name">
       <span class="line" data-split>ALEXANDRU</span>
       <span class="line" data-split>MOLDOVAN</span>
     </h1>
-    <div class="hero-role" aria-live="polite" aria-atomic="true"><span class="role-text">Designer</span></div>
+    <div class="hero-role" aria-live="polite" aria-atomic="true">
+      <span class="role-mask"><span class="role-text">Designer</span></span>
+    </div>
     <div class="hero-bottom">
       <div class="hero-location">Târgu Mureș → Oulu, Finland</div>
       <div class="scroll-hint" id="scroll-cue" aria-hidden="true">
@@ -1093,6 +1184,15 @@
       if (gh) gh.style.opacity = '1';
       var gl = document.getElementById('gallery-heading-line');
       if (gl) gl.style.width = '100%';
+      /* Hero always visible when motion systems skip */
+      ['.hero-label', '.hero-role', '.hero-location', '#scroll-cue', '.nav', '.hero-glow', '.hero-name'].forEach(function (sel) {
+        document.querySelectorAll(sel).forEach(function (el) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+      });
+      var hl = document.getElementById('hero-label');
+      if (hl) hl.classList.add('is-drawn');
     }
 
     /* Minimal interactivity when motion/GSAP unavailable (nav + project opens) */
@@ -1143,7 +1243,7 @@
       gsap.registerPlugin(ScrollTrigger);
     }
 
-    /* ── Char split for hero name ── */
+    /* ── Char split for hero name (per-line for staged reveal) ── */
     function splitIntoChars(element) {
       var text = element.textContent;
       element.setAttribute('aria-label', text);
@@ -1159,10 +1259,29 @@
       return chars;
     }
 
+    var nameLines = [];
     var allChars = [];
     document.querySelectorAll('[data-split]').forEach(function (line) {
-      allChars = allChars.concat(splitIntoChars(line));
+      var chars = splitIntoChars(line);
+      nameLines.push(chars);
+      allChars = allChars.concat(chars);
     });
+
+    /* Preloader name: letter-split for branded entrance */
+    var preNameEl = document.getElementById('preloader-name');
+    var preChars = [];
+    if (preNameEl) {
+      var preText = preNameEl.textContent;
+      preNameEl.setAttribute('aria-label', preText);
+      preNameEl.textContent = '';
+      Array.prototype.forEach.call(preText, function (ch) {
+        var s = document.createElement('span');
+        s.className = 'pre-char';
+        s.textContent = ch === ' ' ? '\u00A0' : ch;
+        preNameEl.appendChild(s);
+        preChars.push(s);
+      });
+    }
 
     /* ── Lenis smooth scroll — desktop only ──
        On touch/mobile, native scroll is smoother, cheaper, and avoids iOS jank. */
@@ -1377,15 +1496,21 @@
     }
 
     /* ── Initial states ── */
-    /* blur(8px) — lighter than 10px for snappier GPU path; still cinematic */
-    gsap.set(allChars, { yPercent: 115, opacity: 0, filter: 'blur(8px)' });
+    /* Mask rise + soft blur + slight 3D tilt — cinematic, still GPU-friendly */
+    gsap.set(allChars, {
+      yPercent: 125, opacity: 0, filter: 'blur(10px)',
+      rotateX: 14, transformOrigin: '50% 100%', transformPerspective: 900
+    });
     gsap.set('.reveal', { y: 72, opacity: 0 });
-    gsap.set('.hero-label', { opacity: 0, y: 20 });
-    gsap.set('.hero-role', { opacity: 0, y: 22 });
-    gsap.set('.hero-location', { opacity: 0, y: 12 });
-    gsap.set('#scroll-cue', { opacity: 0, y: 16 });
-    gsap.set('.nav', { opacity: 0, y: -8 });
-    gsap.set('.hero-glow', { opacity: 0, scale: 0.92 });
+    gsap.set('.hero-label', { opacity: 0, y: 14 });
+    gsap.set('.hero-role', { opacity: 0, y: 28 });
+    gsap.set('.hero-location', { opacity: 0, y: 14 });
+    gsap.set('#scroll-cue', { opacity: 0, y: 18 });
+    gsap.set('.nav', { opacity: 0, y: -10 });
+    gsap.set('.hero-glow', { opacity: 0, scale: 0.88 });
+    if (preChars.length) gsap.set(preChars, { yPercent: 110, opacity: 0 });
+    gsap.set('#preloader-count', { opacity: 0, y: 8 });
+    gsap.set('.hero-name', { scale: 1.015, transformOrigin: '50% 50%' });
 
     /* About: split <br> lines for sequential scroll reveal (DOM only, copy unchanged) */
     var aboutText = document.querySelector('.about-text');
@@ -1432,50 +1557,85 @@
       emailEl.style.opacity = '1';
     }
 
-    /* ── Preloader + hero entrance — choreographed beats ── */
+    /* ── Preloader + hero entrance — Awwwards-grade choreography ── */
     var preloader = document.getElementById('preloader');
     var preloaderBar = document.getElementById('preloader-bar');
+    var preloaderCount = document.getElementById('preloader-count');
     var hero = document.querySelector('.hero');
+    var heroLabel = document.getElementById('hero-label');
+    var countProxy = { v: 0 };
 
     function startRoleCycling() {
       var roles = ['Designer', 'Developer', 'Builder', 'Creator'];
       var i = 0;
       var el = document.querySelector('.role-text');
       if (!el) return;
+      /* Vertical mask wipe — premium over blur fade */
       setInterval(function () {
         gsap.to(el, {
-          opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.4, ease: 'power2.in',
+          yPercent: -105,
+          opacity: 0,
+          duration: 0.48,
+          ease: 'power3.in',
           onComplete: function () {
             i = (i + 1) % roles.length;
             el.textContent = roles[i];
             gsap.fromTo(el,
-              { opacity: 0, y: 22, filter: 'blur(6px)' },
-              { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out' }
+              { yPercent: 105, opacity: 0 },
+              { yPercent: 0, opacity: 1, duration: 0.72, ease: 'expo.out' }
             );
           }
         });
-      }, 3200);
+      }, 3000);
     }
 
     /* Mobile: shorter preloader for faster LCP / time-to-interactive */
-    var preBarDur = isMobile() ? 0.85 : 1.55;
-    var preExitDur = isMobile() ? 0.7 : 1.1;
-    var nameDur = isMobile() ? 1.05 : 1.45;
-    var nameStagger = isMobile() ? 0.018 : 0.028;
+    var preBarDur = isMobile() ? 0.9 : 1.65;
+    var preExitDur = isMobile() ? 0.75 : 1.15;
+    var nameDur = isMobile() ? 1.0 : 1.35;
+    var nameStagger = isMobile() ? 0.02 : 0.032;
+    var lineGap = isMobile() ? 0.12 : 0.18;
 
     var introTL = gsap.timeline({
-      delay: 0.08,
+      delay: 0.06,
       onComplete: function () {
         if (preloader) preloader.setAttribute('aria-busy', 'false');
         startRoleCycling();
+        /* Free GPU after entrance settles */
+        gsap.set(allChars, { clearProps: 'filter,rotateX,transformOrigin' });
       }
     });
 
     introTL
-      /* Preloader: tighter bar + exit so hero breathes sooner */
-      .to(preloaderBar, { width: '100%', duration: preBarDur, ease: 'power2.inOut' })
+      /* 1 — Counter + lettered name + bar: brand signature load */
+      .to('#preloader-count', { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }, 0)
+      .to(countProxy, {
+        v: 100,
+        duration: preBarDur,
+        ease: 'power2.inOut',
+        onUpdate: function () {
+          if (preloaderCount) {
+            var n = Math.round(countProxy.v);
+            preloaderCount.textContent = n < 10 ? '0' + n : String(n);
+          }
+        }
+      }, 0.05)
+      .to(preloaderBar, { width: '100%', duration: preBarDur, ease: 'power2.inOut' }, 0.05);
+
+    if (preChars.length) {
+      introTL.to(preChars, {
+        yPercent: 0,
+        opacity: 1,
+        duration: 0.7,
+        ease: 'expo.out',
+        stagger: 0.028
+      }, 0.12);
+    }
+
+    introTL
+      /* Brief hold on 100 — then cinematic exit */
       .to(preloader, {
-        yPercent: -100,
+        yPercent: -101,
         duration: preExitDur,
         ease: 'expo.inOut',
         onComplete: function () {
@@ -1484,28 +1644,57 @@
             preloader.setAttribute('aria-busy', 'false');
           }
         }
-      }, '+=0.06')
-      /* Glow blooms under label */
-      .to('.hero-glow', { opacity: 1, scale: 1, duration: isMobile() ? 1.15 : 1.6, ease: 'expo.out' }, '-=0.85')
-      .to('.hero-label', { opacity: 1, y: 0, duration: 0.85, ease: 'expo.out' }, '-=0.95')
-      /* Name: signature expo.out primary reveal */
-      .to(allChars, {
+      }, '+=0.12')
+      /* 2 — Atmosphere blooms first (light before form) */
+      .to('.hero-glow', {
+        opacity: 1,
+        scale: 1,
+        duration: isMobile() ? 1.25 : 1.75,
+        ease: 'expo.out'
+      }, '-=0.95')
+      /* 3 — Label + rule lines draw */
+      .to('.hero-label', {
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        ease: 'expo.out',
+        onStart: function () {
+          if (heroLabel) heroLabel.classList.add('is-drawn');
+        }
+      }, '-=1.15');
+
+    /* 4 — Name: line-staged mask reveal (line 1, then line 2) */
+    nameLines.forEach(function (lineChars, li) {
+      if (!lineChars.length) return;
+      introTL.to(lineChars, {
         yPercent: 0,
         opacity: 1,
         filter: 'blur(0px)',
+        rotateX: 0,
         duration: nameDur,
         ease: 'expo.out',
-        stagger: nameStagger,
-        onComplete: function () {
-          /* Drop will-change/filter after entrance to free GPU */
-          gsap.set(allChars, { clearProps: 'filter' });
-        }
-      }, '-=0.75')
-      /* Breathing room before role */
-      .to('.hero-role', { opacity: 1, y: 0, duration: 0.85, ease: 'expo.out' }, '-=0.4')
-      .to('.hero-location', { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.35')
-      .to('#scroll-cue', { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out' }, '-=0.35')
-      .to('.nav', { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, '-=0.65');
+        stagger: nameStagger
+      }, li === 0 ? '-=0.7' : '-=' + (nameDur - lineGap).toFixed(2));
+    });
+
+    /* Fallback if split failed */
+    if (!nameLines.length && allChars.length) {
+      introTL.to(allChars, {
+        yPercent: 0, opacity: 1, filter: 'blur(0px)', rotateX: 0,
+        duration: nameDur, ease: 'expo.out', stagger: nameStagger
+      }, '-=0.7');
+    }
+
+    introTL
+      /* Name settles from micro-scale into final lock */
+      .to('.hero-name', { scale: 1, duration: 1.2, ease: 'expo.out' }, '-=' + (nameDur * 0.85).toFixed(2))
+      /* 5 — Role rises from mask */
+      .to('.hero-role', { opacity: 1, y: 0, duration: 0.95, ease: 'expo.out' }, '-=0.35')
+      /* 6 — Journey + scroll invitation */
+      .to('.hero-location', { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.45')
+      .to('#scroll-cue', { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.55')
+      /* 7 — Nav settles last */
+      .to('.nav', { opacity: 1, y: 0, duration: 1.0, ease: 'expo.out' }, '-=0.7');
 
     /* ── Hero fade on scroll — sequenced storytelling ──
        Name first, then role, then location/cue, then full hide */
