@@ -897,62 +897,118 @@
     .project-panel:hover .project-panel__desc,
     .project-panel.is-hovered .project-panel__desc{transform:translateY(0);opacity:1}
 
-    /* ── CONTACT ── */
+    /* ── CONTACT — grand finale (mirror hero weight, not footer) ── */
     .contact{
       min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
       justify-content:center;align-items:center;
-      padding:var(--section-y) var(--pad-x) clamp(4.5rem,9vh,7rem);
-      text-align:center;position:relative;z-index:3;
+      padding:var(--section-y) var(--pad-x) clamp(5rem,10vh,8rem);
+      text-align:center;position:relative;z-index:3;overflow:hidden;
       background:
-        radial-gradient(ellipse 58% 44% at 50% 42%,rgba(184,184,184,.055),transparent 62%),
-        linear-gradient(180deg,rgba(7,7,7,.55) 0%,transparent 20%),
+        radial-gradient(ellipse 72% 52% at 50% 44%,rgba(184,184,184,.09) 0%,rgba(184,184,184,.03) 42%,transparent 68%),
+        radial-gradient(ellipse 40% 30% at 18% 78%,rgba(184,184,184,.035) 0%,transparent 58%),
+        radial-gradient(ellipse 36% 26% at 84% 22%,rgba(184,184,184,.03) 0%,transparent 55%),
+        linear-gradient(180deg,rgba(7,7,7,.7) 0%,transparent 22%),
+        radial-gradient(ellipse 100% 55% at 50% 110%,rgba(0,0,0,.55) 0%,transparent 50%),
         var(--bg-alt);
       border-top:1px solid var(--border)
     }
     .contact::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:180px;pointer-events:none;
-      background:linear-gradient(180deg,rgba(7,7,7,.6),transparent)
+      content:'';position:absolute;top:0;left:0;right:0;height:220px;pointer-events:none;z-index:0;
+      background:linear-gradient(180deg,rgba(7,7,7,.72),transparent)
     }
-    .contact .section-label{margin-bottom:clamp(2.5rem,5vh,4rem)}
+    /* Living silver bloom behind email — finale atmosphere */
+    .contact-glow{
+      position:absolute;inset:0;pointer-events:none;z-index:0;
+      opacity:0;
+      background:
+        radial-gradient(ellipse 48% 36% at 50% 48%,rgba(184,184,184,.14) 0%,rgba(184,184,184,.05) 36%,transparent 64%),
+        radial-gradient(ellipse 28% 20% at 50% 52%,rgba(240,239,233,.06) 0%,transparent 60%)
+    }
+    .contact-glow::after{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 48%,transparent 0%,transparent 32%,rgba(7,7,7,.28) 70%,rgba(7,7,7,.5) 100%);
+      animation:contactBreathe 12s ease-in-out infinite alternate
+    }
+    @keyframes contactBreathe{
+      0%{opacity:.55;transform:scale(1)}
+      100%{opacity:1;transform:scale(1.05)}
+    }
+    .contact .section-label,
+    .contact-email,
+    .contact-links,
+    .contact-footer{position:relative;z-index:1}
+    .contact .section-label{
+      margin-bottom:clamp(2.75rem,6vh,4.75rem);
+      letter-spacing:.38em;color:var(--accent)
+    }
+    /* MASSIVE closing CTA — Guglieri-scale statement type */
     .contact-email{
-      font-size:clamp(2.1rem,8.5vw,6.25rem);font-weight:300;
-      letter-spacing:-.035em;color:var(--text);
+      font-size:clamp(2.55rem,11.2vw,8.75rem);font-weight:300;
+      letter-spacing:-.045em;color:var(--text);
       display:inline-block;position:relative;
-      transition:color .45s var(--ease);
-      line-height:1.05;padding-bottom:.18em
+      transition:color .5s var(--ease),text-shadow .5s var(--ease);
+      line-height:.95;padding-bottom:.22em;
+      white-space:nowrap;max-width:100%;
+      text-shadow:
+        0 0 100px rgba(184,184,184,.14),
+        0 0 40px rgba(184,184,184,.07),
+        0 2px 0 rgba(0,0,0,.12)
+    }
+    .contact-email__mask{
+      display:block;overflow:hidden;white-space:nowrap;
+      padding-bottom:.05em;margin-bottom:-.02em;
+      perspective:900px;transform-style:preserve-3d
     }
     .contact-email::after{
-      content:'';position:absolute;left:0;bottom:0;width:100%;height:1.5px;
-      background:linear-gradient(90deg,var(--accent),rgba(184,184,184,.25));
-      transform:scaleX(0);transform-origin:right;
-      transition:transform .65s var(--ease)
+      content:'';position:absolute;left:0;bottom:0;width:100%;height:2px;
+      background:linear-gradient(90deg,transparent 0%,var(--accent) 18%,rgba(240,239,233,.95) 50%,var(--accent) 82%,transparent 100%);
+      transform:scaleX(0);transform-origin:center;
+      transition:transform .75s var(--ease);
+      box-shadow:0 0 18px rgba(184,184,184,.35)
     }
-    .contact-email:hover{color:var(--accent)}
-    .contact-email:hover::after{transform:scaleX(1);transform-origin:left}
-    .contact-email .email-char{color:inherit}
-    /* Even tri-link spacing — deliberate 1:1:1 optical rhythm */
+    .contact-email:hover{
+      color:var(--accent);
+      text-shadow:
+        0 0 120px rgba(184,184,184,.28),
+        0 0 48px rgba(184,184,184,.16),
+        0 2px 0 rgba(0,0,0,.1)
+    }
+    .contact-email:hover::after,
+    .contact-email.is-underlined::after{transform:scaleX(1);transform-origin:center}
+    .contact-email .email-char{
+      color:inherit;display:inline-block;will-change:transform,opacity,filter
+    }
+    /* Social row — more presence than nav micro-labels */
     .contact-links{
       display:flex;justify-content:center;align-items:center;
-      gap:clamp(2rem,5vw,3.5rem);
-      margin-top:clamp(2.75rem,5.5vh,4.25rem);
-      font-size:var(--label-size);letter-spacing:.26em;font-weight:500;text-transform:uppercase
+      gap:clamp(2.25rem,5.5vw,4rem);
+      margin-top:clamp(3rem,6.5vh,5rem);
+      font-size:.8125rem;letter-spacing:.3em;font-weight:500;text-transform:uppercase
     }
     .contact-links a{
-      color:var(--muted);transition:color .35s var(--ease);
+      color:var(--muted);transition:color .4s var(--ease);
       display:inline-flex;align-items:center;position:relative;
-      padding:.5rem 0;min-height:44px
+      padding:.55rem 0;min-height:44px
     }
     .contact-links a::after{
       content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;
-      background:var(--accent);transform:scaleX(0);transform-origin:right;
-      transition:transform .45s var(--ease)
+      background:linear-gradient(90deg,var(--accent),rgba(184,184,184,.4));
+      transform:scaleX(0);transform-origin:right;
+      transition:transform .5s var(--ease)
     }
     .contact-links a:hover{color:var(--text)}
     .contact-links a:hover::after{transform:scaleX(1);transform-origin:left}
+    /* Quiet signature — present, not competing with the CTA */
     .contact-footer{
-      margin-top:clamp(4.5rem,9vh,7.5rem);
-      font-size:.5625rem;color:var(--muted);letter-spacing:.16em;
-      text-transform:uppercase
+      margin-top:clamp(4.75rem,10vh,8rem);
+      padding-top:clamp(1.75rem,3.5vh,2.5rem);
+      font-size:.625rem;color:var(--muted-dim);letter-spacing:.2em;
+      text-transform:uppercase;position:relative
+    }
+    .contact-footer::before{
+      content:'';position:absolute;top:0;left:50%;width:min(72px,18vw);height:1px;
+      transform:translateX(-50%);
+      background:linear-gradient(90deg,transparent,var(--border-strong),transparent)
     }
 
     /* ── RESPONSIVE (mobile type uses HIGHER vw — relatively bigger than desktop) ── */
@@ -1137,15 +1193,18 @@
       .project-panel__soon-label{font-size:.6rem;letter-spacing:.36em;padding:.5rem 1rem}
       .project-panel__placeholder::before{animation:none;opacity:.55}
 
-      .contact{min-height:auto;padding:var(--section-y) var(--pad-x) max(4.5rem,calc(var(--safe-bottom) + 3.5rem))}
-      /* 11.5vw on 375px ≈ 43px — dramatic closing CTA */
+      .contact{min-height:auto;padding:var(--section-y) var(--pad-x) max(5rem,calc(var(--safe-bottom) + 3.75rem))}
+      /* Fluid but nowrap — scale to fit full email on one line */
       .contact-email{
-        font-size:clamp(1.9rem,11.5vw,3.15rem);letter-spacing:-.03em;
-        min-height:44px;padding:.35rem .15rem
+        font-size:clamp(1.55rem,9.2vw,2.65rem);letter-spacing:-.03em;
+        min-height:44px;padding:.35rem 0;max-width:100%
       }
-      .contact-links{gap:clamp(1.25rem,5vw,1.75rem);flex-wrap:wrap;margin-top:2.5rem}
+      .contact-links{
+        gap:clamp(1.35rem,5.5vw,2rem);flex-wrap:wrap;margin-top:2.75rem;
+        font-size:.75rem;letter-spacing:.24em
+      }
       .contact-links a{min-height:44px;padding:.55rem .35rem}
-      .contact-footer{margin-top:3.5rem}
+      .contact-footer{margin-top:3.75rem;font-size:.6rem}
 
     }
 
@@ -1159,8 +1218,8 @@
       .nav{gap:.55rem;font-size:.55rem;letter-spacing:.08em}
       .nav a{padding:.5rem .08rem}
       .about-text{font-size:clamp(1.35rem,7.6vw,1.8rem)}
-      .contact-email{font-size:clamp(1.65rem,11.5vw,2.55rem)}
-      .contact-links{gap:1.1rem}
+      .contact-email{font-size:clamp(1.4rem,8.6vw,2.15rem);letter-spacing:-.025em}
+      .contact-links{gap:1.15rem;font-size:.7rem;letter-spacing:.18em}
       .project-panel__title{font-size:clamp(1.55rem,8.4vw,2.05rem)}
       .project-panel__info{padding:2.15rem 1.15rem 1.5rem}
       .project-panel__num{font-size:1.4rem}
@@ -1214,6 +1273,9 @@
       .gallery-heading{opacity:1!important}
       .gallery-heading__line{width:100%!important}
       .hero-glow::before,.hero-glow::after{animation:none!important}
+      .contact-glow{opacity:1!important}
+      .contact-glow::after{animation:none!important}
+      .contact-email.is-underlined::after,.contact-email::after{transform:scaleX(1)!important}
       .hero-label::before,.hero-label::after{transform:scaleX(1)!important}
       .role-text{-webkit-text-fill-color:unset!important;background:none!important;color:var(--muted)!important}
       body.cursor--idle .cursor-ring{animation:none!important}
@@ -1233,7 +1295,9 @@
       .hero-name .char,.hero-name .line{transform:none!important;opacity:1!important;filter:none!important}
       .hero-label,.hero-role,.hero-location,#scroll-cue,.nav,.hero-glow{opacity:1!important;transform:none!important}
       .hero-label::before,.hero-label::after{transform:scaleX(1)!important}
-      .about-line__inner,.email-char{transform:none!important;opacity:1!important}
+      .about-line__inner,.email-char{transform:none!important;opacity:1!important;filter:none!important}
+      .contact-glow{opacity:1!important}
+      .contact-email::after{transform:scaleX(1)!important}
       .about-text em::after{transform:scaleX(1)!important}
       .step-desc{max-height:none!important;opacity:1!important;transform:none!important;margin-top:1.1rem!important}
       .step-label{color:var(--accent)!important}
@@ -1433,8 +1497,9 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
+  <!-- CONTACT — grand finale -->
   <section id="contact" class="contact" aria-label="Contact">
+    <div class="contact-glow" aria-hidden="true"></div>
     <div class="section-label section-label--center reveal">LET'S TALK</div>
     <a href="mailto:me@alexmld.com" class="contact-email reveal" data-magnetic>me@alexmld.com</a>
     <div class="contact-links reveal">
@@ -1480,6 +1545,20 @@
       });
       var hl = document.getElementById('hero-label');
       if (hl) hl.classList.add('is-drawn');
+      /* Contact finale static — glow + underline + email chars */
+      var cg = document.querySelector('.contact-glow');
+      if (cg) { cg.style.opacity = '1'; }
+      var ce = document.querySelector('.contact-email');
+      if (ce) {
+        ce.classList.add('is-underlined');
+        ce.style.opacity = '1';
+        ce.style.transform = 'none';
+      }
+      document.querySelectorAll('.email-char').forEach(function (ch) {
+        ch.style.opacity = '1';
+        ch.style.transform = 'none';
+        ch.style.filter = 'none';
+      });
     }
 
     /* Minimal interactivity when motion/GSAP unavailable (nav + project opens) */
@@ -1722,8 +1801,8 @@
     if (!isTouch) {
       document.querySelectorAll('[data-magnetic]').forEach(function (el) {
         var isCta = el.classList.contains('contact-email');
-        var pull = isCta ? 0.48 : 0.32;
-        var scaleAmt = isCta ? 1.03 : 1.04;
+        var pull = isCta ? 0.52 : 0.32;
+        var scaleAmt = isCta ? 1.035 : 1.04;
         var xTo = gsap.quickTo(el, 'x', { duration: 0.38, ease: 'power3.out' });
         var yTo = gsap.quickTo(el, 'y', { duration: 0.38, ease: 'power3.out' });
         var sTo = gsap.quickTo(el, 'scale', { duration: 0.38, ease: 'power3.out' });
@@ -1823,25 +1902,49 @@
       aboutText.style.opacity = '1';
     }
 
-    /* Contact email: char-split for hero-style reveal */
+    /* Contact email: hero-grade char-split inside mask (finale signature) */
     var emailEl = document.querySelector('.contact-email');
     var emailChars = [];
+    var contactSectionEl = document.getElementById('contact');
     if (emailEl) {
       var emailText = emailEl.textContent;
       emailEl.setAttribute('aria-label', emailText);
       emailEl.textContent = '';
+      var emailMask = document.createElement('span');
+      emailMask.className = 'contact-email__mask';
+      emailMask.setAttribute('aria-hidden', 'true');
       Array.prototype.forEach.call(emailText, function (ch) {
         var span = document.createElement('span');
         span.className = 'email-char';
         span.textContent = ch === ' ' ? '\u00A0' : ch;
-        emailEl.appendChild(span);
+        emailMask.appendChild(span);
         emailChars.push(span);
       });
-      gsap.set(emailChars, { yPercent: 100, opacity: 0 });
+      emailEl.appendChild(emailMask);
+      gsap.set(emailChars, {
+        yPercent: 118, opacity: 0, filter: 'blur(8px)',
+        rotateX: 12, transformOrigin: '50% 100%', transformPerspective: 900
+      });
       /* Clear parent reveal y so magnetic pull starts from true origin */
       emailEl.classList.remove('reveal');
       gsap.set(emailEl, { clearProps: 'transform,opacity' });
       emailEl.style.opacity = '1';
+    }
+    /* Strip contact children from generic .reveal so the finale timeline owns them */
+    if (contactSectionEl) {
+      contactSectionEl.querySelectorAll('.reveal').forEach(function (el) {
+        el.classList.remove('reveal');
+        gsap.set(el, { clearProps: 'transform,opacity' });
+      });
+      /* Hide immediately (pre-finale) — no FOUC between strip and timeline setup */
+      var _cLabel = contactSectionEl.querySelector('.section-label');
+      var _cLinks = contactSectionEl.querySelectorAll('.contact-links a');
+      var _cFoot = contactSectionEl.querySelector('.contact-footer');
+      var _cGlow = contactSectionEl.querySelector('.contact-glow');
+      if (_cLabel) gsap.set(_cLabel, { opacity: 0, y: 28 });
+      if (_cLinks.length) gsap.set(_cLinks, { opacity: 0, y: 32 });
+      if (_cFoot) gsap.set(_cFoot, { opacity: 0, y: 20 });
+      if (_cGlow) gsap.set(_cGlow, { opacity: 0, scale: 0.9 });
     }
 
     /* ── Preloader + hero entrance — Awwwards-grade choreography ── */
@@ -2035,7 +2138,8 @@
     } else {
       gsap.set('.reveal', { opacity: 1, y: 0 });
       if (aboutLineInners.length) gsap.set(aboutLineInners, { opacity: 1, yPercent: 0, filter: 'none' });
-      if (emailChars.length) gsap.set(emailChars, { opacity: 1, yPercent: 0 });
+      if (emailChars.length) gsap.set(emailChars, { opacity: 1, yPercent: 0, filter: 'none', rotateX: 0 });
+      if (emailEl) emailEl.classList.add('is-underlined');
       if (aboutText) aboutText.classList.add('is-revealed');
     }
 
@@ -2059,19 +2163,93 @@
       });
     }
 
-    /* ── Contact email char reveal ── */
-    if (typeof ScrollTrigger !== 'undefined' && emailChars.length && emailEl) {
-      gsap.to(emailChars, {
-        yPercent: 0,
-        opacity: 1,
-        duration: 1.05,
-        ease: 'expo.out',
-        stagger: 0.022,
+    /* ── Contact grand finale — glow → label → email chars → underline → socials → footer ── */
+    if (typeof ScrollTrigger !== 'undefined' && contactSectionEl) {
+      var contactGlow = document.querySelector('.contact-glow');
+      var contactLabel = contactSectionEl.querySelector('.section-label');
+      var contactLinkEls = gsap.utils.toArray('.contact-links a');
+      var contactFooter = contactSectionEl.querySelector('.contact-footer');
+      var contactLinksWrap = contactSectionEl.querySelector('.contact-links');
+
+      /* Parent wrappers stay visible; children animate */
+      if (contactLinksWrap) gsap.set(contactLinksWrap, { opacity: 1 });
+      if (contactGlow) gsap.set(contactGlow, { opacity: 0, scale: 0.9 });
+      if (contactLabel) gsap.set(contactLabel, { opacity: 0, y: 28 });
+      if (contactLinkEls.length) gsap.set(contactLinkEls, { opacity: 0, y: 32 });
+      if (contactFooter) gsap.set(contactFooter, { opacity: 0, y: 20 });
+
+      var finaleTL = gsap.timeline({
         scrollTrigger: {
-          trigger: emailEl,
-          start: 'top 82%'
+          trigger: contactSectionEl,
+          start: 'top 72%',
+          toggleActions: 'play none none none'
         }
       });
+
+      /* 1 — Atmosphere blooms first (light before form) */
+      if (contactGlow) {
+        finaleTL.to(contactGlow, {
+          opacity: 1, scale: 1, duration: 1.55, ease: 'expo.out'
+        }, 0);
+      }
+
+      /* 2 — Invitation label */
+      if (contactLabel) {
+        finaleTL.to(contactLabel, {
+          opacity: 1, y: 0, duration: 1.05, ease: 'expo.out'
+        }, 0.12);
+      }
+
+      /* 3 — Email: hero-grade char rise + blur settle */
+      if (emailChars.length && emailEl) {
+        finaleTL.to(emailChars, {
+          yPercent: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          rotateX: 0,
+          duration: isMobile() ? 1.05 : 1.28,
+          ease: 'expo.out',
+          stagger: isMobile() ? 0.018 : 0.024,
+          onComplete: function () {
+            gsap.set(emailChars, { clearProps: 'filter,rotateX,transformOrigin' });
+          }
+        }, 0.28);
+
+        /* 4 — Underline draws after most chars land */
+        finaleTL.call(function () {
+          if (emailEl) emailEl.classList.add('is-underlined');
+        }, null, 0.28 + (isMobile() ? 0.72 : 0.9));
+      } else if (emailEl) {
+        finaleTL.call(function () {
+          emailEl.classList.add('is-underlined');
+        }, null, 0.5);
+      }
+
+      /* 5 — Social links stagger in */
+      if (contactLinkEls.length) {
+        finaleTL.to(contactLinkEls, {
+          opacity: 1, y: 0, duration: 0.95, ease: 'expo.out', stagger: 0.1
+        }, '-=0.45');
+      }
+
+      /* 6 — Footer signature settles last */
+      if (contactFooter) {
+        finaleTL.to(contactFooter, {
+          opacity: 1, y: 0, duration: 0.9, ease: 'power3.out'
+        }, '-=0.35');
+      }
+    } else {
+      if (emailChars.length) {
+        gsap.set(emailChars, { opacity: 1, yPercent: 0, filter: 'none', rotateX: 0 });
+      }
+      if (emailEl) emailEl.classList.add('is-underlined');
+      var cgFallback = document.querySelector('.contact-glow');
+      if (cgFallback) gsap.set(cgFallback, { opacity: 1 });
+      if (contactSectionEl) {
+        contactSectionEl.querySelectorAll('.section-label, .contact-links a, .contact-footer').forEach(function (el) {
+          gsap.set(el, { opacity: 1, y: 0 });
+        });
+      }
     }
 
     /* ── Timeline connecting line + sequential chapter activation ──
@@ -2557,22 +2735,6 @@
         });
       }
       setActiveNav('home');
-    }
-
-    /* ── Contact link stagger — follows email char reveal ── */
-    if (typeof ScrollTrigger !== 'undefined') {
-      var contactSection = document.getElementById('contact');
-      if (contactSection) {
-        gsap.from('.contact-links a', {
-          y: 24, opacity: 0, duration: 0.95, ease: 'expo.out', stagger: 0.09,
-          scrollTrigger: {
-            trigger: contactSection,
-            start: 'top 68%',
-            toggleActions: 'play none none none'
-          },
-          immediateRender: false
-        });
-      }
     }
 
     /* ── Touch/mobile: timeline auto-cycle while path is on screen ──
