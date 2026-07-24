@@ -34,8 +34,13 @@
       --border:rgba(240,239,233,.12);
       --border-strong:rgba(240,239,233,.2);
       --glow:rgba(184,184,184,.1);
-      --ease:cubic-bezier(.19,1,.22,1);
-      --ease-io:cubic-bezier(.87,0,.13,1);
+      /* Opal Tadpole 6-step ease tokens — primary reveals use --ease (expo.out) */
+      --ease:cubic-bezier(.19,1,.22,1);          /* expo.out — primary reveals */
+      --ease-in:cubic-bezier(.7,0,.84,0);        /* expo.in — exits / dismiss */
+      --ease-io:cubic-bezier(.87,0,.13,1);       /* expo.inOut — page transitions */
+      --ease-out:cubic-bezier(.16,1,.3,1);       /* soft out — secondary entrances */
+      --ease-soft:cubic-bezier(.25,.46,.45,.94); /* hover / micro-interactions */
+      --ease-spring:cubic-bezier(.34,1.56,.64,1);/* playful bounce — click feedback */
       --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
       --pad-x:clamp(1.35rem,5.5vw,6.5rem);
       --section-y:clamp(8.5rem,18vh,15rem);
@@ -86,7 +91,11 @@
       position:fixed;top:0;left:0;height:1.5px;width:0%;
       background:linear-gradient(90deg,rgba(184,184,184,.35),var(--accent),rgba(240,239,233,.9));
       z-index:9999;mix-blend-mode:difference;pointer-events:none;will-change:width;
-      box-shadow:0 0 12px rgba(184,184,184,.25)
+      box-shadow:0 0 12px rgba(184,184,184,.25);
+      transition:box-shadow .4s var(--ease-soft)
+    }
+    .scroll-progress.is-end{
+      box-shadow:0 0 18px rgba(184,184,184,.55),0 0 36px rgba(184,184,184,.2)
     }
 
     /* ── CUSTOM CURSOR ── */
@@ -97,8 +106,10 @@
       pointer-events:none;z-index:99998;opacity:0;
       mix-blend-mode:difference;will-change:transform;
       transform-style:preserve-3d;
-      transition:width .45s var(--ease),height .45s var(--ease),
-        margin .45s var(--ease),opacity .3s ease,background-color .35s ease,border-color .35s ease
+      transition:width .5s var(--ease),height .5s var(--ease),
+        margin .5s var(--ease),opacity .35s var(--ease-soft),
+        background-color .4s var(--ease),border-color .4s var(--ease),
+        box-shadow .5s var(--ease-soft)
     }
     .cursor-dot{
       position:fixed;top:0;left:0;width:5px;height:5px;
@@ -111,7 +122,16 @@
       position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
       font-size:9px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
       color:var(--bg);opacity:0;pointer-events:none;white-space:nowrap;
-      transition:opacity .3s ease;mix-blend-mode:normal
+      transition:opacity .35s var(--ease-soft);mix-blend-mode:normal
+    }
+    /* Idle pulse via box-shadow — avoids fighting GSAP transform */
+    body.cursor--idle .cursor-ring{
+      box-shadow:0 0 0 0 rgba(240,239,233,0);
+      animation:cursorIdlePulse 2.4s var(--ease-soft) infinite
+    }
+    @keyframes cursorIdlePulse{
+      0%,100%{box-shadow:0 0 0 0 rgba(240,239,233,0)}
+      50%{box-shadow:0 0 0 10px rgba(240,239,233,.07)}
     }
     body.cursor-active{cursor:none}
     body.cursor-active a,body.cursor-active .project-panel,body.cursor-active .step,
@@ -125,6 +145,12 @@
     }
     body.cursor--panel .cursor-dot{opacity:0!important;visibility:hidden}
     body.cursor--panel .cursor-label{opacity:1}
+    body.cursor--soon .cursor-ring{
+      width:72px;height:72px;margin-top:-36px;margin-left:-36px;
+      opacity:.7;background:transparent;border-color:var(--text)
+    }
+    body.cursor--soon .cursor-label{opacity:1;color:var(--text)}
+    body.cursor--soon .cursor-dot{opacity:0!important;visibility:hidden}
 
     /* ── PAGE TRANSITION ── */
     .page-transition{
@@ -178,7 +204,7 @@
     .nav a::after{
       content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;
       background:var(--accent);transform:scaleX(0);transform-origin:right;
-      transition:transform .45s var(--ease)
+      transition:transform .5s var(--ease)
     }
     .nav a:hover{color:var(--text)}
     .nav a:hover::after{transform:scaleX(1);transform-origin:left}
@@ -207,6 +233,10 @@
     .section-label--center{position:relative;padding-bottom:.35rem}
     .reveal{opacity:0}
     .char{display:inline-block;will-change:transform,opacity}
+    .about-line{display:block;overflow:hidden;margin-top:.2em}
+    .about-line:first-child{margin-top:0}
+    .about-line__inner{display:inline-block;will-change:transform,opacity}
+    .email-char{display:inline-block;will-change:transform,opacity}
 
     /* ── HERO ── */
     .hero{
@@ -334,11 +364,11 @@
     }
     .step:hover .step-dot,.step.active .step-dot{
       background:var(--accent);border-color:var(--accent);
-      box-shadow:0 0 0 5px rgba(184,184,184,.1),0 0 32px rgba(184,184,184,.35);
-      transform:translateX(-50%) scale(1.28)
+      box-shadow:0 0 0 7px rgba(184,184,184,.14),0 0 42px rgba(184,184,184,.5);
+      transform:translateX(-50%) scale(1.32)
     }
     .step:hover .step-dot::after,.step.active .step-dot::after{
-      border-color:rgba(184,184,184,.3);transform:scale(1);opacity:1
+      border-color:rgba(184,184,184,.4);transform:scale(1.08);opacity:1
     }
     .step-label{
       font-size:clamp(.9rem,1.4vw,1.1rem);font-weight:700;
@@ -454,7 +484,7 @@
       width:100%;height:120%;object-fit:cover;
       position:absolute;top:-10%;left:0;
       will-change:transform;filter:grayscale(100%) contrast(1.06) brightness(.92);
-      transition:filter .75s var(--ease),transform .75s var(--ease);border-radius:7px
+      transition:filter .55s var(--ease),transform .75s var(--ease);border-radius:7px
     }
     .project-panel:hover .project-panel__img,
     .project-panel.is-hovered .project-panel__img{
@@ -465,7 +495,7 @@
       background:
         radial-gradient(ellipse at 30% 20%,rgba(184,184,184,.14),transparent 50%),
         linear-gradient(155deg,#0c1520 0%,#152535 42%,#0a121c 100%);
-      filter:grayscale(100%) brightness(.88);transition:filter .75s var(--ease)
+      filter:grayscale(100%) brightness(.88);transition:filter .55s var(--ease)
     }
     .project-panel:hover .project-panel__placeholder,
     .project-panel.is-hovered .project-panel__placeholder{
@@ -476,12 +506,13 @@
       font-size:clamp(.75rem,1.1vw,.95rem);font-weight:600;letter-spacing:.3em;
       color:var(--accent);opacity:.8;font-variant-numeric:tabular-nums;
       text-shadow:0 2px 16px rgba(0,0,0,.7);
-      transition:opacity .4s var(--ease),transform .4s var(--ease)
+      transition:opacity .4s var(--ease),transform .45s var(--ease)
     }
     .project-panel:hover .project-panel__number,
     .project-panel.is-hovered .project-panel__number{
       opacity:1;transform:translateY(-3px)
     }
+    /* Info lags image colorization slightly — color first, then copy */
     .project-panel__info{
       position:relative;z-index:2;width:100%;padding:2.5rem 1.9rem 2rem;
       background:linear-gradient(
@@ -491,7 +522,7 @@
         rgba(7,7,7,.97) 100%
       );
       opacity:0;transform:translateY(24px);
-      transition:opacity .6s var(--ease),transform .7s var(--ease)
+      transition:opacity .55s var(--ease) .08s,transform .65s var(--ease) .08s
     }
     .project-panel:hover .project-panel__info,
     .project-panel.is-hovered .project-panel__info{opacity:1;transform:translateY(0)}
@@ -499,7 +530,7 @@
       font-size:clamp(1.55rem,3vw,2.25rem);font-weight:800;
       letter-spacing:-.038em;line-height:.9;text-transform:uppercase;
       transform:translateY(12px);opacity:0;
-      transition:transform .6s var(--ease) .05s,opacity .5s ease .05s
+      transition:transform .55s var(--ease) .12s,opacity .45s var(--ease-soft) .12s
     }
     .project-panel:hover .project-panel__title,
     .project-panel.is-hovered .project-panel__title{transform:translateY(0);opacity:1}
@@ -507,7 +538,7 @@
       font-size:var(--label-size);font-weight:500;letter-spacing:.18em;
       color:var(--accent);margin-top:.8rem;text-transform:uppercase;
       transform:translateY(10px);opacity:0;
-      transition:transform .6s var(--ease) .1s,opacity .5s ease .1s
+      transition:transform .55s var(--ease) .18s,opacity .45s var(--ease-soft) .18s
     }
     .project-panel:hover .project-panel__meta,
     .project-panel.is-hovered .project-panel__meta{transform:translateY(0);opacity:1}
@@ -515,7 +546,7 @@
       font-size:.9rem;color:rgba(240,239,233,.62);line-height:1.6;
       margin-top:.95rem;max-width:360px;font-weight:300;
       transform:translateY(10px);opacity:0;
-      transition:transform .6s var(--ease) .16s,opacity .5s ease .16s
+      transition:transform .55s var(--ease) .24s,opacity .45s var(--ease-soft) .24s
     }
     .project-panel:hover .project-panel__desc,
     .project-panel.is-hovered .project-panel__desc{transform:translateY(0);opacity:1}
@@ -548,10 +579,11 @@
       content:'';position:absolute;left:0;bottom:0;width:100%;height:1.5px;
       background:linear-gradient(90deg,var(--accent),rgba(184,184,184,.25));
       transform:scaleX(0);transform-origin:right;
-      transition:transform .6s var(--ease)
+      transition:transform .65s var(--ease)
     }
     .contact-email:hover{color:var(--accent)}
     .contact-email:hover::after{transform:scaleX(1);transform-origin:left}
+    .contact-email .email-char{color:inherit}
     .contact-links{
       display:flex;justify-content:center;gap:clamp(1.75rem,4.5vw,3.25rem);
       margin-top:clamp(2.75rem,5.5vh,4.25rem);
@@ -698,6 +730,7 @@
       .grain,.vignette{display:none!important}
       .scroll-line::after{display:none}
       .hero-name .char{transform:none!important;opacity:1!important;filter:none!important}
+      .about-line__inner,.email-char{transform:none!important;opacity:1!important;filter:none!important}
       .project-panel__img,.project-panel__placeholder{filter:grayscale(0%)!important}
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1!important;transform:none!important
@@ -705,6 +738,7 @@
       .gallery-heading{opacity:1!important}
       .gallery-heading__line{width:100%!important}
       .hero-glow::after{animation:none!important}
+      body.cursor--idle .cursor-ring{animation:none!important}
     }
   </style>
 
@@ -714,6 +748,7 @@
       .preloader{display:none!important}
       .cursor-ring,.cursor-dot{display:none!important}
       .hero-name .char,.hero-name .line{transform:none!important;opacity:1!important;filter:none!important}
+      .about-line__inner,.email-char{transform:none!important;opacity:1!important}
       .gallery-heading{opacity:1!important}
       .gallery-heading__line{width:100%!important}
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
@@ -988,15 +1023,15 @@
       allChars = allChars.concat(splitIntoChars(line));
     });
 
-    /* ── Lenis smooth scroll ── */
+    /* ── Lenis smooth scroll — 1.55s expo.out matches --ease ── */
     var lenis = null;
     if (typeof Lenis !== 'undefined') {
       lenis = new Lenis({
-        duration: 1.7,
+        duration: 1.55,
         easing: function (t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
         smoothWheel: true,
         touchMultiplier: 2,
-        wheelMultiplier: 0.78
+        wheelMultiplier: 0.82
       });
       if (typeof ScrollTrigger !== 'undefined') {
         lenis.on('scroll', ScrollTrigger.update);
@@ -1026,6 +1061,7 @@
     /* ── Custom cursor (desktop only) ── */
     var cursorRing = document.getElementById('cursor-ring');
     var cursorDot = document.getElementById('cursor-dot');
+    var cursorLabel = cursorRing ? cursorRing.querySelector('.cursor-label') : null;
     var panels = document.querySelectorAll('.project-panel');
 
     if (!isTouch && cursorRing && cursorDot) {
@@ -1034,13 +1070,32 @@
       var mouseX = -1, mouseY = -1;
       var prevMouseX = -1, prevMouseY = -1;
       var cursorRevealed = false;
+      var idleTimer = null;
+      var isIdle = false;
 
-      var xRing = gsap.quickTo(cursorRing, 'x', { duration: 0.5, ease: 'power3.out' });
-      var yRing = gsap.quickTo(cursorRing, 'y', { duration: 0.5, ease: 'power3.out' });
+      /* Ring lag 0.55s — premium sweet spot; dot near-instant */
+      var xRing = gsap.quickTo(cursorRing, 'x', { duration: 0.55, ease: 'power3.out' });
+      var yRing = gsap.quickTo(cursorRing, 'y', { duration: 0.55, ease: 'power3.out' });
       var xDot = gsap.quickTo(cursorDot, 'x', { duration: 0.08, ease: 'power2.out' });
       var yDot = gsap.quickTo(cursorDot, 'y', { duration: 0.08, ease: 'power2.out' });
-      var rotXRing = gsap.quickTo(cursorRing, 'rotateX', { duration: 0.3, ease: 'power2.out' });
-      var rotYRing = gsap.quickTo(cursorRing, 'rotateY', { duration: 0.3, ease: 'power2.out' });
+      var rotXRing = gsap.quickTo(cursorRing, 'rotateX', { duration: 0.28, ease: 'power2.out' });
+      var rotYRing = gsap.quickTo(cursorRing, 'rotateY', { duration: 0.28, ease: 'power2.out' });
+
+      function clearIdle() {
+        if (isIdle) {
+          document.body.classList.remove('cursor--idle');
+          isIdle = false;
+        }
+        if (idleTimer) clearTimeout(idleTimer);
+        idleTimer = setTimeout(function () {
+          if (!document.body.classList.contains('cursor--panel') &&
+              !document.body.classList.contains('cursor--link') &&
+              !document.body.classList.contains('cursor--soon')) {
+            document.body.classList.add('cursor--idle');
+            isIdle = true;
+          }
+        }, 2000);
+      }
 
       window.addEventListener('mousemove', function (e) {
         var newX = e.clientX;
@@ -1048,8 +1103,8 @@
         var velocityX = 0, velocityY = 0;
 
         if (prevMouseX >= 0) {
-          velocityX = (newX - prevMouseX) * 0.15;
-          velocityY = (newY - prevMouseY) * 0.15;
+          velocityX = (newX - prevMouseX) * 0.18;
+          velocityY = (newY - prevMouseY) * 0.18;
         }
         prevMouseX = newX;
         prevMouseY = newY;
@@ -1066,9 +1121,10 @@
         xDot(mouseX);
         yDot(mouseY);
 
-        /* Velocity tilt — max 6deg, quickTo only */
-        rotXRing(Math.max(-6, Math.min(6, velocityY)));
-        rotYRing(Math.max(-6, Math.min(6, -velocityX)));
+        /* Velocity tilt — max 8deg, quickTo only */
+        rotXRing(Math.max(-8, Math.min(8, velocityY)));
+        rotYRing(Math.max(-8, Math.min(8, -velocityX)));
+        clearIdle();
       });
 
       function updateCursorState() {
@@ -1084,58 +1140,141 @@
           else p.classList.remove('is-hovered');
         });
 
+        document.body.classList.remove('cursor--link', 'cursor--panel', 'cursor--soon');
+
         if (hoveredPanel && hoveredPanel.getAttribute('data-url')) {
-          document.body.classList.remove('cursor--link');
           document.body.classList.add('cursor--panel');
+          if (cursorLabel) cursorLabel.textContent = 'VIEW';
+          if (isIdle) { document.body.classList.remove('cursor--idle'); isIdle = false; }
         } else if (hoveredPanel) {
-          document.body.classList.remove('cursor--panel');
-          document.body.classList.add('cursor--link');
+          /* Panels without live URL — SOON label */
+          document.body.classList.add('cursor--soon');
+          if (cursorLabel) cursorLabel.textContent = 'SOON';
+          if (isIdle) { document.body.classList.remove('cursor--idle'); isIdle = false; }
         } else if (isInteractive) {
-          document.body.classList.remove('cursor--panel');
           document.body.classList.add('cursor--link');
-        } else {
-          document.body.classList.remove('cursor--link', 'cursor--panel');
+          if (cursorLabel) cursorLabel.textContent = 'VIEW';
+          if (isIdle) { document.body.classList.remove('cursor--idle'); isIdle = false; }
+        } else if (cursorLabel) {
+          cursorLabel.textContent = 'VIEW';
         }
       }
 
       window.addEventListener('mousemove', updateCursorState);
       if (lenis) lenis.on('scroll', updateCursorState);
+
+      /* Click press feedback on ring — scale via GSAP so it composes with x/y */
+      var ringScale = gsap.quickTo(cursorRing, 'scale', { duration: 0.22, ease: 'power2.out' });
+      window.addEventListener('mousedown', function () { ringScale(0.88); });
+      window.addEventListener('mouseup', function () { ringScale(1); });
     }
 
-    /* ── Magnetic links (quickTo for continuous tracking) ── */
+    /* ── Magnetic links — CTA pulls harder than nav; subtle scale under pull ── */
     if (!isTouch) {
       document.querySelectorAll('[data-magnetic]').forEach(function (el) {
-        var xTo = gsap.quickTo(el, 'x', { duration: 0.4, ease: 'power3.out' });
-        var yTo = gsap.quickTo(el, 'y', { duration: 0.4, ease: 'power3.out' });
+        var isCta = el.classList.contains('contact-email');
+        var pull = isCta ? 0.48 : 0.32;
+        var scaleAmt = isCta ? 1.03 : 1.04;
+        var xTo = gsap.quickTo(el, 'x', { duration: 0.38, ease: 'power3.out' });
+        var yTo = gsap.quickTo(el, 'y', { duration: 0.38, ease: 'power3.out' });
+        var sTo = gsap.quickTo(el, 'scale', { duration: 0.38, ease: 'power3.out' });
+
         el.addEventListener('mousemove', function (e) {
           var rect = el.getBoundingClientRect();
           var x = e.clientX - rect.left - rect.width / 2;
           var y = e.clientY - rect.top - rect.height / 2;
-          xTo(x * 0.38);
-          yTo(y * 0.38);
+          xTo(x * pull);
+          yTo(y * pull);
+          sTo(scaleAmt);
         });
         el.addEventListener('mouseleave', function () {
+          /* Slightly damped elastic — present, not cartoon */
           gsap.to(el, {
             x: 0,
             y: 0,
-            duration: 0.75,
-            ease: 'elastic.out(1.15, 0.32)'
+            scale: 1,
+            duration: 0.85,
+            ease: 'elastic.out(1.08, 0.36)'
           });
         });
       });
     }
 
-    /* ── Initial states ── */
-    /* blur(10px) + deeper y — cinematic, still GPU-safe for ~20 chars */
-    gsap.set(allChars, { yPercent: 120, opacity: 0, filter: 'blur(10px)' });
-    gsap.set('.reveal', { y: 80, opacity: 0 });
-    gsap.set('.hero-label', { opacity: 0, y: 24 });
-    gsap.set('.hero-role', { opacity: 0, y: 24 });
-    gsap.set('.hero-location', { opacity: 0 });
-    gsap.set('#scroll-cue', { opacity: 0, y: 18 });
-    gsap.set('.nav', { opacity: 0 });
+    /* ── Haptic-like click feedback (scale pulse on interactive targets) ── */
+    if (!isTouch) {
+      document.querySelectorAll('a, .project-panel[data-url], button').forEach(function (el) {
+        el.addEventListener('mousedown', function () {
+          if (el.hasAttribute('data-magnetic')) return; /* magnetic owns scale */
+          gsap.to(el, { scale: 0.97, duration: 0.12, ease: 'power2.out', overwrite: 'auto' });
+        });
+        el.addEventListener('mouseup', function () {
+          if (el.hasAttribute('data-magnetic')) return;
+          gsap.to(el, { scale: 1, duration: 0.4, ease: 'expo.out', overwrite: 'auto' });
+        });
+        el.addEventListener('mouseleave', function () {
+          if (el.hasAttribute('data-magnetic')) return;
+          gsap.to(el, { scale: 1, duration: 0.3, ease: 'power2.out', overwrite: 'auto' });
+        });
+      });
+    }
 
-    /* ── Preloader + hero entrance ── */
+    /* ── Initial states ── */
+    /* blur(8px) — lighter than 10px for snappier GPU path; still cinematic */
+    gsap.set(allChars, { yPercent: 115, opacity: 0, filter: 'blur(8px)' });
+    gsap.set('.reveal', { y: 72, opacity: 0 });
+    gsap.set('.hero-label', { opacity: 0, y: 20 });
+    gsap.set('.hero-role', { opacity: 0, y: 22 });
+    gsap.set('.hero-location', { opacity: 0, y: 12 });
+    gsap.set('#scroll-cue', { opacity: 0, y: 16 });
+    gsap.set('.nav', { opacity: 0, y: -8 });
+    gsap.set('.hero-glow', { opacity: 0, scale: 0.92 });
+
+    /* About: split <br> lines for sequential scroll reveal (DOM only, copy unchanged) */
+    var aboutText = document.querySelector('.about-text');
+    var aboutLineInners = [];
+    if (aboutText) {
+      var aboutHtml = aboutText.innerHTML;
+      var aboutParts = aboutHtml.split(/<br\s*\/?>/i);
+      aboutText.innerHTML = '';
+      aboutParts.forEach(function (part) {
+        var line = document.createElement('span');
+        line.className = 'about-line';
+        var inner = document.createElement('span');
+        inner.className = 'about-line__inner';
+        inner.innerHTML = part.trim();
+        line.appendChild(inner);
+        aboutText.appendChild(line);
+        aboutLineInners.push(inner);
+      });
+      gsap.set(aboutLineInners, { yPercent: 110, opacity: 0 });
+      /* Lines drive the story — clear parent reveal transform so body isn't offset */
+      aboutText.classList.remove('reveal');
+      gsap.set(aboutText, { clearProps: 'transform,opacity' });
+      aboutText.style.opacity = '1';
+    }
+
+    /* Contact email: char-split for hero-style reveal */
+    var emailEl = document.querySelector('.contact-email');
+    var emailChars = [];
+    if (emailEl) {
+      var emailText = emailEl.textContent;
+      emailEl.setAttribute('aria-label', emailText);
+      emailEl.textContent = '';
+      Array.prototype.forEach.call(emailText, function (ch) {
+        var span = document.createElement('span');
+        span.className = 'email-char';
+        span.textContent = ch === ' ' ? '\u00A0' : ch;
+        emailEl.appendChild(span);
+        emailChars.push(span);
+      });
+      gsap.set(emailChars, { yPercent: 100, opacity: 0 });
+      /* Clear parent reveal y so magnetic pull starts from true origin */
+      emailEl.classList.remove('reveal');
+      gsap.set(emailEl, { clearProps: 'transform,opacity' });
+      emailEl.style.opacity = '1';
+    }
+
+    /* ── Preloader + hero entrance — choreographed beats ── */
     var preloader = document.getElementById('preloader');
     var preloaderBar = document.getElementById('preloader-bar');
     var hero = document.querySelector('.hero');
@@ -1147,68 +1286,128 @@
       if (!el) return;
       setInterval(function () {
         gsap.to(el, {
-          opacity: 0, y: -18, filter: 'blur(4px)', duration: 0.35, ease: 'power2.in',
+          opacity: 0, y: -22, filter: 'blur(6px)', duration: 0.4, ease: 'power2.in',
           onComplete: function () {
             i = (i + 1) % roles.length;
             el.textContent = roles[i];
             gsap.fromTo(el,
-              { opacity: 0, y: 18, filter: 'blur(4px)' },
-              { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.55, ease: 'power3.out' }
+              { opacity: 0, y: 22, filter: 'blur(6px)' },
+              { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out' }
             );
           }
         });
-      }, 3000);
+      }, 3200);
     }
 
     var introTL = gsap.timeline({
-      delay: 0.12,
+      delay: 0.1,
       onComplete: startRoleCycling
     });
 
     introTL
-      .to(preloaderBar, { width: '100%', duration: 1.9, ease: 'power2.inOut' })
-      .to(preloader, { yPercent: -100, duration: 1.25, ease: 'power4.inOut' }, '+=0.12')
-      .to('.hero-label', { opacity: 1, y: 0, duration: 0.95, ease: 'power3.out' }, '-=0.75')
+      /* Preloader: tighter bar + exit so hero breathes sooner */
+      .to(preloaderBar, { width: '100%', duration: 1.55, ease: 'power2.inOut' })
+      .to(preloader, { yPercent: -100, duration: 1.1, ease: 'expo.inOut' }, '+=0.08')
+      /* Glow blooms under label */
+      .to('.hero-glow', { opacity: 1, scale: 1, duration: 1.6, ease: 'expo.out' }, '-=0.95')
+      .to('.hero-label', { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, '-=1.05')
+      /* Name: signature expo.out primary reveal */
       .to(allChars, {
         yPercent: 0,
         opacity: 1,
         filter: 'blur(0px)',
-        duration: 1.55,
+        duration: 1.45,
         ease: 'expo.out',
-        stagger: 0.032
-      }, '-=0.95')
-      .to('.hero-role', { opacity: 1, y: 0, duration: 0.95, ease: 'power3.out' }, '-=0.6')
-      .to('.hero-location', { opacity: 1, duration: 1.1, ease: 'power3.out' }, '-=0.55')
-      .to('#scroll-cue', { opacity: 1, y: 0, duration: 0.95, ease: 'power2.out' }, '-=0.55')
-      .to('.nav', { opacity: 1, duration: 1.1, ease: 'power3.out' }, '-=0.85');
+        stagger: 0.028,
+        onComplete: function () {
+          /* Drop will-change/filter after entrance to free GPU */
+          gsap.set(allChars, { clearProps: 'filter' });
+        }
+      }, '-=0.85')
+      /* Breathing room before role */
+      .to('.hero-role', { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, '-=0.45')
+      .to('.hero-location', { opacity: 1, y: 0, duration: 0.95, ease: 'power3.out' }, '-=0.4')
+      .to('#scroll-cue', { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.4')
+      .to('.nav', { opacity: 1, y: 0, duration: 1, ease: 'expo.out' }, '-=0.75');
 
-    /* ── Hero fade on scroll (path/content reveals underneath) ── */
+    /* ── Hero fade on scroll — sequenced storytelling ──
+       Name first, then role, then location/cue, then full hide */
     if (typeof ScrollTrigger !== 'undefined') {
       gsap.timeline({
         scrollTrigger: {
           trigger: document.body,
           start: 'top top',
           end: function () { return window.innerHeight * 0.95; },
-          scrub: 1.4
+          scrub: 1.2
         }
       })
-        .to(['.hero-name', '.hero-role', '.hero-label', '#scroll-cue', '.hero-location', '.hero-glow'], {
-          y: -70, opacity: 0, duration: 0.45, ease: 'power2.in'
-        }, 0)
-        .to(hero, { autoAlpha: 0, duration: 0.45, ease: 'power1.in' }, 0.5)
-        .set(hero, { pointerEvents: 'none' }, 0.72);
+        .to('.hero-name', { y: -55, opacity: 0, duration: 0.35, ease: 'none' }, 0)
+        .to('.hero-label', { y: -40, opacity: 0, duration: 0.32, ease: 'none' }, 0.04)
+        .to('.hero-role', { y: -48, opacity: 0, duration: 0.32, ease: 'none' }, 0.1)
+        .to('.hero-location', { y: -30, opacity: 0, duration: 0.28, ease: 'none' }, 0.16)
+        .to('#scroll-cue', { y: -24, opacity: 0, duration: 0.28, ease: 'none' }, 0.18)
+        .to('.hero-glow', { opacity: 0, scale: 1.08, duration: 0.4, ease: 'none' }, 0.08)
+        .to(hero, { autoAlpha: 0, duration: 0.35, ease: 'none' }, 0.48)
+        .set(hero, { pointerEvents: 'none' }, 0.7);
     }
 
-    /* ── Section reveals ── */
+    /* ── Section reveals — expo.out primary; steps stagger with timeline ── */
     if (typeof ScrollTrigger !== 'undefined') {
       gsap.utils.toArray('.reveal').forEach(function (el) {
+        /* Steps get their own choreography below */
+        if (el.classList.contains('step')) return;
         gsap.to(el, {
-          opacity: 1, y: 0, duration: 1.45, ease: 'power4.out',
-          scrollTrigger: { trigger: el, start: 'top 90%' }
+          opacity: 1, y: 0, duration: 1.35, ease: 'expo.out',
+          scrollTrigger: { trigger: el, start: 'top 88%' }
         });
       });
+
+      /* Steps stagger in as timeline line begins filling */
+      var pathSteps = gsap.utils.toArray('.step');
+      if (pathSteps.length) {
+        gsap.set(pathSteps, { y: 56, opacity: 0 });
+        gsap.to(pathSteps, {
+          y: 0, opacity: 1, duration: 1.2, ease: 'expo.out', stagger: 0.14,
+          scrollTrigger: {
+            trigger: pathSteps[0],
+            start: 'top 85%'
+          }
+        });
+      }
     } else {
       gsap.set('.reveal', { opacity: 1, y: 0 });
+      if (aboutLineInners.length) gsap.set(aboutLineInners, { opacity: 1, yPercent: 0 });
+      if (emailChars.length) gsap.set(emailChars, { opacity: 1, yPercent: 0 });
+    }
+
+    /* ── About lines — sequential scroll storytelling ── */
+    if (typeof ScrollTrigger !== 'undefined' && aboutLineInners.length && aboutText) {
+      gsap.to(aboutLineInners, {
+        yPercent: 0,
+        opacity: 1,
+        duration: 1.15,
+        ease: 'expo.out',
+        stagger: 0.14,
+        scrollTrigger: {
+          trigger: aboutText,
+          start: 'top 78%'
+        }
+      });
+    }
+
+    /* ── Contact email char reveal ── */
+    if (typeof ScrollTrigger !== 'undefined' && emailChars.length && emailEl) {
+      gsap.to(emailChars, {
+        yPercent: 0,
+        opacity: 1,
+        duration: 1.05,
+        ease: 'expo.out',
+        stagger: 0.022,
+        scrollTrigger: {
+          trigger: emailEl,
+          start: 'top 82%'
+        }
+      });
     }
 
     /* ── Timeline connecting line + step stagger ── */
@@ -1219,6 +1418,7 @@
       if (timelineFill && pathSection) {
         /* matchMedia so orientation / resize swaps width↔height correctly */
         var tlMm = gsap.matchMedia();
+        /* scrub 0.45 — slightly snappier line follow without feeling jittery */
         tlMm.add('(max-width: 768px)', function () {
           gsap.set(timelineFill, { width: '100%', height: '0%' });
           var tw = gsap.to(timelineFill, {
@@ -1228,7 +1428,7 @@
               trigger: pathSection,
               start: 'top 70%',
               end: 'bottom 50%',
-              scrub: 0.6
+              scrub: 0.45
             }
           });
           return function () { tw.kill(); gsap.set(timelineFill, { clearProps: 'height,width' }); };
@@ -1242,7 +1442,7 @@
               trigger: pathSection,
               start: 'top 70%',
               end: 'bottom 50%',
-              scrub: 0.6
+              scrub: 0.45
             }
           });
           return function () { tw.kill(); gsap.set(timelineFill, { clearProps: 'height,width' }); };
@@ -1272,36 +1472,37 @@
     var stickyTrack = galleryWrap ? galleryWrap.querySelector('.sticky-track') : null;
 
     if (typeof ScrollTrigger !== 'undefined' && galleryHeading && galleryWrap) {
+      /* Cinematic heading: label rises, line draws through */
       var headingTL = gsap.timeline({
         scrollTrigger: {
           trigger: galleryWrap,
-          start: 'top 80%',
-          end: 'top 30%',
-          scrub: 0.6
+          start: 'top 82%',
+          end: 'top 28%',
+          scrub: 0.55
         }
       });
       headingTL.fromTo(galleryHeading,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power2.out' },
+        { opacity: 0, y: 36 },
+        { opacity: 1, y: 0, duration: 1, ease: 'none' },
         0
       );
       if (galleryHeadingLine) {
         headingTL.fromTo(galleryHeadingLine,
-          { width: '0%' },
-          { width: '100%', duration: 1, ease: 'power2.inOut' },
-          0.2
+          { width: '0%', opacity: 0.3 },
+          { width: '100%', opacity: 1, duration: 1.15, ease: 'none' },
+          0.12
         );
       }
 
       /* Fade heading as the pinned track takes over (desktop) */
       gsap.matchMedia().add('(min-width: 769px)', function () {
         var fadeTw = gsap.to(galleryHeading, {
-          opacity: 0, y: -10, ease: 'none',
+          opacity: 0, y: -18, ease: 'none',
           scrollTrigger: {
             trigger: stickyTrack || galleryWrap,
             start: 'top top',
-            end: 'top -15%',
-            scrub: 0.4
+            end: 'top -18%',
+            scrub: 0.5
           }
         });
         return function () { fadeTw.kill(); };
@@ -1328,6 +1529,7 @@
           return Math.max(Math.abs(getScrollDistance()), window.innerWidth * 0.35);
         }
 
+        /* scrub 0.85 — less lag than 1, still cinematic inertia */
         var horizontalTween = gsap.to(track, {
           x: getScrollDistance,
           ease: 'none',
@@ -1336,42 +1538,77 @@
             start: 'top top',
             end: function () { return '+=' + getPinScrollLength(); },
             pin: true,
-            scrub: 1,
+            scrub: 0.85,
             invalidateOnRefresh: true,
             anticipatePin: 1
           }
         });
 
-        /* Parallax on project images (yPercent modest — img is 120% tall) */
+        /* Parallax — stronger 14% for visible depth (img is 120% tall) */
         var panelImgs = document.querySelectorAll('.project-panel__img, .project-panel__placeholder');
         var parallaxTween = gsap.to(panelImgs, {
-          yPercent: 10,
+          yPercent: 14,
           ease: 'none',
           scrollTrigger: {
             trigger: stickyTrack,
             start: 'top top',
             end: function () { return '+=' + getPinScrollLength(); },
-            scrub: 1,
+            scrub: 0.85,
             invalidateOnRefresh: true
           }
         });
 
-        /* Panel entrance — clip-path wipe from bottom */
+        /* Panel entrance — clip-path wipe + subtle scale settle */
         panels.forEach(function (panel) {
-          gsap.set(panel, { clipPath: 'inset(100% 0% 0% 0%)', opacity: 0, y: 70 });
+          gsap.set(panel, {
+            clipPath: 'inset(100% 0% 0% 0%)',
+            opacity: 0,
+            y: 80,
+            scale: 0.96,
+            willChange: 'clip-path, transform, opacity'
+          });
         });
         var entranceTween = gsap.to(panels, {
           clipPath: 'inset(0% 0% 0% 0%)',
           opacity: 1,
           y: 0,
-          duration: 1.7,
+          scale: 1,
+          duration: 1.55,
           ease: 'expo.out',
-          stagger: 0.12,
+          stagger: 0.1,
           scrollTrigger: {
             trigger: galleryWrap,
-            start: 'top 62%',
+            start: 'top 64%',
             toggleActions: 'play none none reverse'
+          },
+          onComplete: function () {
+            panels.forEach(function (panel) {
+              gsap.set(panel, { willChange: 'transform' });
+            });
           }
+        });
+
+        /* Center-focus scale: panels gently enlarge near viewport center */
+        var centerFocusTriggers = [];
+        panels.forEach(function (panel) {
+          centerFocusTriggers.push(ScrollTrigger.create({
+            trigger: panel,
+            containerAnimation: horizontalTween,
+            start: 'left 70%',
+            end: 'right 30%',
+            onEnter: function () {
+              gsap.to(panel, { scale: 1.025, duration: 0.7, ease: 'power3.out', overwrite: 'auto' });
+            },
+            onEnterBack: function () {
+              gsap.to(panel, { scale: 1.025, duration: 0.7, ease: 'power3.out', overwrite: 'auto' });
+            },
+            onLeave: function () {
+              gsap.to(panel, { scale: 1, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
+            },
+            onLeaveBack: function () {
+              gsap.to(panel, { scale: 1, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
+            }
+          }));
         });
 
         /* Lazy images can alter scrollWidth after decode — refresh ST when they load */
@@ -1399,10 +1636,11 @@
           parallaxTween.kill();
           if (entranceTween.scrollTrigger) entranceTween.scrollTrigger.kill();
           entranceTween.kill();
+          centerFocusTriggers.forEach(function (st) { st.kill(); });
           gsap.set(track, { clearProps: 'transform' });
           gsap.set(panelImgs, { clearProps: 'transform' });
           panels.forEach(function (panel) {
-            gsap.set(panel, { clearProps: 'clipPath,opacity,transform' });
+            gsap.set(panel, { clearProps: 'clipPath,opacity,transform,willChange,scale' });
           });
         };
       });
@@ -1412,8 +1650,8 @@
         var mobileTweens = [];
         panels.forEach(function (panel) {
           mobileTweens.push(gsap.from(panel, {
-            y: 48, opacity: 0,
-            duration: 1.25, ease: 'power3.out',
+            y: 52, opacity: 0,
+            duration: 1.2, ease: 'expo.out',
             scrollTrigger: {
               trigger: panel,
               start: 'top 88%',
@@ -1465,7 +1703,7 @@
       });
     }
 
-    /* ── Page transition wipe on panel click ── */
+    /* ── Page transition wipe on panel click — expo.inOut matches --ease-io ── */
     var transitionOverlay = document.getElementById('page-transition');
 
     function navigateWithWipe(url) {
@@ -1474,16 +1712,16 @@
         gsap.set(transitionOverlay, { transformOrigin: 'bottom', scaleY: 0 });
         gsap.to(transitionOverlay, {
           scaleY: 1,
-          duration: 0.7,
-          ease: 'power4.inOut',
+          duration: 0.65,
+          ease: 'expo.inOut',
           onComplete: function () {
             window.open(url, '_blank', 'noopener,noreferrer');
             /* Cover stays up briefly, then wipes away so the tab never flashes mid-reset */
             gsap.set(transitionOverlay, { transformOrigin: 'top' });
             gsap.to(transitionOverlay, {
               scaleY: 0,
-              duration: 0.45,
-              ease: 'power3.inOut',
+              duration: 0.42,
+              ease: 'expo.inOut',
               delay: 0.08,
               onComplete: function () {
                 gsap.set(transitionOverlay, { transformOrigin: 'bottom', scaleY: 0 });
@@ -1510,7 +1748,7 @@
       });
     });
 
-    /* ── Scroll progress bar ── */
+    /* ── Scroll progress bar — glow intensifies near page end ── */
     var progressBar = document.getElementById('scroll-progress');
     if (progressBar && typeof ScrollTrigger !== 'undefined') {
       gsap.to(progressBar, {
@@ -1520,7 +1758,11 @@
           trigger: document.body,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.3
+          scrub: 0.25,
+          onUpdate: function (self) {
+            if (self.progress > 0.88) progressBar.classList.add('is-end');
+            else progressBar.classList.remove('is-end');
+          }
         }
       });
     }
@@ -1581,18 +1823,17 @@
       setActiveNav('home');
     }
 
-    /* ── Contact link stagger (parent .reveal already faded in the block) ── */
+    /* ── Contact link stagger — follows email char reveal ── */
     if (typeof ScrollTrigger !== 'undefined') {
       var contactSection = document.getElementById('contact');
       if (contactSection) {
         gsap.from('.contact-links a', {
-          y: 28, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.1,
+          y: 24, opacity: 0, duration: 0.95, ease: 'expo.out', stagger: 0.09,
           scrollTrigger: {
             trigger: contactSection,
-            start: 'top 72%',
+            start: 'top 68%',
             toggleActions: 'play none none none'
           },
-          /* Avoid fighting the parent .reveal opacity tween mid-flight */
           immediateRender: false
         });
       }
