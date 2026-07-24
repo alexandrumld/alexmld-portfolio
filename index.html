@@ -12,13 +12,15 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Only weights actually used: 300,400,500,600,700,800 (dropped 200/900) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23070707'/%3E%3Ctext x='50' y='72' font-family='Inter,sans-serif' font-weight='800' font-size='52' fill='%23b8b8b8' text-anchor='middle' letter-spacing='-2'%3EA%3C/text%3E%3C/svg%3E">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+  <!-- defer: non-blocking parse; scripts run before DOMContentLoaded, after HTML parsed -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js" defer></script>
 
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -29,8 +31,10 @@
       --bg-elevated:#121212;
       --text:#f0efe9;
       --accent:#b8b8b8;
-      --muted:rgba(240,239,233,.48);
-      --muted-dim:rgba(240,239,233,.22);
+      /* .55 alpha ≈ 5.3:1 on #070707 — WCAG AA for body/UI text (was .48 ≈ 4.4:1) */
+      --muted:rgba(240,239,233,.55);
+      /* Decorative only — not sole means of conveying info */
+      --muted-dim:rgba(240,239,233,.28);
       --border:rgba(240,239,233,.12);
       --border-strong:rgba(240,239,233,.2);
       --glow:rgba(184,184,184,.1);
@@ -46,6 +50,10 @@
       --section-y:clamp(8.5rem,18vh,15rem);
       --label-size:.6875rem;
       --label-track:.3em;
+      --safe-top:env(safe-area-inset-top,0px);
+      --safe-right:env(safe-area-inset-right,0px);
+      --safe-bottom:env(safe-area-inset-bottom,0px);
+      --safe-left:env(safe-area-inset-left,0px);
     }
 
     /* overflow-x:clip (not hidden) — hidden forces overflow-y:auto and breaks position:sticky */
@@ -66,8 +74,28 @@
     ::-webkit-scrollbar{display:none}
     *{scrollbar-width:none;-ms-overflow-style:none}
 
-    a:focus-visible,button:focus-visible,.project-panel:focus-visible{
+    a:focus-visible,button:focus-visible,.project-panel:focus-visible,.skip-link:focus-visible{
       outline:2px solid var(--accent);outline-offset:6px;border-radius:2px
+    }
+    /* High-contrast focus ring fallback for dark+silver surfaces */
+    a:focus-visible,button:focus-visible,.project-panel:focus-visible{
+      box-shadow:0 0 0 6px rgba(7,7,7,.85),0 0 0 8px var(--accent)
+    }
+
+    /* ── SKIP LINK (WCAG 2.4.1) ── */
+    .skip-link{
+      position:fixed;top:0;left:var(--pad-x);z-index:100001;
+      padding:.85rem 1.25rem;min-height:44px;
+      display:inline-flex;align-items:center;
+      background:var(--text);color:var(--bg);
+      font-size:var(--label-size);font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+      border-radius:2px;transform:translateY(-150%);
+      transition:transform .3s var(--ease-soft);
+      padding-top:max(.85rem,var(--safe-top))
+    }
+    .skip-link:focus,.skip-link:focus-visible{
+      transform:translateY(max(.75rem,var(--safe-top)));
+      outline:2px solid var(--accent);outline-offset:3px
     }
 
     /* ── ATMOSPHERE: vignette + grain + ambient depth ── */
@@ -192,7 +220,7 @@
     .nav{
       position:fixed;top:0;right:0;z-index:100;
       display:flex;align-items:center;gap:clamp(1.35rem,2.8vw,2.25rem);
-      padding:1.85rem var(--pad-x) 1.85rem 2rem;
+      padding:max(1.85rem,calc(var(--safe-top) + .65rem)) max(var(--pad-x),var(--safe-right)) 1.85rem 2rem;
       font-size:var(--label-size);letter-spacing:.2em;font-weight:500;
       text-transform:uppercase
     }
@@ -241,9 +269,11 @@
     /* ── HERO ── */
     .hero{
       position:fixed;top:0;left:0;right:0;z-index:2;
-      width:100%;height:100dvh;
+      /* svh: stable vs iOS URL bar show/hide (avoids fixed-hero jump); fallbacks for older browsers */
+      width:100%;height:100vh;height:100svh;
       display:flex;flex-direction:column;justify-content:center;align-items:center;
-      text-align:center;padding:2rem var(--pad-x);
+      text-align:center;
+      padding:max(2rem,var(--safe-top)) max(var(--pad-x),var(--safe-right)) max(2rem,var(--safe-bottom)) max(var(--pad-x),var(--safe-left));
       background:var(--bg);overflow:hidden
     }
     .hero-glow{
@@ -291,10 +321,10 @@
     .hero-bottom{
       position:absolute;bottom:0;left:0;right:0;z-index:1;
       display:flex;flex-direction:column;align-items:center;
-      padding-bottom:clamp(1.85rem,4.5vh,3rem);gap:1rem
+      padding-bottom:max(clamp(1.85rem,4.5vh,3rem),calc(var(--safe-bottom) + 1rem));gap:1rem
     }
     .hero-location{
-      font-size:var(--label-size);letter-spacing:.26em;color:var(--muted-dim);
+      font-size:var(--label-size);letter-spacing:.26em;color:var(--muted);
       white-space:nowrap;text-transform:uppercase
     }
     .scroll-hint{text-align:center;display:flex;flex-direction:column;align-items:center}
@@ -312,8 +342,8 @@
     }
     @keyframes scrollLine{0%{transform:translateY(-120%)}100%{transform:translateY(280%)}}
 
-    /* Spacer so content scrolls under fixed hero */
-    .hero-spacer{height:100dvh;pointer-events:none}
+    /* Spacer so content scrolls under fixed hero — must match .hero height */
+    .hero-spacer{height:100vh;height:100svh;pointer-events:none}
 
     /* ── PATH / TIMELINE ── */
     .path{
@@ -349,13 +379,19 @@
     }
     .step{
       flex:1;text-align:center;position:relative;padding-top:2.25rem;
-      transition:transform .55s var(--ease)
+      transition:transform .55s var(--ease);
+      /* Ensure readable focus/active affordance area ≥44px tall */
+      min-height:44px
     }
     .step:hover{transform:translateY(-5px)}
     .step-dot{
       position:absolute;top:0;left:50%;transform:translateX(-50%);
       width:15px;height:15px;border-radius:50%;background:var(--bg-alt);
       border:1.5px solid var(--muted);transition:all .55s var(--ease);z-index:1
+    }
+    /* Expand visual target without changing 15px design (decorative, not a control) */
+    .step-dot::before{
+      content:'';position:absolute;inset:-15px;border-radius:50%
     }
     .step-dot::after{
       content:'';position:absolute;inset:-7px;border-radius:50%;
@@ -542,8 +578,9 @@
     }
     .project-panel:hover .project-panel__meta,
     .project-panel.is-hovered .project-panel__meta{transform:translateY(0);opacity:1}
+    /* .72 alpha ≈ 7.8:1 on panel gradient — WCAG AA for small text */
     .project-panel__desc{
-      font-size:.9rem;color:rgba(240,239,233,.62);line-height:1.6;
+      font-size:.9rem;color:rgba(240,239,233,.72);line-height:1.6;
       margin-top:.95rem;max-width:360px;font-weight:300;
       transform:translateY(10px);opacity:0;
       transition:transform .55s var(--ease) .24s,opacity .45s var(--ease-soft) .24s
@@ -603,7 +640,7 @@
     .contact-links a:hover::after{transform:scaleX(1);transform-origin:left}
     .contact-footer{
       margin-top:clamp(4.5rem,9vh,7.5rem);
-      font-size:.5625rem;color:var(--muted-dim);letter-spacing:.16em;
+      font-size:.5625rem;color:var(--muted);letter-spacing:.16em;
       text-transform:uppercase
     }
 
@@ -614,60 +651,73 @@
       body.cursor-active{cursor:auto}
       body.cursor-active a,body.cursor-active .project-panel{cursor:pointer}
 
+      /* Tighter section rhythm on small screens — still spacious, not cramped */
+      :root{
+        --section-y:clamp(5.5rem,14vh,9rem);
+        --pad-x:1.25rem
+      }
+
       .nav{
         top:0;right:0;gap:1rem;
-        padding:1rem 1.1rem 1rem .85rem;
+        padding:max(1rem,calc(var(--safe-top) + .35rem)) max(1.1rem,var(--safe-right)) 1rem .85rem;
         font-size:.625rem;letter-spacing:.14em;
-        background:linear-gradient(180deg,rgba(7,7,7,.9),rgba(7,7,7,.55) 70%,transparent);
+        background:linear-gradient(180deg,rgba(7,7,7,.92),rgba(7,7,7,.55) 70%,transparent);
         backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
       }
-      .nav a{min-height:44px;padding:.5rem .15rem}
+      .nav a{min-height:44px;padding:.5rem .2rem}
 
-      .hero{padding:1.75rem 1.2rem}
+      .hero{padding:max(1.75rem,var(--safe-top)) 1.2rem max(1.75rem,var(--safe-bottom))}
       .hero-label{font-size:.625rem;letter-spacing:.28em;gap:.85rem;margin-bottom:1.65rem}
       .hero-label::before,.hero-label::after{width:1.4rem}
-      /* Mobile: 16.5vw > desktop 15.5vw — relatively larger display type */
+      /* Mobile: 17.5vw > desktop 15.5vw — statement-scale display type */
       .hero-name{
-        font-size:clamp(3.1rem,16.5vw,5.5rem);
+        font-size:clamp(3.25rem,17.5vw,5.75rem);
         letter-spacing:-.052em;line-height:.84
       }
-      .hero-role{font-size:clamp(1.1rem,4.2vw,1.25rem);margin-top:1.5rem}
-      .hero-bottom{padding-bottom:1.65rem;gap:.75rem}
+      .hero-role{font-size:clamp(1.15rem,4.5vw,1.3rem);margin-top:1.5rem}
+      .hero-bottom{padding-bottom:max(1.65rem,calc(var(--safe-bottom) + .75rem));gap:.75rem}
       .hero-location{font-size:.625rem;letter-spacing:.16em}
+      .scroll-hint{pointer-events:none}
       .scroll-hint span{font-size:.55rem;letter-spacing:.32em}
       .scroll-line{height:40px;margin-top:12px}
 
-      .path{padding:7rem 1.35rem 7.5rem}
-      .path .section-label{margin-bottom:4rem}
-      .timeline{flex-direction:column;gap:3.25rem;padding:0 0 0 .35rem}
+      .path{padding:var(--section-y) 1.35rem calc(var(--section-y) * 1.1)}
+      .path .section-label{margin-bottom:3.25rem}
+      .timeline{flex-direction:column;gap:2.75rem;padding:0 0 0 .35rem}
       .timeline-line{top:0;bottom:0;left:7px;width:1px;height:auto;right:auto}
       .timeline-line-fill{
         width:100%!important;height:0%;
         background:linear-gradient(180deg,var(--accent),rgba(184,184,184,.25));
         box-shadow:none
       }
-      .step{text-align:left;padding-left:2.5rem;padding-top:0}
+      .step{
+        text-align:left;padding:0 0 0 2.75rem;
+        min-height:44px
+      }
       .step:hover{transform:none}
       .step-dot{left:0;top:4px;transform:none;width:14px;height:14px}
       .step:hover .step-dot,.step.active .step-dot{transform:scale(1.3)}
-      .step-label{margin-top:0;font-size:1.05rem;letter-spacing:.16em}
-      .step-year{font-size:.65rem}
+      .step-label{margin-top:0;font-size:1.1rem;letter-spacing:.16em}
+      .step-year{font-size:.6875rem}
+      /* Always-visible descriptions on mobile; active step is more prominent */
       .step-desc,.step:hover .step-desc,.step.active .step-desc{
         max-height:none;opacity:1;margin-top:.65rem;max-width:none;
         font-size:.9375rem;line-height:1.65
       }
+      .step.active .step-label{color:var(--accent)}
+      .step.active .step-desc{color:rgba(240,239,233,.78)}
 
-      .about{min-height:auto;padding:7rem 1.4rem}
-      .about .section-label{margin-bottom:2.75rem}
-      /* 6.8vw on 375px ≈ 25.5px — statement scale on mobile */
+      .about{min-height:auto;padding:var(--section-y) 1.4rem}
+      .about .section-label{margin-bottom:2.5rem}
+      /* 7.2vw on 375px ≈ 27px — statement scale on mobile */
       .about-text{
-        font-size:clamp(1.35rem,6.8vw,1.85rem);line-height:1.5;
+        font-size:clamp(1.4rem,7.2vw,1.95rem);line-height:1.48;
         max-width:none;text-wrap:pretty
       }
 
       .gallery-wrapper{height:auto}
       .gallery-heading{
-        position:relative;padding:4rem 1.35rem 2rem;
+        position:relative;padding:3.5rem 1.35rem 1.75rem;
         backdrop-filter:none;-webkit-backdrop-filter:none;background:none;opacity:1
       }
       .gallery-heading__label{font-size:.625rem;letter-spacing:.28em}
@@ -676,13 +726,17 @@
         position:relative;height:auto;overflow:visible;
         flex-direction:column;align-items:stretch
       }
-      .track{flex-direction:column;gap:2rem;padding:0 1.2rem 5.5rem}
+      .track{flex-direction:column;gap:1.75rem;padding:0 1.15rem max(4.5rem,calc(var(--safe-bottom) + 3.5rem))}
       .project-panel{
         flex-shrink:unset;width:100%;height:auto;aspect-ratio:3/4;
         perspective:none;transform-style:flat;
         border-radius:10px;max-height:none;
-        box-shadow:0 20px 50px rgba(0,0,0,.4)
+        box-shadow:0 20px 50px rgba(0,0,0,.4);
+        /* Native-feeling press feedback (paired with JS touch handlers) */
+        transition:border-color .35s var(--ease),box-shadow .45s var(--ease),transform .2s var(--ease-soft)
       }
+      .project-panel.is-pressed{transform:scale(.985)}
+      .project-panel[data-url]{cursor:pointer;-webkit-tap-highlight-color:transparent}
       .project-panel__img-wrap{transform-style:flat;border-radius:9px}
       .project-panel__img,.project-panel__placeholder{
         filter:grayscale(0%) brightness(1);height:115%;top:-7.5%
@@ -702,23 +756,45 @@
       .project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1;transform:none
       }
-      .project-panel__title{font-size:clamp(1.65rem,7.5vw,2.1rem)}
+      .project-panel__title{font-size:clamp(1.75rem,8vw,2.2rem)}
       .project-panel__meta{font-size:.65rem;margin-top:.6rem;letter-spacing:.16em}
       .project-panel__desc{font-size:.9375rem;max-width:none;margin-top:.75rem;line-height:1.6}
 
-      .contact{min-height:auto;padding:7.5rem 1.35rem 5rem}
-      /* 10.5vw on 375px ≈ 39px — dramatic closing CTA */
-      .contact-email{font-size:clamp(1.85rem,10.5vw,3rem);letter-spacing:-.03em}
-      .contact-links{gap:1.5rem;flex-wrap:wrap;margin-top:2.75rem}
-      .contact-links a{min-height:44px;padding:.55rem .2rem}
-      .contact-footer{margin-top:4rem}
+      .contact{min-height:auto;padding:var(--section-y) 1.35rem max(4.5rem,calc(var(--safe-bottom) + 3.5rem))}
+      /* 11.5vw on 375px ≈ 43px — dramatic closing CTA */
+      .contact-email{
+        font-size:clamp(1.9rem,11.5vw,3.15rem);letter-spacing:-.03em;
+        min-height:44px;padding:.35rem .15rem
+      }
+      .contact-links{gap:1.35rem;flex-wrap:wrap;margin-top:2.5rem}
+      .contact-links a{min-height:44px;padding:.55rem .35rem}
+      .contact-footer{margin-top:3.5rem}
+
+      /* Lighter preloader chrome on mobile (faster perceived start) */
+      .preloader{gap:1.5rem}
+      .preloader-bar{width:132px}
     }
 
-    @media(max-width:380px){
-      /* Keep vw ≥ desktop so type stays relatively larger on small screens */
-      .hero-name{font-size:clamp(2.85rem,16vw,3.75rem)}
-      .nav{gap:.75rem;font-size:.575rem}
-      .contact-email{font-size:clamp(1.75rem,11vw,2.6rem)}
+    /* Small phones (≤360px / classic 320 CSS px) */
+    @media(max-width:360px){
+      .hero-name{font-size:clamp(2.95rem,18vw,3.9rem)}
+      .hero-role{font-size:clamp(1.05rem,4.8vw,1.2rem)}
+      .nav{gap:.65rem;font-size:.55rem;letter-spacing:.1em}
+      .nav a{padding:.5rem .1rem}
+      .about-text{font-size:clamp(1.3rem,7.6vw,1.7rem)}
+      .contact-email{font-size:clamp(1.7rem,12vw,2.55rem)}
+      .project-panel__title{font-size:clamp(1.55rem,8.5vw,2rem)}
+      .track{gap:1.5rem;padding-left:1rem;padding-right:1rem}
+    }
+
+    /* Touch devices: press feedback for links without hover dependency */
+    @media(hover:none) and (pointer:coarse){
+      .nav a:active,.contact-links a:active,.contact-email:active{
+        color:var(--text)
+      }
+      .nav a:active::after,.contact-links a:active::after,.contact-email:active::after{
+        transform:scaleX(1);transform-origin:left
+      }
     }
 
     /* ── REDUCED MOTION ── */
@@ -735,10 +811,16 @@
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1!important;transform:none!important
       }
+      .project-panel.is-pressed{transform:none!important}
       .gallery-heading{opacity:1!important}
       .gallery-heading__line{width:100%!important}
       .hero-glow::after{animation:none!important}
       body.cursor--idle .cursor-ring{animation:none!important}
+      /* Stacked gallery — no pin / horizontal track motion */
+      .gallery-wrapper{height:auto!important}
+      .sticky-track{position:relative!important;height:auto!important;overflow:visible!important}
+      .track{flex-direction:column!important;width:100%!important;transform:none!important}
+      .project-panel{width:100%!important;height:auto!important;transform:none!important}
     }
   </style>
 
@@ -763,6 +845,8 @@
   </noscript>
 </head>
 <body>
+  <a class="skip-link" href="#path">Skip to content</a>
+
   <div class="vignette" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
@@ -774,9 +858,9 @@
   <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
 
   <!-- PRELOADER -->
-  <div class="preloader" id="preloader">
+  <div class="preloader" id="preloader" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
     <div class="preloader-name">ALEX MOLDOVAN</div>
-    <div class="preloader-bar">
+    <div class="preloader-bar" aria-hidden="true">
       <div class="preloader-bar-inner" id="preloader-bar"></div>
     </div>
   </div>
@@ -797,10 +881,10 @@
       <span class="line" data-split>ALEXANDRU</span>
       <span class="line" data-split>MOLDOVAN</span>
     </h1>
-    <div class="hero-role"><span class="role-text">Designer</span></div>
+    <div class="hero-role" aria-live="polite" aria-atomic="true"><span class="role-text">Designer</span></div>
     <div class="hero-bottom">
       <div class="hero-location">Târgu Mureș → Oulu, Finland</div>
-      <div class="scroll-hint" id="scroll-cue">
+      <div class="scroll-hint" id="scroll-cue" aria-hidden="true">
         <span>SCROLL</span>
         <div class="scroll-line"></div>
       </div>
@@ -809,32 +893,32 @@
   <div class="hero-spacer" aria-hidden="true"></div>
 
   <!-- PATH -->
-  <section id="path" class="path" aria-label="The path">
+  <section id="path" class="path" aria-label="The path" tabindex="-1">
     <div class="section-label section-label--center reveal">THE PATH</div>
-    <div class="timeline">
+    <div class="timeline" role="list" aria-label="Career path">
       <div class="timeline-line" aria-hidden="true">
         <div class="timeline-line-fill" id="timeline-fill"></div>
       </div>
-      <div class="step reveal">
-        <div class="step-dot"></div>
+      <div class="step reveal" role="listitem">
+        <div class="step-dot" aria-hidden="true"></div>
         <div class="step-label">FRAMES</div>
         <div class="step-year">2019—2023</div>
         <div class="step-desc">In front of cameras. Modeling taught me composition. Acting taught me timing.</div>
       </div>
-      <div class="step reveal">
-        <div class="step-dot"></div>
+      <div class="step reveal" role="listitem">
+        <div class="step-dot" aria-hidden="true"></div>
         <div class="step-label">CANVAS</div>
         <div class="step-year">2023—2024</div>
         <div class="step-desc">Graphic design. Logos, brands, visual identity. Making things look the way they feel.</div>
       </div>
-      <div class="step reveal">
-        <div class="step-dot"></div>
+      <div class="step reveal" role="listitem">
+        <div class="step-dot" aria-hidden="true"></div>
         <div class="step-label">CODE</div>
         <div class="step-year">2024—2026</div>
         <div class="step-desc">I started building. Bots, apps, websites. From Figma to deploy. Everything clicked.</div>
       </div>
-      <div class="step reveal">
-        <div class="step-dot"></div>
+      <div class="step reveal" role="listitem">
+        <div class="step-dot" aria-hidden="true"></div>
         <div class="step-label">OULU</div>
         <div class="step-year">2026→</div>
         <div class="step-desc">Computer Science at University of Oulu. The work continues.</div>
@@ -868,7 +952,7 @@
         <article class="project-panel" data-url="https://gentsclub.ro" tabindex="0" role="link" aria-label="GentsClub — open project">
           <div class="project-panel__number">01 / 05</div>
           <div class="project-panel__img-wrap">
-            <img class="project-panel__img" src="assets/projects/gentsclub.jpg" alt="GentsClub website screenshot" loading="lazy" width="900" height="1200">
+            <img class="project-panel__img" src="assets/projects/gentsclub.jpg" alt="GentsClub website screenshot" loading="lazy" decoding="async" width="900" height="1200">
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">GENTSCLUB</h2>
@@ -881,7 +965,7 @@
         <article class="project-panel" data-url="https://delirat.com" tabindex="0" role="link" aria-label="Delirat — open project">
           <div class="project-panel__number">02 / 05</div>
           <div class="project-panel__img-wrap">
-            <img class="project-panel__img" src="assets/projects/delirat.jpg" alt="Delirat website screenshot" loading="lazy" width="900" height="1200">
+            <img class="project-panel__img" src="assets/projects/delirat.jpg" alt="Delirat website screenshot" loading="lazy" decoding="async" width="900" height="1200">
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">DELIRAT</h2>
@@ -907,7 +991,7 @@
         <article class="project-panel" aria-label="Whumple project">
           <div class="project-panel__number">04 / 05</div>
           <div class="project-panel__img-wrap">
-            <img class="project-panel__img" src="assets/projects/whumple.jpg" alt="Whumple website screenshot" loading="lazy" width="900" height="1200">
+            <img class="project-panel__img" src="assets/projects/whumple.jpg" alt="Whumple website screenshot" loading="lazy" decoding="async" width="900" height="1200">
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">WHUMPLE</h2>
@@ -920,7 +1004,7 @@
         <article class="project-panel" data-url="https://nowa-silueta.ro" tabindex="0" role="link" aria-label="Nowa Silueta — open project">
           <div class="project-panel__number">05 / 05</div>
           <div class="project-panel__img-wrap">
-            <img class="project-panel__img" src="assets/projects/nowa-silueta.jpg" alt="Nowa Silueta website screenshot" loading="lazy" width="900" height="1200">
+            <img class="project-panel__img" src="assets/projects/nowa-silueta.jpg" alt="Nowa Silueta website screenshot" loading="lazy" decoding="async" width="900" height="1200">
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">NOWA SILUETA</h2>
@@ -946,6 +1030,8 @@
   </section>
 
   <script>
+  /* Boot after deferred GSAP/Lenis scripts (they run before DOMContentLoaded) */
+  function __portfolioBoot() {
   (function () {
     'use strict';
 
@@ -961,7 +1047,10 @@
         e.style.transform = 'none';
       });
       var pre = document.getElementById('preloader');
-      if (pre) pre.style.display = 'none';
+      if (pre) {
+        pre.style.display = 'none';
+        pre.setAttribute('aria-busy', 'false');
+      }
       var gh = document.getElementById('gallery-heading');
       if (gh) gh.style.opacity = '1';
       var gl = document.getElementById('gallery-heading-line');
@@ -1023,14 +1112,16 @@
       allChars = allChars.concat(splitIntoChars(line));
     });
 
-    /* ── Lenis smooth scroll — 1.55s expo.out matches --ease ── */
+    /* ── Lenis smooth scroll — desktop only ──
+       On touch/mobile, native scroll is smoother, cheaper, and avoids iOS jank. */
     var lenis = null;
-    if (typeof Lenis !== 'undefined') {
+    var useLenis = typeof Lenis !== 'undefined' && !isTouch && !isMobile();
+    if (useLenis) {
       lenis = new Lenis({
         duration: 1.55,
         easing: function (t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); },
         smoothWheel: true,
-        touchMultiplier: 2,
+        touchMultiplier: 1.5,
         wheelMultiplier: 0.82
       });
       if (typeof ScrollTrigger !== 'undefined') {
@@ -1218,6 +1309,21 @@
       });
     }
 
+    /* ── Touch press feedback — CSS class for panels; subtle scale for links ── */
+    if (isTouch) {
+      document.querySelectorAll('.project-panel[data-url]').forEach(function (el) {
+        el.addEventListener('touchstart', function () {
+          el.classList.add('is-pressed');
+        }, { passive: true });
+        el.addEventListener('touchend', function () {
+          el.classList.remove('is-pressed');
+        }, { passive: true });
+        el.addEventListener('touchcancel', function () {
+          el.classList.remove('is-pressed');
+        }, { passive: true });
+      });
+    }
+
     /* ── Initial states ── */
     /* blur(8px) — lighter than 10px for snappier GPU path; still cinematic */
     gsap.set(allChars, { yPercent: 115, opacity: 0, filter: 'blur(8px)' });
@@ -1299,36 +1405,55 @@
       }, 3200);
     }
 
+    /* Mobile: shorter preloader for faster LCP / time-to-interactive */
+    var preBarDur = isMobile() ? 0.85 : 1.55;
+    var preExitDur = isMobile() ? 0.7 : 1.1;
+    var nameDur = isMobile() ? 1.05 : 1.45;
+    var nameStagger = isMobile() ? 0.018 : 0.028;
+
     var introTL = gsap.timeline({
-      delay: 0.1,
-      onComplete: startRoleCycling
+      delay: 0.08,
+      onComplete: function () {
+        if (preloader) preloader.setAttribute('aria-busy', 'false');
+        startRoleCycling();
+      }
     });
 
     introTL
       /* Preloader: tighter bar + exit so hero breathes sooner */
-      .to(preloaderBar, { width: '100%', duration: 1.55, ease: 'power2.inOut' })
-      .to(preloader, { yPercent: -100, duration: 1.1, ease: 'expo.inOut' }, '+=0.08')
+      .to(preloaderBar, { width: '100%', duration: preBarDur, ease: 'power2.inOut' })
+      .to(preloader, {
+        yPercent: -100,
+        duration: preExitDur,
+        ease: 'expo.inOut',
+        onComplete: function () {
+          if (preloader) {
+            preloader.style.display = 'none';
+            preloader.setAttribute('aria-busy', 'false');
+          }
+        }
+      }, '+=0.06')
       /* Glow blooms under label */
-      .to('.hero-glow', { opacity: 1, scale: 1, duration: 1.6, ease: 'expo.out' }, '-=0.95')
-      .to('.hero-label', { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, '-=1.05')
+      .to('.hero-glow', { opacity: 1, scale: 1, duration: isMobile() ? 1.15 : 1.6, ease: 'expo.out' }, '-=0.85')
+      .to('.hero-label', { opacity: 1, y: 0, duration: 0.85, ease: 'expo.out' }, '-=0.95')
       /* Name: signature expo.out primary reveal */
       .to(allChars, {
         yPercent: 0,
         opacity: 1,
         filter: 'blur(0px)',
-        duration: 1.45,
+        duration: nameDur,
         ease: 'expo.out',
-        stagger: 0.028,
+        stagger: nameStagger,
         onComplete: function () {
           /* Drop will-change/filter after entrance to free GPU */
           gsap.set(allChars, { clearProps: 'filter' });
         }
-      }, '-=0.85')
+      }, '-=0.75')
       /* Breathing room before role */
-      .to('.hero-role', { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, '-=0.45')
-      .to('.hero-location', { opacity: 1, y: 0, duration: 0.95, ease: 'power3.out' }, '-=0.4')
-      .to('#scroll-cue', { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.4')
-      .to('.nav', { opacity: 1, y: 0, duration: 1, ease: 'expo.out' }, '-=0.75');
+      .to('.hero-role', { opacity: 1, y: 0, duration: 0.85, ease: 'expo.out' }, '-=0.4')
+      .to('.hero-location', { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.35')
+      .to('#scroll-cue', { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out' }, '-=0.35')
+      .to('.nav', { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, '-=0.65');
 
     /* ── Hero fade on scroll — sequenced storytelling ──
        Name first, then role, then location/cue, then full hide */
@@ -1449,19 +1574,30 @@
         });
       }
 
-      /* Activate steps on scroll — always allow leave-back so state stays honest.
-         Touch auto-cycle (below) only runs when no step is scroll-active nearby. */
-      gsap.utils.toArray('.step').forEach(function (step) {
-        ScrollTrigger.create({
-          trigger: step,
-          start: 'top 80%',
-          end: 'bottom 20%',
-          onEnter: function () { step.classList.add('active'); },
-          onEnterBack: function () { step.classList.add('active'); },
-          onLeave: function () { step.classList.remove('active'); },
-          onLeaveBack: function () { step.classList.remove('active'); }
+      /* Pointer-fine desktop only: activate steps on scroll.
+         Touch (incl. iPad landscape): auto-cycle owns .active so they don't fight. */
+      if (!isTouch) {
+        gsap.matchMedia().add('(min-width: 769px)', function () {
+          var stepTriggers = [];
+          gsap.utils.toArray('.step').forEach(function (step) {
+            stepTriggers.push(ScrollTrigger.create({
+              trigger: step,
+              start: 'top 80%',
+              end: 'bottom 20%',
+              onEnter: function () { step.classList.add('active'); },
+              onEnterBack: function () { step.classList.add('active'); },
+              onLeave: function () { step.classList.remove('active'); },
+              onLeaveBack: function () { step.classList.remove('active'); }
+            }));
+          });
+          return function () {
+            stepTriggers.forEach(function (st) { st.kill(); });
+            document.querySelectorAll('.step').forEach(function (s) {
+              s.classList.remove('active');
+            });
+          };
         });
-      });
+      }
     }
 
     /* ── Gallery heading reveal ── */
@@ -1839,24 +1975,25 @@
       }
     }
 
-    /* ── Touch: timeline auto-cycle when path is off-screen ── */
-    if (isTouch) {
+    /* ── Touch/mobile: timeline auto-cycle while path is on screen ──
+       More prominent on small screens — one step pulses at a time. */
+    if (isTouch || isMobile()) {
       var steps = document.querySelectorAll('.step');
       var pathForCycle = document.querySelector('.path');
       var cur = 0;
+      var cycleInterval = isMobile() ? 2400 : 3000;
       var cycle = function () {
         if (pathForCycle) {
           var r = pathForCycle.getBoundingClientRect();
-          var pathInView = r.top < window.innerHeight * 0.9 && r.bottom > window.innerHeight * 0.1;
-          /* While path is on screen, ScrollTrigger owns .active — don't fight it */
-          if (pathInView) return;
+          var pathInView = r.top < window.innerHeight * 0.9 && r.bottom > window.innerHeight * 0.12;
+          if (!pathInView) return;
         }
         steps.forEach(function (s) { s.classList.remove('active'); });
         if (steps[cur]) steps[cur].classList.add('active');
         cur = (cur + 1) % steps.length;
       };
-      cycle();
-      setInterval(cycle, 3000);
+      if (steps[0]) steps[0].classList.add('active');
+      setInterval(cycle, cycleInterval);
     }
 
     /* ── Resize / visualViewport refresh (mobile URL bar, rotation) ── */
@@ -1872,7 +2009,21 @@
       window.visualViewport.addEventListener('resize', scheduleRefresh);
     }
 
+    /* Non-critical: refresh ST after idle so late font/layout settle doesn't jank intro */
+    if (typeof ScrollTrigger !== 'undefined' && typeof requestIdleCallback === 'function') {
+      requestIdleCallback(function () {
+        ScrollTrigger.refresh();
+      }, { timeout: 2500 });
+    }
+
   })();
+  } /* end __portfolioBoot */
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', __portfolioBoot);
+  } else {
+    __portfolioBoot();
+  }
   </script>
 </body>
 </html>
