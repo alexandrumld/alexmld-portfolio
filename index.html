@@ -4,10 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="description" content="Alex Moldovan — Designer & Developer. Târgu Mureș → Oulu, Finland.">
+  <meta name="author" content="Alex Moldovan">
+  <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#070707">
+  <meta name="color-scheme" content="dark">
   <meta property="og:title" content="Alex Moldovan — Designer & Developer">
   <meta property="og:description" content="Designer & Developer. Târgu Mureș → Oulu, Finland.">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Alex Moldovan — Designer & Developer">
+  <meta name="twitter:description" content="Designer & Developer. Târgu Mureș → Oulu, Finland.">
   <title>Alex Moldovan — Designer & Developer</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,9 +97,12 @@
     a:focus-visible,button:focus-visible,.project-panel:focus-visible,.skip-link:focus-visible{
       outline:2px solid var(--accent);outline-offset:6px;border-radius:2px
     }
-    /* High-contrast focus ring fallback for dark+silver surfaces */
-    a:focus-visible,button:focus-visible,.project-panel:focus-visible{
+    /* High-contrast focus ring for links/buttons (panels use outline + museum rim) */
+    a:focus-visible,button:focus-visible{
       box-shadow:0 0 0 6px rgba(7,7,7,.85),0 0 0 8px var(--accent)
+    }
+    .project-panel:focus-visible{
+      outline-offset:4px
     }
 
     /* ── SKIP LINK (WCAG 2.4.1) ── */
@@ -388,6 +398,7 @@
     .hero-label.is-drawn::before,.hero-label.is-drawn::after{transform:scaleX(1)}
     /* Statement scale — fluid vw with room so letters never clip at edges */
     .hero-name{
+      position:relative;isolation:isolate;
       font-size:clamp(4rem,16.2vw,18.75rem);font-weight:800;
       letter-spacing:-.056em;line-height:.78;color:var(--text);
       text-shadow:
@@ -395,10 +406,36 @@
         0 0 48px rgba(184,184,184,.06),
         0 2px 0 rgba(0,0,0,.15)
     }
+    /* Signature moment: one silver shear across the name after entrance */
+    .hero-name .name-shear{
+      position:absolute;inset:-8% -25%;z-index:2;pointer-events:none;
+      background:linear-gradient(
+        108deg,
+        transparent 0%,
+        transparent 42%,
+        rgba(240,239,233,.04) 46%,
+        rgba(240,239,233,.55) 49.5%,
+        rgba(184,184,184,.85) 50%,
+        rgba(240,239,233,.45) 50.5%,
+        rgba(240,239,233,.04) 54%,
+        transparent 58%,
+        transparent 100%
+      );
+      transform:translateX(-130%) skewX(-16deg);
+      opacity:0;mix-blend-mode:overlay;will-change:transform,opacity
+    }
+    .hero-name.is-sheared .name-shear{
+      animation:nameShear 1.2s cubic-bezier(.19,1,.22,1) forwards
+    }
+    @keyframes nameShear{
+      0%{transform:translateX(-130%) skewX(-16deg);opacity:0}
+      12%{opacity:1}
+      100%{transform:translateX(130%) skewX(-16deg);opacity:0}
+    }
     .hero-name .line{
       display:block;overflow:hidden;white-space:nowrap;
       padding-bottom:.04em;margin-bottom:-.04em; /* anti-clip descenders / optical air */
-      perspective:800px;transform-style:preserve-3d
+      perspective:800px;transform-style:preserve-3d;position:relative;z-index:1
     }
     /* Per-char silver falloff — only after JS split; parent stays solid for noscript/RM */
     .hero-name .char{
@@ -714,7 +751,19 @@
     .gallery-heading__count{
       font-size:clamp(.625rem,.95vw,.75rem);font-weight:500;letter-spacing:.28em;
       color:var(--accent);white-space:nowrap;flex-shrink:0;
-      font-variant-numeric:tabular-nums;opacity:.85
+      font-variant-numeric:tabular-nums;opacity:.85;
+      min-width:4.5em;text-align:right
+    }
+    .gallery-heading__index{
+      display:inline-block;transition:opacity .35s var(--ease-soft),transform .45s var(--ease);
+      min-width:1.4em
+    }
+    .gallery-heading__index.is-tick{
+      animation:indexTick .45s var(--ease) both
+    }
+    @keyframes indexTick{
+      0%{opacity:.35;transform:translateY(6px)}
+      100%{opacity:1;transform:translateY(0)}
     }
     .gallery-heading__line{
       display:block;height:1px;width:0%;flex:1;position:relative;
@@ -751,11 +800,20 @@
         0 8px 24px rgba(0,0,0,.35);
       transition:
         border-color .65s var(--ease),
-        box-shadow .75s var(--ease)
+        box-shadow .75s var(--ease),
+        opacity .7s var(--ease)
     }
     .project-panel[data-url]{cursor:pointer}
-    /* Museum hover: silver rim + deep cinematic shadow (no transform — GSAP owns scale) */
-    .project-panel:hover,.project-panel.is-hovered{
+    /* Neighbors recede when a panel holds the museum spotlight */
+    @media(min-width:769px) and (hover:hover){
+      .track:has(.project-panel.is-focused) .project-panel:not(.is-focused):not(:hover):not(.is-hovered):not(:focus-visible){
+        opacity:.72;
+        transition:opacity .7s var(--ease),border-color .65s var(--ease),box-shadow .75s var(--ease)
+      }
+    }
+    /* Museum spotlight: hover + center-focus + keyboard — silver rim (GSAP owns scale) */
+    .project-panel:hover,.project-panel.is-hovered,
+    .project-panel.is-focused,.project-panel:focus-visible{
       border-color:rgba(184,184,184,.38);
       box-shadow:
         0 0 0 1px rgba(184,184,184,.2),
@@ -786,7 +844,9 @@
       mix-blend-mode:overlay
     }
     .project-panel:hover .project-panel__img-wrap::after,
-    .project-panel.is-hovered .project-panel__img-wrap::after{
+    .project-panel.is-hovered .project-panel__img-wrap::after,
+    .project-panel.is-focused .project-panel__img-wrap::after,
+    .project-panel:focus-visible .project-panel__img-wrap::after{
       transform:translateX(130%) skewX(-12deg)
     }
     /* Soft edge vignette — depth at rest, lifts on hover */
@@ -798,7 +858,9 @@
       opacity:.85;transition:opacity .7s var(--ease);border-radius:9px
     }
     .project-panel:hover .project-panel__img-wrap::before,
-    .project-panel.is-hovered .project-panel__img-wrap::before{opacity:.35}
+    .project-panel.is-hovered .project-panel__img-wrap::before,
+    .project-panel.is-focused .project-panel__img-wrap::before,
+    .project-panel:focus-visible .project-panel__img-wrap::before{opacity:.35}
     .project-panel__img{
       width:100%;height:120%;object-fit:cover;
       position:absolute;top:-10%;left:0;
@@ -807,7 +869,9 @@
       transition:filter .85s var(--ease);border-radius:9px
     }
     .project-panel:hover .project-panel__img,
-    .project-panel.is-hovered .project-panel__img{
+    .project-panel.is-hovered .project-panel__img,
+    .project-panel.is-focused .project-panel__img,
+    .project-panel:focus-visible .project-panel__img{
       filter:grayscale(0%) contrast(1.04) brightness(1.05)
     }
     /* Friendby teaser — intentional “coming” field, not empty placeholder */
@@ -844,7 +908,9 @@
       50%{opacity:1;transform:scale(1.08)}
     }
     .project-panel:hover .project-panel__placeholder,
-    .project-panel.is-hovered .project-panel__placeholder{
+    .project-panel.is-hovered .project-panel__placeholder,
+    .project-panel.is-focused .project-panel__placeholder,
+    .project-panel:focus-visible .project-panel__placeholder{
       filter:grayscale(0%) brightness(1.05)
     }
     /* Teaser mark — design treatment, not project copy */
@@ -859,7 +925,9 @@
       user-select:none;transition:color .65s var(--ease)
     }
     .project-panel:hover .project-panel__soon-mark,
-    .project-panel.is-hovered .project-panel__soon-mark{color:rgba(240,239,233,.12)}
+    .project-panel.is-hovered .project-panel__soon-mark,
+    .project-panel.is-focused .project-panel__soon-mark,
+    .project-panel:focus-visible .project-panel__soon-mark{color:rgba(240,239,233,.12)}
     .project-panel__soon-label{
       font-size:clamp(.625rem,.9vw,.7rem);font-weight:600;letter-spacing:.42em;
       text-transform:uppercase;color:var(--accent);
@@ -870,7 +938,9 @@
       transition:border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease)
     }
     .project-panel:hover .project-panel__soon-label,
-    .project-panel.is-hovered .project-panel__soon-label{
+    .project-panel.is-hovered .project-panel__soon-label,
+    .project-panel.is-focused .project-panel__soon-label,
+    .project-panel:focus-visible .project-panel__soon-label{
       border-color:rgba(184,184,184,.5);
       box-shadow:0 0 36px rgba(184,184,184,.16);
       transform:translateY(-2px)
@@ -893,7 +963,9 @@
       color:var(--accent);opacity:.75
     }
     .project-panel:hover .project-panel__number,
-    .project-panel.is-hovered .project-panel__number{
+    .project-panel.is-hovered .project-panel__number,
+    .project-panel.is-focused .project-panel__number,
+    .project-panel:focus-visible .project-panel__number{
       opacity:1;transform:translateY(-4px)
     }
     /* Info: cinematic cascade — color first, copy after */
@@ -910,7 +982,9 @@
       transition:opacity .6s var(--ease) .06s,transform .75s var(--ease) .06s
     }
     .project-panel:hover .project-panel__info,
-    .project-panel.is-hovered .project-panel__info{opacity:1;transform:translateY(0)}
+    .project-panel.is-hovered .project-panel__info,
+    .project-panel.is-focused .project-panel__info,
+    .project-panel:focus-visible .project-panel__info{opacity:1;transform:translateY(0)}
     .project-panel__title{
       font-size:clamp(1.65rem,3.2vw,2.4rem);font-weight:800;
       letter-spacing:-.042em;line-height:.88;text-transform:uppercase;
@@ -918,7 +992,9 @@
       transition:transform .65s var(--ease) .14s,opacity .5s var(--ease-soft) .14s
     }
     .project-panel:hover .project-panel__title,
-    .project-panel.is-hovered .project-panel__title{transform:translateY(0);opacity:1}
+    .project-panel.is-hovered .project-panel__title,
+    .project-panel.is-focused .project-panel__title,
+    .project-panel:focus-visible .project-panel__title{transform:translateY(0);opacity:1}
     .project-panel__meta{
       font-size:var(--label-size);font-weight:500;letter-spacing:.2em;
       color:var(--accent);margin-top:.85rem;text-transform:uppercase;
@@ -926,7 +1002,9 @@
       transition:transform .65s var(--ease) .22s,opacity .5s var(--ease-soft) .22s
     }
     .project-panel:hover .project-panel__meta,
-    .project-panel.is-hovered .project-panel__meta{transform:translateY(0);opacity:1}
+    .project-panel.is-hovered .project-panel__meta,
+    .project-panel.is-focused .project-panel__meta,
+    .project-panel:focus-visible .project-panel__meta{transform:translateY(0);opacity:1}
     /* .72 alpha ≈ 7.8:1 on panel gradient — WCAG AA for small text */
     .project-panel__desc{
       font-size:.9rem;color:rgba(240,239,233,.72);line-height:1.62;
@@ -935,7 +1013,9 @@
       transition:transform .65s var(--ease) .3s,opacity .5s var(--ease-soft) .3s
     }
     .project-panel:hover .project-panel__desc,
-    .project-panel.is-hovered .project-panel__desc{transform:translateY(0);opacity:1}
+    .project-panel.is-hovered .project-panel__desc,
+    .project-panel.is-focused .project-panel__desc,
+    .project-panel:focus-visible .project-panel__desc{transform:translateY(0);opacity:1}
 
     /* ── CONTACT — grand finale (brightest silver atmosphere; not a footer) ── */
     .contact{
@@ -1008,6 +1088,7 @@
     }
     .contact-email:hover{
       color:var(--accent);
+      animation:none; /* let hover text-shadow win over emailHold */
       text-shadow:
         0 0 120px rgba(184,184,184,.28),
         0 0 48px rgba(184,184,184,.16),
@@ -1049,6 +1130,14 @@
       content:'';position:absolute;top:0;left:50%;width:min(72px,18vw);height:1px;
       transform:translateX(-50%);
       background:linear-gradient(90deg,transparent,var(--border-strong),transparent)
+    }
+    /* Finale hold: soft silver pulse on underlined email — living invitation */
+    .contact-email.is-underlined{
+      animation:emailHold 5.5s ease-in-out infinite alternate
+    }
+    @keyframes emailHold{
+      0%{text-shadow:0 0 100px rgba(184,184,184,.14),0 0 40px rgba(184,184,184,.07),0 2px 0 rgba(0,0,0,.12)}
+      100%{text-shadow:0 0 130px rgba(184,184,184,.26),0 0 56px rgba(184,184,184,.14),0 2px 0 rgba(0,0,0,.1)}
     }
 
     /* ── RESPONSIVE (mobile type uses HIGHER vw — relatively bigger than desktop) ── */
@@ -1196,7 +1285,8 @@
         /* Native-feeling press feedback (paired with JS touch handlers) */
         transition:border-color .35s var(--ease),box-shadow .45s var(--ease),transform .22s var(--ease-soft)
       }
-      .project-panel:hover,.project-panel.is-hovered{
+      .project-panel:hover,.project-panel.is-hovered,
+      .project-panel.is-focused,.project-panel:focus-visible{
         border-color:rgba(240,239,233,.14);
         box-shadow:0 24px 56px rgba(0,0,0,.48),0 0 0 1px rgba(240,239,233,.08)
       }
@@ -1317,10 +1407,13 @@
       .hero-glow::before,.hero-glow::after{animation:none!important}
       .contact-glow{opacity:1!important}
       .contact-glow::after{animation:none!important}
+      .contact-email.is-underlined{animation:none!important}
       .contact-email.is-underlined::after,.contact-email::after{transform:scaleX(1)!important}
       .hero-label::before,.hero-label::after{transform:scaleX(1)!important}
+      .hero-name .name-shear{display:none!important}
       .role-text{-webkit-text-fill-color:unset!important;background:none!important;color:var(--muted)!important}
       body.cursor--idle .cursor-ring{animation:none!important}
+      .gallery-heading__index{animation:none!important}
       /* Stacked gallery — no pin / horizontal track motion */
       .gallery-wrapper{height:auto!important}
       .sticky-track{position:relative!important;height:auto!important;overflow:visible!important}
@@ -1394,6 +1487,7 @@
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="hero-label" id="hero-label">DESIGNER · DEVELOPER · BUILDER</div>
     <h1 class="hero-name">
+      <span class="name-shear" aria-hidden="true"></span>
       <span class="line" data-split>ALEXANDRU</span>
       <span class="line" data-split>MOLDOVAN</span>
     </h1>
@@ -1460,7 +1554,7 @@
   <section id="work" class="gallery-wrapper" aria-label="Selected work">
     <div class="gallery-heading" id="gallery-heading">
       <span class="gallery-heading__label">SELECTED WORK</span>
-      <span class="gallery-heading__count" aria-hidden="true">05</span>
+      <span class="gallery-heading__count" aria-hidden="true"><span class="gallery-heading__index" id="gallery-index">01</span> / 05</span>
       <span class="gallery-heading__line" id="gallery-heading-line"></span>
     </div>
 
@@ -2036,6 +2130,17 @@
         startRoleCycling();
         /* Free GPU after entrance settles */
         gsap.set(allChars, { clearProps: 'filter,rotateX,transformOrigin' });
+        /* Signature moment: silver shear across the name (once) */
+        var heroNameEl = document.querySelector('.hero-name');
+        if (heroNameEl) {
+          heroNameEl.classList.add('is-sheared');
+          var shearEl = heroNameEl.querySelector('.name-shear');
+          if (shearEl) {
+            shearEl.addEventListener('animationend', function () {
+              shearEl.style.display = 'none';
+            }, { once: true });
+          }
+        }
       }
     });
 
@@ -2506,28 +2611,53 @@
           }
         });
 
-        /* Center-focus: panels enlarge near viewport center (respects hover lift via overwrite auto) */
+        /* Center-focus spotlight: scale + color reveal + live catalog index */
         var centerFocusTriggers = [];
+        var galleryIndexEl = document.getElementById('gallery-index');
+        var lastGalleryIndex = -1;
+        function setGalleryIndex(idx) {
+          if (!galleryIndexEl || idx === lastGalleryIndex) return;
+          lastGalleryIndex = idx;
+          var n = idx + 1;
+          galleryIndexEl.textContent = n < 10 ? '0' + n : String(n);
+          galleryIndexEl.classList.remove('is-tick');
+          /* retrigger tick animation */
+          void galleryIndexEl.offsetWidth;
+          galleryIndexEl.classList.add('is-tick');
+        }
+        /* Prefer the rightmost focused panel so index always matches spotlight */
+        function syncGalleryIndexFromFocus() {
+          var best = -1;
+          panels.forEach(function (p, i) {
+            if (p.classList.contains('is-focused')) best = i;
+          });
+          if (best >= 0) setGalleryIndex(best);
+        }
+        function focusPanel(panel, on) {
+          if (on) {
+            panel.classList.add('is-focused');
+            gsap.to(panel, { scale: 1.035, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
+          } else {
+            panel.classList.remove('is-focused');
+            gsap.to(panel, { scale: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
+          }
+          syncGalleryIndexFromFocus();
+        }
         panels.forEach(function (panel) {
           centerFocusTriggers.push(ScrollTrigger.create({
             trigger: panel,
             containerAnimation: horizontalTween,
-            start: 'left 68%',
-            end: 'right 32%',
-            onEnter: function () {
-              gsap.to(panel, { scale: 1.035, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
-            },
-            onEnterBack: function () {
-              gsap.to(panel, { scale: 1.035, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
-            },
-            onLeave: function () {
-              gsap.to(panel, { scale: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
-            },
-            onLeaveBack: function () {
-              gsap.to(panel, { scale: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
-            }
+            /* Tighter band so only ~one panel holds the spotlight */
+            start: 'left 58%',
+            end: 'right 42%',
+            onEnter: function () { focusPanel(panel, true); },
+            onEnterBack: function () { focusPanel(panel, true); },
+            onLeave: function () { focusPanel(panel, false); },
+            onLeaveBack: function () { focusPanel(panel, false); }
           }));
         });
+        /* Seed first panel as active catalog entry */
+        if (panels.length) setGalleryIndex(0);
 
         /* Lazy images can alter scrollWidth after decode — refresh ST when they load */
         function refreshGallery() {
@@ -2558,14 +2688,18 @@
           gsap.set(track, { clearProps: 'transform' });
           gsap.set(panelImgs, { clearProps: 'transform' });
           panels.forEach(function (panel) {
+            panel.classList.remove('is-focused');
             gsap.set(panel, { clearProps: 'clipPath,opacity,transform,willChange,scale' });
           });
         };
       });
 
-      /* Mobile stacked reveals — editorial rise per card */
+      /* Mobile stacked reveals — editorial rise per card + live catalog index */
       gsap.matchMedia().add('(max-width: 768px)', function () {
         var mobileTweens = [];
+        var mobileIndexTriggers = [];
+        var galleryIndexEl = document.getElementById('gallery-index');
+        var lastIdx = -1;
         panels.forEach(function (panel, i) {
           mobileTweens.push(gsap.from(panel, {
             y: 56, opacity: 0, scale: 0.97,
@@ -2577,15 +2711,43 @@
               toggleActions: 'play none none reverse'
             }
           }));
+          mobileIndexTriggers.push(ScrollTrigger.create({
+            trigger: panel,
+            start: 'top 55%',
+            end: 'bottom 45%',
+            onEnter: function () {
+              if (!galleryIndexEl || i === lastIdx) return;
+              lastIdx = i;
+              var n = i + 1;
+              galleryIndexEl.textContent = n < 10 ? '0' + n : String(n);
+            },
+            onEnterBack: function () {
+              if (!galleryIndexEl || i === lastIdx) return;
+              lastIdx = i;
+              var n = i + 1;
+              galleryIndexEl.textContent = n < 10 ? '0' + n : String(n);
+            }
+          }));
         });
         return function () {
           mobileTweens.forEach(function (tw) {
             if (tw.scrollTrigger) tw.scrollTrigger.kill();
             tw.kill();
           });
+          mobileIndexTriggers.forEach(function (st) { st.kill(); });
         };
       });
     }
+
+    /* Keyboard: focus-visible already styles panels; keep is-hovered for cursorless environments */
+    panels.forEach(function (panel) {
+      panel.addEventListener('focus', function () {
+        panel.classList.add('is-hovered');
+      });
+      panel.addEventListener('blur', function () {
+        panel.classList.remove('is-hovered');
+      });
+    });
 
     /* ── 3D panel hover tilt (desktop) ──
        Single gsap.to for combined transform — quickTo(rotateX/Y/scale) can
@@ -2747,10 +2909,21 @@
         onEnterBack: function () { setActiveNav('home'); }
       });
 
+      var pathEl = document.getElementById('path');
       var aboutEl = document.getElementById('about');
       var workEl = document.getElementById('work');
       var contactEl = document.getElementById('contact');
 
+      /* Path is the biographical journey — ABOUT covers path + who */
+      if (pathEl) {
+        ScrollTrigger.create({
+          trigger: pathEl,
+          start: 'top 50%',
+          end: 'bottom 50%',
+          onEnter: function () { setActiveNav('about'); },
+          onEnterBack: function () { setActiveNav('about'); }
+        });
+      }
       if (aboutEl) {
         ScrollTrigger.create({
           trigger: aboutEl,
