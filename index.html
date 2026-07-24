@@ -1511,25 +1511,26 @@
       <div class="timeline-line" aria-hidden="true">
         <div class="timeline-line-fill" id="timeline-fill"></div>
       </div>
-      <div class="step reveal" role="listitem">
+      <!-- Steps omit .reveal — custom GSAP path handler owns entrance; .reveal + clearProps was re-hiding them -->
+      <div class="step" role="listitem">
         <div class="step-dot" aria-hidden="true"></div>
         <div class="step-label">FRAMES</div>
         <div class="step-year">2019—2023</div>
         <div class="step-desc">In front of cameras. Modeling taught me composition. Acting taught me timing.</div>
       </div>
-      <div class="step reveal" role="listitem">
+      <div class="step" role="listitem">
         <div class="step-dot" aria-hidden="true"></div>
         <div class="step-label">CANVAS</div>
         <div class="step-year">2023—2024</div>
         <div class="step-desc">Graphic design. Logos, brands, visual identity. Making things look the way they feel.</div>
       </div>
-      <div class="step reveal" role="listitem">
+      <div class="step" role="listitem">
         <div class="step-dot" aria-hidden="true"></div>
         <div class="step-label">CODE</div>
         <div class="step-year">2024—2026</div>
         <div class="step-desc">I started building. Bots, apps, websites. From Figma to deploy. Everything clicked.</div>
       </div>
-      <div class="step reveal" role="listitem">
+      <div class="step" role="listitem">
         <div class="step-dot" aria-hidden="true"></div>
         <div class="step-label">OULU</div>
         <div class="step-year">2026→</div>
@@ -1663,6 +1664,13 @@
       document.querySelectorAll('.reveal').forEach(function (e) {
         e.style.opacity = '1';
         e.style.transform = 'none';
+        e.style.filter = 'none';
+      });
+      /* Steps no longer use .reveal — still force-visible for reduced-motion / no-GSAP */
+      document.querySelectorAll('.step').forEach(function (e) {
+        e.style.opacity = '1';
+        e.style.transform = 'none';
+        e.style.filter = 'none';
       });
       var pre = document.getElementById('preloader');
       if (pre) {
@@ -1999,10 +2007,11 @@
     }
 
     /* ── Initial states ── */
-    /* Mask rise + soft blur + slight 3D tilt — cinematic, still GPU-friendly */
+    /* Mask rise + soft blur + slight 3D tilt — blur/rotate kept light (was 10px/14°; caused name lag) */
     gsap.set(allChars, {
-      yPercent: 125, opacity: 0, filter: 'blur(10px)',
-      rotateX: 14, transformOrigin: '50% 100%', transformPerspective: 900
+      yPercent: 125, opacity: 0, filter: 'blur(6px)',
+      rotateX: 8, transformOrigin: '50% 100%', transformPerspective: 600,
+      force3D: true
     });
     gsap.set('.reveal', { y: 72, opacity: 0 });
     gsap.set('.hero-label', { opacity: 0, y: 14 });
@@ -2116,12 +2125,12 @@
       }, 3000);
     }
 
-    /* Mobile: shorter preloader for faster LCP / time-to-interactive */
-    var preBarDur = isMobile() ? 0.9 : 1.65;
-    var preExitDur = isMobile() ? 0.75 : 1.15;
-    var nameDur = isMobile() ? 1.0 : 1.35;
-    var nameStagger = isMobile() ? 0.02 : 0.032;
-    var lineGap = isMobile() ? 0.12 : 0.18;
+    /* Mobile + desktop: shorter preloader so the name lands sooner (felt like "lag") */
+    var preBarDur = isMobile() ? 0.75 : 1.15;
+    var preExitDur = isMobile() ? 0.65 : 0.95;
+    var nameDur = isMobile() ? 0.9 : 1.15;
+    var nameStagger = isMobile() ? 0.018 : 0.026;
+    var lineGap = isMobile() ? 0.1 : 0.14;
 
     var introTL = gsap.timeline({
       delay: 0.06,
@@ -2266,25 +2275,39 @@
         });
       });
 
-      /* Steps stagger in as timeline line begins filling — journey chapters */
+      /* Steps stagger in as timeline line begins filling — journey chapters.
+         Must NOT use .reveal: clearProps would re-apply CSS .reveal{opacity:0} and hide labels. */
       var pathSteps = gsap.utils.toArray('.step');
+      var pathSectionEl = document.querySelector('.path');
       if (pathSteps.length) {
-        gsap.set(pathSteps, { y: 64, opacity: 0, filter: 'blur(6px)' });
+        pathSteps.forEach(function (el) {
+          el.classList.remove('reveal');
+          /* Kill CSS transition so GSAP opacity/transform aren't double-interpolated (mobile dim rules) */
+          el.style.transition = 'none';
+        });
+        gsap.set(pathSteps, { y: 64, opacity: 0, filter: 'blur(6px)', force3D: true });
         gsap.to(pathSteps, {
           y: 0, opacity: 1, filter: 'blur(0px)',
-          duration: 1.35, ease: 'expo.out', stagger: 0.16,
+          duration: 1.2, ease: 'expo.out', stagger: 0.14,
           scrollTrigger: {
-            trigger: pathSteps[0],
-            start: 'top 86%'
+            /* Section trigger is more reliable than first step (tall path / mobile rail) */
+            trigger: pathSectionEl || pathSteps[0],
+            start: 'top 82%',
+            once: true
           },
           onComplete: function () {
-            /* Hand opacity/transform back to CSS (hover lift, mobile dimming) */
+            /* Hand opacity/transform back to CSS (hover lift, mobile dimming).
+               Safe now: steps have no .reveal class to re-hide them. */
             gsap.set(pathSteps, { clearProps: 'filter,opacity,transform' });
+            pathSteps.forEach(function (el) {
+              el.style.transition = '';
+            });
           }
         });
       }
     } else {
       gsap.set('.reveal', { opacity: 1, y: 0 });
+      gsap.set('.step', { opacity: 1, y: 0, filter: 'none' });
       if (aboutLineInners.length) gsap.set(aboutLineInners, { opacity: 1, yPercent: 0, filter: 'none' });
       if (emailChars.length) gsap.set(emailChars, { opacity: 1, yPercent: 0, filter: 'none', rotateX: 0 });
       if (emailEl) emailEl.classList.add('is-underlined');
