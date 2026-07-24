@@ -551,134 +551,256 @@
     /* ── WORK / HORIZONTAL GALLERY ── */
     .gallery-wrapper{
       position:relative;z-index:3;background:var(--bg);
-      height:auto;min-height:100vh;min-height:100dvh
+      height:auto;min-height:100vh;min-height:100dvh;
+      /* Deep stage: subtle radial pool so panels float on museum dark */
+      background-image:
+        radial-gradient(ellipse 70% 50% at 50% 55%,rgba(184,184,184,.03),transparent 68%),
+        radial-gradient(ellipse 40% 30% at 80% 20%,rgba(184,184,184,.02),transparent 55%)
     }
     .gallery-wrapper::before{
       content:'';position:absolute;top:0;left:0;right:0;height:1px;
-      background:linear-gradient(90deg,transparent,var(--border-strong),transparent);
-      z-index:6;pointer-events:none
+      background:linear-gradient(90deg,transparent 0%,var(--border-strong) 20%,var(--accent) 50%,var(--border-strong) 80%,transparent 100%);
+      z-index:6;pointer-events:none;opacity:.7
     }
     .gallery-wrapper::after{
-      content:'';position:absolute;top:0;left:0;right:0;height:140px;pointer-events:none;
-      background:linear-gradient(180deg,rgba(7,7,7,.4),transparent);z-index:4
+      content:'';position:absolute;top:0;left:0;right:0;height:160px;pointer-events:none;
+      background:linear-gradient(180deg,rgba(7,7,7,.55),transparent);z-index:4
     }
     .gallery-heading{
       position:relative;z-index:5;
-      display:flex;align-items:center;gap:2rem;
-      padding:clamp(2.5rem,5vh,3.75rem) var(--pad-x);pointer-events:none;opacity:0;
+      display:flex;align-items:center;gap:clamp(1.25rem,2.5vw,2.5rem);
+      padding:clamp(2.75rem,5.5vh,4.25rem) var(--pad-x) clamp(1.5rem,3vh,2.25rem);
+      pointer-events:none;opacity:0;
       backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-      background:linear-gradient(to bottom,rgba(7,7,7,.7),rgba(7,7,7,0))
+      background:linear-gradient(to bottom,rgba(7,7,7,.78) 0%,rgba(7,7,7,.35) 55%,rgba(7,7,7,0) 100%)
     }
     .gallery-heading__label{
-      font-size:var(--label-size);font-weight:500;letter-spacing:var(--label-track);
-      text-transform:uppercase;color:var(--muted);white-space:nowrap;flex-shrink:0
+      font-size:clamp(.75rem,1.15vw,.875rem);font-weight:600;letter-spacing:.38em;
+      text-transform:uppercase;color:var(--text);white-space:nowrap;flex-shrink:0;
+      text-shadow:0 0 40px rgba(184,184,184,.15)
+    }
+    .gallery-heading__count{
+      font-size:clamp(.625rem,.95vw,.75rem);font-weight:500;letter-spacing:.28em;
+      color:var(--accent);white-space:nowrap;flex-shrink:0;
+      font-variant-numeric:tabular-nums;opacity:.85
     }
     .gallery-heading__line{
-      display:block;height:1px;width:0%;flex:1;
-      background:linear-gradient(90deg,rgba(184,184,184,.55),rgba(184,184,184,.08),transparent)
+      display:block;height:1px;width:0%;flex:1;position:relative;
+      background:linear-gradient(90deg,rgba(184,184,184,.7),rgba(184,184,184,.2) 40%,transparent 100%);
+      box-shadow:0 0 12px rgba(184,184,184,.2)
+    }
+    .gallery-heading__line::after{
+      content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+      width:5px;height:5px;border-radius:50%;
+      background:var(--accent);box-shadow:0 0 10px rgba(184,184,184,.55);
+      opacity:.6
     }
     .sticky-track{
       position:relative;height:100vh;height:100dvh;width:100%;
       overflow:hidden;display:flex;align-items:center
     }
-    /* Horizontal pad matches gallery-heading so first panel aligns with label */
+    /* Leading pad aligns with heading; trailing pad centers last panel with end air */
     .track{
-      display:flex;gap:clamp(2rem,3.5vw,3.75rem);padding:0 var(--pad-x);
+      display:flex;gap:clamp(2.25rem,4vw,4.25rem);
+      padding-left:var(--pad-x);
+      padding-right:max(var(--pad-x),calc((100vw - min(80vh,860px) * .75) / 2));
       width:max-content;flex-shrink:0;will-change:transform
     }
     .project-panel{
       flex-shrink:0;height:min(80vh,860px);aspect-ratio:3/4;overflow:hidden;
       position:relative;display:flex;align-items:flex-end;
-      border-radius:8px;will-change:transform;
-      transform-style:preserve-3d;perspective:1200px;
+      border-radius:10px;will-change:transform;
+      transform-style:preserve-3d;perspective:1400px;
       contain:layout paint;
-      border:1px solid var(--border);
+      border:1px solid rgba(240,239,233,.1);
       box-shadow:
-        0 0 0 1px rgba(0,0,0,.45),
-        0 28px 70px rgba(0,0,0,.5);
-      transition:border-color .55s var(--ease),box-shadow .65s var(--ease)
+        0 0 0 1px rgba(0,0,0,.5),
+        0 32px 80px rgba(0,0,0,.55),
+        0 8px 24px rgba(0,0,0,.35);
+      transition:
+        border-color .65s var(--ease),
+        box-shadow .75s var(--ease)
     }
     .project-panel[data-url]{cursor:pointer}
+    /* Museum hover: silver rim + deep cinematic shadow (no transform — GSAP owns scale) */
     .project-panel:hover,.project-panel.is-hovered{
-      border-color:var(--border-strong);
+      border-color:rgba(184,184,184,.38);
       box-shadow:
-        0 0 0 1px rgba(184,184,184,.12),
-        0 36px 90px rgba(0,0,0,.6),
-        0 0 80px rgba(184,184,184,.06)
+        0 0 0 1px rgba(184,184,184,.2),
+        0 48px 110px rgba(0,0,0,.65),
+        0 0 100px rgba(184,184,184,.1),
+        0 0 0 1px rgba(184,184,184,.08) inset
     }
     .project-panel__img-wrap{
       position:absolute;inset:0;overflow:hidden;
-      transform-style:preserve-3d;border-radius:7px;
+      transform-style:preserve-3d;border-radius:9px;
       background:var(--bg-elevated)
     }
+    /* Specular light sweep — Awwwards museum hover signature */
+    .project-panel__img-wrap::after{
+      content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
+      background:linear-gradient(
+        115deg,
+        transparent 0%,
+        transparent 38%,
+        rgba(240,239,233,.07) 48%,
+        rgba(184,184,184,.14) 50%,
+        rgba(240,239,233,.06) 52%,
+        transparent 62%,
+        transparent 100%
+      );
+      transform:translateX(-130%) skewX(-12deg);
+      transition:transform 1s var(--ease);
+      mix-blend-mode:overlay
+    }
+    .project-panel:hover .project-panel__img-wrap::after,
+    .project-panel.is-hovered .project-panel__img-wrap::after{
+      transform:translateX(130%) skewX(-12deg)
+    }
+    /* Soft edge vignette — depth at rest, lifts on hover */
+    .project-panel__img-wrap::before{
+      content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+      background:
+        radial-gradient(ellipse 90% 80% at 50% 45%,transparent 35%,rgba(0,0,0,.35) 100%),
+        linear-gradient(180deg,rgba(0,0,0,.2) 0%,transparent 28%);
+      opacity:.85;transition:opacity .7s var(--ease);border-radius:9px
+    }
+    .project-panel:hover .project-panel__img-wrap::before,
+    .project-panel.is-hovered .project-panel__img-wrap::before{opacity:.35}
     .project-panel__img{
       width:100%;height:120%;object-fit:cover;
       position:absolute;top:-10%;left:0;
-      will-change:transform;filter:grayscale(100%) contrast(1.06) brightness(.92);
-      transition:filter .55s var(--ease),transform .75s var(--ease);border-radius:7px
+      will-change:transform;filter:grayscale(100%) contrast(1.08) brightness(.88);
+      /* transform reserved for GSAP parallax yPercent — zoom lives on img-wrap tilt */
+      transition:filter .85s var(--ease);border-radius:9px
     }
     .project-panel:hover .project-panel__img,
     .project-panel.is-hovered .project-panel__img{
-      filter:grayscale(0%) contrast(1.03) brightness(1.04)
+      filter:grayscale(0%) contrast(1.04) brightness(1.05)
     }
+    /* Friendby teaser — intentional “coming” field, not empty placeholder */
     .project-panel__placeholder{
       width:100%;height:120%;position:absolute;top:-10%;left:0;
       background:
-        radial-gradient(ellipse at 30% 20%,rgba(184,184,184,.14),transparent 50%),
-        linear-gradient(155deg,#0c1520 0%,#152535 42%,#0a121c 100%);
-      filter:grayscale(100%) brightness(.88);transition:filter .55s var(--ease)
+        radial-gradient(ellipse 55% 45% at 28% 22%,rgba(184,184,184,.18),transparent 55%),
+        radial-gradient(ellipse 40% 35% at 78% 72%,rgba(100,140,180,.12),transparent 50%),
+        radial-gradient(ellipse 60% 50% at 50% 50%,rgba(20,35,55,.5),transparent 70%),
+        linear-gradient(155deg,#0a1018 0%,#121e2c 38%,#0d1824 68%,#080e14 100%);
+      filter:grayscale(40%) brightness(.9);transition:filter .85s var(--ease)
+    }
+    .project-panel__placeholder::before{
+      content:'';position:absolute;inset:0;
+      background-image:
+        linear-gradient(rgba(184,184,184,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(184,184,184,.04) 1px,transparent 1px);
+      background-size:48px 48px;
+      mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 20%,transparent 75%);
+      -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 20%,transparent 75%);
+      animation:teaserGrid 18s linear infinite;opacity:.7
+    }
+    .project-panel__placeholder::after{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 42%,rgba(184,184,184,.1),transparent 42%);
+      animation:teaserPulse 4.5s ease-in-out infinite
+    }
+    @keyframes teaserGrid{
+      0%{transform:translate(0,0)}
+      100%{transform:translate(48px,48px)}
+    }
+    @keyframes teaserPulse{
+      0%,100%{opacity:.45;transform:scale(1)}
+      50%{opacity:1;transform:scale(1.08)}
     }
     .project-panel:hover .project-panel__placeholder,
     .project-panel.is-hovered .project-panel__placeholder{
-      filter:grayscale(0%) brightness(1.02)
+      filter:grayscale(0%) brightness(1.05)
     }
+    /* Teaser mark — design treatment, not project copy */
+    .project-panel__soon{
+      position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:1rem;pointer-events:none;
+      text-align:center;padding:2rem
+    }
+    .project-panel__soon-mark{
+      font-size:clamp(3.5rem,8vw,5.5rem);font-weight:800;letter-spacing:-.04em;
+      line-height:.85;color:rgba(240,239,233,.07);text-transform:uppercase;
+      user-select:none;transition:color .65s var(--ease)
+    }
+    .project-panel:hover .project-panel__soon-mark,
+    .project-panel.is-hovered .project-panel__soon-mark{color:rgba(240,239,233,.12)}
+    .project-panel__soon-label{
+      font-size:clamp(.625rem,.9vw,.7rem);font-weight:600;letter-spacing:.42em;
+      text-transform:uppercase;color:var(--accent);
+      padding:.55rem 1.15rem;border:1px solid rgba(184,184,184,.28);
+      border-radius:100px;background:rgba(7,7,7,.35);
+      backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+      box-shadow:0 0 24px rgba(184,184,184,.08);
+      transition:border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease)
+    }
+    .project-panel:hover .project-panel__soon-label,
+    .project-panel.is-hovered .project-panel__soon-label{
+      border-color:rgba(184,184,184,.5);
+      box-shadow:0 0 36px rgba(184,184,184,.16);
+      transform:translateY(-2px)
+    }
+    /* Index as composition — large index + total */
     .project-panel__number{
-      position:absolute;top:1.65rem;left:1.65rem;z-index:3;
-      font-size:clamp(.75rem,1.1vw,.95rem);font-weight:600;letter-spacing:.3em;
-      color:var(--accent);opacity:.8;font-variant-numeric:tabular-nums;
-      text-shadow:0 2px 16px rgba(0,0,0,.7);
-      transition:opacity .4s var(--ease),transform .45s var(--ease)
+      position:absolute;top:1.5rem;left:1.5rem;z-index:3;
+      display:flex;align-items:baseline;gap:.35rem;
+      font-variant-numeric:tabular-nums;
+      text-shadow:0 2px 20px rgba(0,0,0,.75),0 0 40px rgba(0,0,0,.3);
+      transition:opacity .45s var(--ease),transform .55s var(--ease);
+      opacity:.9
+    }
+    .project-panel__num{
+      font-size:clamp(1.35rem,2.2vw,1.85rem);font-weight:700;letter-spacing:.04em;
+      color:var(--text);line-height:1
+    }
+    .project-panel__num-total{
+      font-size:clamp(.7rem,1vw,.85rem);font-weight:500;letter-spacing:.22em;
+      color:var(--accent);opacity:.75
     }
     .project-panel:hover .project-panel__number,
     .project-panel.is-hovered .project-panel__number{
-      opacity:1;transform:translateY(-3px)
+      opacity:1;transform:translateY(-4px)
     }
-    /* Info lags image colorization slightly — color first, then copy */
+    /* Info: cinematic cascade — color first, copy after */
     .project-panel__info{
-      position:relative;z-index:2;width:100%;padding:2.5rem 1.9rem 2rem;
+      position:relative;z-index:2;width:100%;padding:3rem 1.9rem 2.1rem;
       background:linear-gradient(
         transparent 0%,
-        rgba(7,7,7,.12) 15%,
-        rgba(7,7,7,.68) 50%,
-        rgba(7,7,7,.97) 100%
+        rgba(7,7,7,.08) 12%,
+        rgba(7,7,7,.55) 42%,
+        rgba(7,7,7,.92) 72%,
+        rgba(7,7,7,.98) 100%
       );
-      opacity:0;transform:translateY(24px);
-      transition:opacity .55s var(--ease) .08s,transform .65s var(--ease) .08s
+      opacity:0;transform:translateY(32px);
+      transition:opacity .6s var(--ease) .06s,transform .75s var(--ease) .06s
     }
     .project-panel:hover .project-panel__info,
     .project-panel.is-hovered .project-panel__info{opacity:1;transform:translateY(0)}
     .project-panel__title{
-      font-size:clamp(1.55rem,3vw,2.25rem);font-weight:800;
-      letter-spacing:-.038em;line-height:.9;text-transform:uppercase;
-      transform:translateY(12px);opacity:0;
-      transition:transform .55s var(--ease) .12s,opacity .45s var(--ease-soft) .12s
+      font-size:clamp(1.65rem,3.2vw,2.4rem);font-weight:800;
+      letter-spacing:-.042em;line-height:.88;text-transform:uppercase;
+      transform:translateY(16px);opacity:0;
+      transition:transform .65s var(--ease) .14s,opacity .5s var(--ease-soft) .14s
     }
     .project-panel:hover .project-panel__title,
     .project-panel.is-hovered .project-panel__title{transform:translateY(0);opacity:1}
     .project-panel__meta{
-      font-size:var(--label-size);font-weight:500;letter-spacing:.18em;
-      color:var(--accent);margin-top:.8rem;text-transform:uppercase;
-      transform:translateY(10px);opacity:0;
-      transition:transform .55s var(--ease) .18s,opacity .45s var(--ease-soft) .18s
+      font-size:var(--label-size);font-weight:500;letter-spacing:.2em;
+      color:var(--accent);margin-top:.85rem;text-transform:uppercase;
+      transform:translateY(12px);opacity:0;
+      transition:transform .65s var(--ease) .22s,opacity .5s var(--ease-soft) .22s
     }
     .project-panel:hover .project-panel__meta,
     .project-panel.is-hovered .project-panel__meta{transform:translateY(0);opacity:1}
     /* .72 alpha ≈ 7.8:1 on panel gradient — WCAG AA for small text */
     .project-panel__desc{
-      font-size:.9rem;color:rgba(240,239,233,.72);line-height:1.6;
-      margin-top:.95rem;max-width:360px;font-weight:300;
-      transform:translateY(10px);opacity:0;
-      transition:transform .55s var(--ease) .24s,opacity .45s var(--ease-soft) .24s
+      font-size:.9rem;color:rgba(240,239,233,.72);line-height:1.62;
+      margin-top:1rem;max-width:360px;font-weight:300;
+      transform:translateY(12px);opacity:0;
+      transition:transform .65s var(--ease) .3s,opacity .5s var(--ease-soft) .3s
     }
     .project-panel:hover .project-panel__desc,
     .project-panel.is-hovered .project-panel__desc{transform:translateY(0);opacity:1}
@@ -822,51 +944,77 @@
         max-width:none;text-wrap:pretty
       }
 
-      .gallery-wrapper{height:auto}
-      /* Heading + track share --pad-x so label aligns with first panel */
-      .gallery-heading{
-        position:relative;padding:3.5rem var(--pad-x) 1.75rem;
-        backdrop-filter:none;-webkit-backdrop-filter:none;background:none;opacity:1
+      .gallery-wrapper{
+        height:auto;
+        background-image:
+          radial-gradient(ellipse 90% 40% at 50% 0%,rgba(184,184,184,.04),transparent 55%)
       }
-      .gallery-heading__label{font-size:.625rem;letter-spacing:.28em}
-      .gallery-heading__line{width:100%}
+      /* Deliberate mobile gallery — editorial stack, not a squeezed desktop track */
+      .gallery-heading{
+        position:relative;padding:3.75rem var(--pad-x) 1.35rem;
+        backdrop-filter:none;-webkit-backdrop-filter:none;background:none;opacity:1;
+        flex-wrap:wrap;gap:.85rem 1.25rem
+      }
+      .gallery-heading__label{font-size:.7rem;letter-spacing:.32em}
+      .gallery-heading__count{font-size:.6rem;letter-spacing:.22em}
+      .gallery-heading__line{width:100%;flex:1 1 100%;order:3;margin-top:.15rem}
       .sticky-track{
         position:relative;height:auto;overflow:visible;
         flex-direction:column;align-items:stretch
       }
-      .track{flex-direction:column;gap:1.75rem;padding:0 var(--pad-x) max(4.5rem,calc(var(--safe-bottom) + 3.5rem))}
+      .track{
+        flex-direction:column;gap:2.25rem;
+        padding:0 var(--pad-x) max(5rem,calc(var(--safe-bottom) + 3.75rem));
+        width:100%
+      }
       .project-panel{
         flex-shrink:unset;width:100%;height:auto;aspect-ratio:3/4;
         perspective:none;transform-style:flat;
-        border-radius:10px;max-height:none;
-        box-shadow:0 20px 50px rgba(0,0,0,.4);
+        border-radius:14px;max-height:none;
+        box-shadow:
+          0 24px 56px rgba(0,0,0,.48),
+          0 0 0 1px rgba(240,239,233,.08);
         /* Native-feeling press feedback (paired with JS touch handlers) */
-        transition:border-color .35s var(--ease),box-shadow .45s var(--ease),transform .2s var(--ease-soft)
+        transition:border-color .35s var(--ease),box-shadow .45s var(--ease),transform .22s var(--ease-soft)
       }
-      .project-panel.is-pressed{transform:scale(.985)}
+      .project-panel:hover,.project-panel.is-hovered{
+        border-color:rgba(240,239,233,.14);
+        box-shadow:0 24px 56px rgba(0,0,0,.48),0 0 0 1px rgba(240,239,233,.08)
+      }
+      .project-panel.is-pressed{transform:scale(.982)}
       .project-panel[data-url]{cursor:pointer;-webkit-tap-highlight-color:transparent}
-      .project-panel__img-wrap{transform-style:flat;border-radius:9px}
+      .project-panel__img-wrap{transform-style:flat;border-radius:13px}
+      .project-panel__img-wrap::after{display:none} /* no light sweep on touch */
+      .project-panel__img-wrap::before{opacity:.45}
       .project-panel__img,.project-panel__placeholder{
-        filter:grayscale(0%) brightness(1);height:115%;top:-7.5%
+        filter:grayscale(0%) brightness(1.02) contrast(1.02);height:115%;top:-7.5%
       }
+      /* Mobile index — composition mark, larger than desktop rest state */
       .project-panel__number{
-        top:1.25rem;left:1.25rem;font-size:.75rem;opacity:.9
+        top:1.15rem;left:1.15rem;opacity:1
       }
+      .project-panel__num{font-size:clamp(1.5rem,6.5vw,1.85rem)}
+      .project-panel__num-total{font-size:.7rem;letter-spacing:.18em}
       .project-panel__info{
-        opacity:1;transform:none;padding:2.25rem 1.4rem 1.65rem;
+        opacity:1;transform:none;padding:2.5rem 1.35rem 1.75rem;
         background:linear-gradient(
           transparent 0%,
-          rgba(7,7,7,.18) 18%,
-          rgba(7,7,7,.8) 52%,
-          rgba(7,7,7,.98) 100%
+          rgba(7,7,7,.12) 14%,
+          rgba(7,7,7,.72) 48%,
+          rgba(7,7,7,.96) 78%,
+          rgba(7,7,7,.99) 100%
         )
       }
       .project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1;transform:none
       }
-      .project-panel__title{font-size:clamp(1.75rem,8vw,2.2rem)}
-      .project-panel__meta{font-size:.65rem;margin-top:.6rem;letter-spacing:.16em}
-      .project-panel__desc{font-size:.9375rem;max-width:none;margin-top:.75rem;line-height:1.6}
+      .project-panel__title{font-size:clamp(1.85rem,8.5vw,2.35rem);letter-spacing:-.04em}
+      .project-panel__meta{font-size:.65rem;margin-top:.65rem;letter-spacing:.16em}
+      .project-panel__desc{font-size:.9375rem;max-width:none;margin-top:.8rem;line-height:1.62}
+      /* Teaser always reads as designed on mobile */
+      .project-panel__soon-mark{font-size:clamp(3.25rem,18vw,4.5rem);color:rgba(240,239,233,.1)}
+      .project-panel__soon-label{font-size:.6rem;letter-spacing:.36em;padding:.5rem 1rem}
+      .project-panel__placeholder::before{animation:none;opacity:.55}
 
       .contact{min-height:auto;padding:var(--section-y) var(--pad-x) max(4.5rem,calc(var(--safe-bottom) + 3.5rem))}
       /* 11.5vw on 375px ≈ 43px — dramatic closing CTA */
@@ -892,8 +1040,10 @@
       .about-text{font-size:clamp(1.28rem,7.4vw,1.7rem)}
       .contact-email{font-size:clamp(1.65rem,11.5vw,2.55rem)}
       .contact-links{gap:1.1rem}
-      .project-panel__title{font-size:clamp(1.5rem,8.2vw,2rem)}
-      .project-panel__info{padding:2rem 1.15rem 1.4rem}
+      .project-panel__title{font-size:clamp(1.55rem,8.4vw,2.05rem)}
+      .project-panel__info{padding:2.15rem 1.15rem 1.5rem}
+      .project-panel__num{font-size:1.4rem}
+      .track{gap:1.85rem}
       .step{padding-left:2.4rem}
       .step-desc{font-size:.875rem}
     }
@@ -929,11 +1079,13 @@
       .hero-name .char{transform:none!important;opacity:1!important;filter:none!important}
       .preloader-name .pre-char{transform:none!important;opacity:1!important}
       .about-line__inner,.email-char{transform:none!important;opacity:1!important;filter:none!important}
-      .project-panel__img,.project-panel__placeholder{filter:grayscale(0%)!important}
+      .project-panel__img,.project-panel__placeholder{filter:grayscale(0%)!important;transform:none!important}
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1!important;transform:none!important
       }
       .project-panel.is-pressed{transform:none!important}
+      .project-panel__img-wrap::after{display:none!important}
+      .project-panel__placeholder::before,.project-panel__placeholder::after{animation:none!important}
       .gallery-heading{opacity:1!important}
       .gallery-heading__line{width:100%!important}
       .hero-glow::before,.hero-glow::after{animation:none!important}
@@ -943,7 +1095,7 @@
       /* Stacked gallery — no pin / horizontal track motion */
       .gallery-wrapper{height:auto!important}
       .sticky-track{position:relative!important;height:auto!important;overflow:visible!important}
-      .track{flex-direction:column!important;width:100%!important;transform:none!important}
+      .track{flex-direction:column!important;width:100%!important;transform:none!important;padding-right:var(--pad-x)!important}
       .project-panel{width:100%!important;height:auto!important;transform:none!important}
     }
   </style>
@@ -962,10 +1114,12 @@
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1!important;transform:none!important
       }
-      .project-panel__img,.project-panel__placeholder{filter:grayscale(0%)!important}
+      .project-panel__img,.project-panel__placeholder{filter:grayscale(0%)!important;transform:none!important}
+      .project-panel__img-wrap::after{display:none!important}
+      .project-panel__placeholder::before,.project-panel__placeholder::after{animation:none!important}
       .gallery-wrapper{height:auto!important}
       .sticky-track{position:relative!important;height:auto!important;overflow:visible!important}
-      .track{flex-direction:column!important;padding:2rem 1.25rem!important}
+      .track{flex-direction:column!important;padding:2rem 1.25rem!important;width:100%!important}
       .project-panel{width:100%!important;height:auto!important}
     </style>
   </noscript>
@@ -1071,6 +1225,7 @@
   <section id="work" class="gallery-wrapper" aria-label="Selected work">
     <div class="gallery-heading" id="gallery-heading">
       <span class="gallery-heading__label">SELECTED WORK</span>
+      <span class="gallery-heading__count" aria-hidden="true">05</span>
       <span class="gallery-heading__line" id="gallery-heading-line"></span>
     </div>
 
@@ -1079,7 +1234,7 @@
 
         <!-- 01 GENTSCLUB -->
         <article class="project-panel" data-url="https://gentsclub.ro" tabindex="0" role="link" aria-label="GentsClub — open project">
-          <div class="project-panel__number">01 / 05</div>
+          <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">01</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
             <img class="project-panel__img" src="assets/projects/gentsclub.jpg" alt="GentsClub website screenshot" loading="lazy" decoding="async" width="900" height="1200">
           </div>
@@ -1092,7 +1247,7 @@
 
         <!-- 02 DELIRAT -->
         <article class="project-panel" data-url="https://delirat.com" tabindex="0" role="link" aria-label="Delirat — open project">
-          <div class="project-panel__number">02 / 05</div>
+          <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">02</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
             <img class="project-panel__img" src="assets/projects/delirat.jpg" alt="Delirat website screenshot" loading="lazy" decoding="async" width="900" height="1200">
           </div>
@@ -1103,11 +1258,15 @@
           </div>
         </article>
 
-        <!-- 03 FRIENDBY (CSS gradient placeholder) — no live URL yet, not focusable as a link -->
-        <article class="project-panel" aria-label="Friendby project">
-          <div class="project-panel__number">03 / 05</div>
+        <!-- 03 FRIENDBY — intentional teaser (no live URL), not focusable as a link -->
+        <article class="project-panel project-panel--soon" aria-label="Friendby project">
+          <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">03</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
-            <div class="project-panel__placeholder" role="img" aria-label="Friendby abstract gradient"></div>
+            <div class="project-panel__placeholder" role="img" aria-label="Friendby abstract gradient teaser"></div>
+            <div class="project-panel__soon" aria-hidden="true">
+              <span class="project-panel__soon-mark">03</span>
+              <span class="project-panel__soon-label">Coming soon</span>
+            </div>
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">FRIENDBY</h2>
@@ -1118,7 +1277,7 @@
 
         <!-- 04 WHUMPLE — no live URL yet, not focusable as a link -->
         <article class="project-panel" aria-label="Whumple project">
-          <div class="project-panel__number">04 / 05</div>
+          <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">04</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
             <img class="project-panel__img" src="assets/projects/whumple.jpg" alt="Whumple website screenshot" loading="lazy" decoding="async" width="900" height="1200">
           </div>
@@ -1131,7 +1290,7 @@
 
         <!-- 05 NOWA SILUETA -->
         <article class="project-panel" data-url="https://nowa-silueta.ro" tabindex="0" role="link" aria-label="Nowa Silueta — open project">
-          <div class="project-panel__number">05 / 05</div>
+          <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">05</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
             <img class="project-panel__img" src="assets/projects/nowa-silueta.jpg" alt="Nowa Silueta website screenshot" loading="lazy" decoding="async" width="900" height="1200">
           </div>
@@ -1849,37 +2008,37 @@
     var stickyTrack = galleryWrap ? galleryWrap.querySelector('.sticky-track') : null;
 
     if (typeof ScrollTrigger !== 'undefined' && galleryHeading && galleryWrap) {
-      /* Cinematic heading: label rises, line draws through */
+      /* Cinematic heading: label rises, count fades, line draws through */
       var headingTL = gsap.timeline({
         scrollTrigger: {
           trigger: galleryWrap,
-          start: 'top 82%',
-          end: 'top 28%',
-          scrub: 0.55
+          start: 'top 84%',
+          end: 'top 30%',
+          scrub: 0.5
         }
       });
       headingTL.fromTo(galleryHeading,
-        { opacity: 0, y: 36 },
+        { opacity: 0, y: 42 },
         { opacity: 1, y: 0, duration: 1, ease: 'none' },
         0
       );
       if (galleryHeadingLine) {
         headingTL.fromTo(galleryHeadingLine,
-          { width: '0%', opacity: 0.3 },
-          { width: '100%', opacity: 1, duration: 1.15, ease: 'none' },
-          0.12
+          { width: '0%', opacity: 0.25 },
+          { width: '100%', opacity: 1, duration: 1.2, ease: 'none' },
+          0.1
         );
       }
 
       /* Fade heading as the pinned track takes over (desktop) */
       gsap.matchMedia().add('(min-width: 769px)', function () {
         var fadeTw = gsap.to(galleryHeading, {
-          opacity: 0, y: -18, ease: 'none',
+          opacity: 0, y: -22, ease: 'none',
           scrollTrigger: {
             trigger: stickyTrack || galleryWrap,
             start: 'top top',
-            end: 'top -18%',
-            scrub: 0.5
+            end: 'top -16%',
+            scrub: 0.45
           }
         });
         return function () { fadeTw.kill(); };
@@ -1890,23 +2049,23 @@
        Root cause of the shortfall bug: overflow-x:hidden on html/body broke
        position:sticky, so the track scrolled away vertically before X finished.
        Fix: overflow-x:clip + ScrollTrigger pin with end === |x| distance so
-       the last panel always reaches full visibility. */
+       the last panel always reaches full visibility + trailing pad for end air. */
     if (typeof ScrollTrigger !== 'undefined' && track && galleryWrap && stickyTrack) {
       gsap.matchMedia().add('(min-width: 769px)', function () {
-        /* Distance to translate so the track's right edge aligns with the viewport's right edge.
-           scrollWidth includes track padding, so last panel ends with breathing room. */
+        /* Distance so track right edge (incl. trailing pad) aligns with viewport right.
+           Trailing pad centers last panel with museum breathing room. */
         function getScrollDistance() {
           var dist = track.scrollWidth - window.innerWidth;
           return dist > 0 ? -dist : 0;
         }
 
         function getPinScrollLength() {
-          /* 1:1 mapping: vertical scroll distance equals horizontal travel.
-             Small minimum so short tracks still feel intentional. */
-          return Math.max(Math.abs(getScrollDistance()), window.innerWidth * 0.35);
+          /* 1:1 mapping: vertical scroll equals horizontal travel.
+             Trailing pad on .track gives last-panel breathing room. */
+          return Math.max(Math.abs(getScrollDistance()), window.innerWidth * 0.4);
         }
 
-        /* scrub 0.85 — less lag than 1, still cinematic inertia */
+        /* scrub 0.75 — cinematic inertia without sticky lag */
         var horizontalTween = gsap.to(track, {
           x: getScrollDistance,
           ease: 'none',
@@ -1915,33 +2074,33 @@
             start: 'top top',
             end: function () { return '+=' + getPinScrollLength(); },
             pin: true,
-            scrub: 0.85,
+            scrub: 0.75,
             invalidateOnRefresh: true,
             anticipatePin: 1
           }
         });
 
-        /* Parallax — stronger 14% for visible depth (img is 120% tall) */
+        /* Parallax — 16% for visible depth (img is 120% tall; hover scale uses transform separate) */
         var panelImgs = document.querySelectorAll('.project-panel__img, .project-panel__placeholder');
         var parallaxTween = gsap.to(panelImgs, {
-          yPercent: 14,
+          yPercent: 16,
           ease: 'none',
           scrollTrigger: {
             trigger: stickyTrack,
             start: 'top top',
             end: function () { return '+=' + getPinScrollLength(); },
-            scrub: 0.85,
+            scrub: 0.75,
             invalidateOnRefresh: true
           }
         });
 
-        /* Panel entrance — clip-path wipe + subtle scale settle */
+        /* Panel entrance — bottom mask wipe + lift settle (museum curtain) */
         panels.forEach(function (panel) {
           gsap.set(panel, {
             clipPath: 'inset(100% 0% 0% 0%)',
             opacity: 0,
-            y: 80,
-            scale: 0.96,
+            y: 64,
+            scale: 0.94,
             willChange: 'clip-path, transform, opacity'
           });
         });
@@ -1950,12 +2109,12 @@
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 1.55,
+          duration: 1.45,
           ease: 'expo.out',
-          stagger: 0.1,
+          stagger: 0.12,
           scrollTrigger: {
             trigger: galleryWrap,
-            start: 'top 64%',
+            start: 'top 68%',
             toggleActions: 'play none none reverse'
           },
           onComplete: function () {
@@ -1965,25 +2124,25 @@
           }
         });
 
-        /* Center-focus scale: panels gently enlarge near viewport center */
+        /* Center-focus: panels enlarge near viewport center (respects hover lift via overwrite auto) */
         var centerFocusTriggers = [];
         panels.forEach(function (panel) {
           centerFocusTriggers.push(ScrollTrigger.create({
             trigger: panel,
             containerAnimation: horizontalTween,
-            start: 'left 70%',
-            end: 'right 30%',
+            start: 'left 68%',
+            end: 'right 32%',
             onEnter: function () {
-              gsap.to(panel, { scale: 1.025, duration: 0.7, ease: 'power3.out', overwrite: 'auto' });
+              gsap.to(panel, { scale: 1.035, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
             },
             onEnterBack: function () {
-              gsap.to(panel, { scale: 1.025, duration: 0.7, ease: 'power3.out', overwrite: 'auto' });
+              gsap.to(panel, { scale: 1.035, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
             },
             onLeave: function () {
-              gsap.to(panel, { scale: 1, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
+              gsap.to(panel, { scale: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
             },
             onLeaveBack: function () {
-              gsap.to(panel, { scale: 1, duration: 0.65, ease: 'power3.out', overwrite: 'auto' });
+              gsap.to(panel, { scale: 1, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
             }
           }));
         });
@@ -2022,16 +2181,17 @@
         };
       });
 
-      /* Mobile stacked reveals */
+      /* Mobile stacked reveals — editorial rise per card */
       gsap.matchMedia().add('(max-width: 768px)', function () {
         var mobileTweens = [];
-        panels.forEach(function (panel) {
+        panels.forEach(function (panel, i) {
           mobileTweens.push(gsap.from(panel, {
-            y: 52, opacity: 0,
-            duration: 1.2, ease: 'expo.out',
+            y: 56, opacity: 0, scale: 0.97,
+            duration: 1.15, ease: 'expo.out',
+            delay: i * 0.02,
             scrollTrigger: {
               trigger: panel,
-              start: 'top 88%',
+              start: 'top 90%',
               toggleActions: 'play none none reverse'
             }
           }));
@@ -2045,7 +2205,9 @@
       });
     }
 
-    /* ── 3D panel hover tilt (desktop, quickTo for continuous tracking) ── */
+    /* ── 3D panel hover tilt (desktop) ──
+       Single gsap.to for combined transform — quickTo(rotateX/Y/scale) can
+       silently no-op on some elements; one tween keeps 3D matrix coherent. */
     if (!isTouch && typeof ScrollTrigger !== 'undefined') {
       gsap.matchMedia().add('(min-width: 769px)', function () {
         var cleanups = [];
@@ -2053,36 +2215,61 @@
           var imgWrap = panel.querySelector('.project-panel__img-wrap');
           if (!imgWrap) return;
 
-          var rotY = gsap.quickTo(imgWrap, 'rotateY', { duration: 0.55, ease: 'power3.out' });
-          var rotX = gsap.quickTo(imgWrap, 'rotateX', { duration: 0.55, ease: 'power3.out' });
-          var scaleTo = gsap.quickTo(imgWrap, 'scale', { duration: 0.55, ease: 'power3.out' });
-          var xTo = gsap.quickTo(imgWrap, 'x', { duration: 0.55, ease: 'power3.out' });
-          var yTo = gsap.quickTo(imgWrap, 'y', { duration: 0.55, ease: 'power3.out' });
+          gsap.set(imgWrap, {
+            transformPerspective: 1200,
+            transformStyle: 'preserve-3d',
+            force3D: true
+          });
 
+          function tiltTo(vars) {
+            var cfg = {
+              duration: 0.55,
+              ease: 'power3.out',
+              overwrite: 'auto',
+              force3D: true
+            };
+            var k;
+            for (k in vars) {
+              if (Object.prototype.hasOwnProperty.call(vars, k)) cfg[k] = vars[k];
+            }
+            gsap.to(imgWrap, cfg);
+          }
+
+          function onEnter() {
+            tiltTo({ scale: 1.1 });
+          }
           function onMove(e) {
             var rect = panel.getBoundingClientRect();
             var x = (e.clientX - rect.left) / rect.width - 0.5;
             var y = (e.clientY - rect.top) / rect.height - 0.5;
-            rotY(x * 10);
-            rotX(-y * 10);
-            scaleTo(1.08);
-            xTo(x * 12);
-            yTo(y * 12);
+            tiltTo({
+              rotateY: x * 12,
+              rotateX: -y * 10,
+              scale: 1.1,
+              x: x * 16,
+              y: y * 14
+            });
           }
           function onLeave() {
-            rotY(0);
-            rotX(0);
-            scaleTo(1);
-            xTo(0);
-            yTo(0);
+            tiltTo({
+              rotateY: 0,
+              rotateX: 0,
+              scale: 1,
+              x: 0,
+              y: 0,
+              duration: 0.7
+            });
           }
 
+          panel.addEventListener('mouseenter', onEnter);
           panel.addEventListener('mousemove', onMove);
           panel.addEventListener('mouseleave', onLeave);
           cleanups.push(function () {
+            panel.removeEventListener('mouseenter', onEnter);
             panel.removeEventListener('mousemove', onMove);
             panel.removeEventListener('mouseleave', onLeave);
-            gsap.set(imgWrap, { clearProps: 'transform' });
+            gsap.killTweensOf(imgWrap);
+            gsap.set(imgWrap, { clearProps: 'transform,transformPerspective,transformStyle' });
           });
         });
         return function () {
