@@ -27,18 +27,22 @@
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
     :root{
+      /* Depth ladder — void → stage → elevated surface (not flat black) */
       --bg:#070707;
-      --bg-alt:#0b0b0b;
-      --bg-elevated:#121212;
-      --text:#f0efe9;
-      --accent:#b8b8b8;
+      --bg-alt:#0e0e0f;          /* cool micro-lift; path/contact stages */
+      --bg-elevated:#151516;     /* cards/panels; readable above void */
+      --bg-void:#050505;         /* museum black — about/gallery wells */
+      --text:#f0efe9;            /* warm cream — human against cool silver */
+      --accent:#b8b8b8;          /* cool technical silver (not gold) */
       /* .55 alpha ≈ 5.3:1 on #070707 — WCAG AA for body/UI text (was .48 ≈ 4.4:1) */
       --muted:rgba(240,239,233,.55);
       /* Decorative only — not sole means of conveying info */
       --muted-dim:rgba(240,239,233,.28);
       --border:rgba(240,239,233,.12);
       --border-strong:rgba(240,239,233,.2);
-      --glow:rgba(184,184,184,.1);
+      --glow:rgba(184,184,184,.12);
+      /* Scroll atmosphere (0–1) — driven by GSAP; grain/vignette respond */
+      --scroll-p:0;
       /* Ease tokens — primary reveals use --ease (expo.out); soft for hovers */
       --ease:cubic-bezier(.19,1,.22,1);          /* expo.out — primary reveals */
       --ease-soft:cubic-bezier(.25,.46,.45,.94); /* hover / micro-interactions */
@@ -61,7 +65,12 @@
     .lenis.lenis-stopped{overflow:hidden}
 
     body{
-      background:var(--bg);color:var(--text);font-family:var(--font);
+      /* Space, not a flat swatch: ceiling wash + floor falloff under all sections */
+      background-color:var(--bg);
+      background-image:
+        radial-gradient(ellipse 130% 70% at 50% -15%,rgba(184,184,184,.032),transparent 52%),
+        radial-gradient(ellipse 100% 55% at 50% 115%,rgba(0,0,0,.55),transparent 52%);
+      color:var(--text);font-family:var(--font);
       font-weight:400;line-height:1.65;overflow-x:clip;
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
       text-rendering:optimizeLegibility;-webkit-tap-highlight-color:transparent;
@@ -102,20 +111,42 @@
       outline:2px solid var(--accent);outline-offset:3px
     }
 
-    /* ── ATMOSPHERE: vignette + grain + ambient depth ── */
+    /* ── ATMOSPHERE: ambient volume + vignette + grain ──
+       Layer order (back→front): body wash → content → ambient → vignette → grain
+       Goal: feel INSIDE a cold premium room, not looking at flat black */
+    .ambient{
+      position:fixed;inset:0;z-index:9996;pointer-events:none;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 35%,rgba(184,184,184,.07),transparent 62%),
+        radial-gradient(ellipse 45% 35% at 12% 70%,rgba(184,184,184,.04),transparent 58%),
+        radial-gradient(ellipse 40% 32% at 88% 28%,rgba(184,184,184,.032),transparent 55%);
+      /* soft-light: living air volume without flattening text contrast */
+      mix-blend-mode:soft-light;
+      opacity:calc(.42 + var(--scroll-p) * .28);
+      animation:ambientBreathe 18s ease-in-out infinite alternate
+    }
+    @keyframes ambientBreathe{
+      0%{filter:brightness(.88)}
+      100%{filter:brightness(1.12)}
+    }
+    /* Room vignette — soft walls + floor weight; center stays open (not a heavy frame) */
     .vignette{
       position:fixed;inset:0;z-index:9997;pointer-events:none;
       background:
-        radial-gradient(ellipse 80% 65% at 50% 38%,transparent 22%,rgba(0,0,0,.42) 72%,rgba(0,0,0,.72) 100%),
-        radial-gradient(ellipse 100% 90% at 50% 100%,rgba(0,0,0,.5),transparent 48%),
-        radial-gradient(ellipse 50% 40% at 0% 50%,rgba(0,0,0,.25),transparent 55%),
-        radial-gradient(ellipse 50% 40% at 100% 50%,rgba(0,0,0,.25),transparent 55%);
+        radial-gradient(ellipse 88% 72% at 50% 40%,transparent 30%,rgba(0,0,0,.26) 70%,rgba(0,0,0,.58) 100%),
+        radial-gradient(ellipse 100% 85% at 50% 100%,rgba(0,0,0,.48),transparent 50%),
+        radial-gradient(ellipse 48% 55% at 0% 50%,rgba(0,0,0,.22),transparent 58%),
+        radial-gradient(ellipse 48% 55% at 100% 50%,rgba(0,0,0,.22),transparent 58%);
+      opacity:calc(.9 + var(--scroll-p) * .1)
     }
+    /* Film grain — present but not noisy; scroll-drift via transform (GPU) */
     .grain{
-      position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.055;
-      background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-      background-repeat:repeat;background-size:160px 160px;
-      mix-blend-mode:overlay
+      position:fixed;inset:-20%;z-index:9998;pointer-events:none;opacity:.068;
+      background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-repeat:repeat;background-size:148px 148px;
+      mix-blend-mode:overlay;
+      transform:translate3d(calc(var(--scroll-p) * -28px),calc(var(--scroll-p) * 56px),0);
+      will-change:transform
     }
 
     /* ── SCROLL PROGRESS ── */
@@ -300,39 +331,42 @@
         max(var(--pad-x),var(--safe-right))
         max(5.5rem,calc(var(--safe-bottom) + 3.5rem))
         max(var(--pad-x),var(--safe-left));
-      background:var(--bg);overflow:hidden
+      background:
+        radial-gradient(ellipse 90% 60% at 50% 100%,rgba(0,0,0,.45),transparent 55%),
+        var(--bg);
+      overflow:hidden
     }
     /* Cinematic multi-layer light: core bloom + corner washes + floor falloff + slow drift */
     .hero-glow{
       position:absolute;inset:0;pointer-events:none;z-index:0;
       background:
-        radial-gradient(ellipse 58% 44% at 50% 46%,rgba(184,184,184,.13) 0%,rgba(184,184,184,.04) 38%,transparent 62%),
-        radial-gradient(ellipse 36% 28% at 16% 76%,rgba(184,184,184,.055) 0%,transparent 55%),
-        radial-gradient(ellipse 32% 24% at 84% 20%,rgba(184,184,184,.045) 0%,transparent 55%),
-        radial-gradient(ellipse 100% 70% at 50% 115%,rgba(0,0,0,.75) 0%,transparent 52%)
+        radial-gradient(ellipse 60% 46% at 50% 46%,rgba(184,184,184,.145) 0%,rgba(184,184,184,.045) 38%,transparent 64%),
+        radial-gradient(ellipse 38% 30% at 14% 78%,rgba(184,184,184,.06) 0%,transparent 55%),
+        radial-gradient(ellipse 34% 26% at 86% 18%,rgba(184,184,184,.05) 0%,transparent 55%),
+        radial-gradient(ellipse 100% 70% at 50% 115%,rgba(0,0,0,.78) 0%,transparent 52%)
     }
     .hero-glow::before{
       content:'';position:absolute;inset:-8%;
       background:
-        radial-gradient(ellipse 42% 36% at 48% 42%,rgba(240,239,233,.06) 0%,transparent 58%),
-        radial-gradient(ellipse 28% 22% at 62% 58%,rgba(184,184,184,.04) 0%,transparent 60%);
+        radial-gradient(ellipse 44% 38% at 48% 42%,rgba(240,239,233,.07) 0%,transparent 58%),
+        radial-gradient(ellipse 30% 24% at 62% 58%,rgba(184,184,184,.045) 0%,transparent 60%);
       animation:heroDrift 16s ease-in-out infinite alternate;
       will-change:transform,opacity
     }
     .hero-glow::after{
       content:'';position:absolute;inset:0;
       background:
-        radial-gradient(circle at 50% 46%,transparent 0%,transparent 28%,rgba(7,7,7,.35) 72%,rgba(7,7,7,.62) 100%);
-      animation:heroBreathe 11s ease-in-out infinite alternate
+        radial-gradient(circle at 50% 46%,transparent 0%,transparent 26%,rgba(7,7,7,.32) 70%,rgba(7,7,7,.58) 100%);
+      animation:heroBreathe 12s ease-in-out infinite alternate
     }
     @keyframes heroBreathe{
-      0%{opacity:.5;transform:scale(1)}
-      100%{opacity:1;transform:scale(1.06)}
+      0%{opacity:.48;transform:scale(1)}
+      100%{opacity:1;transform:scale(1.07)}
     }
     @keyframes heroDrift{
-      0%{transform:translate(-2.5%,1.5%) scale(1);opacity:.7}
-      50%{transform:translate(1.5%,-2%) scale(1.04);opacity:1}
-      100%{transform:translate(2.5%,1%) scale(1.02);opacity:.85}
+      0%{transform:translate(-2.5%,1.5%) scale(1);opacity:.68}
+      50%{transform:translate(1.5%,-2%) scale(1.045);opacity:1}
+      100%{transform:translate(2.5%,1%) scale(1.02);opacity:.82}
     }
     .hero-label,.hero-name,.hero-role{position:relative;z-index:1}
     .hero-bottom{z-index:1}
@@ -437,26 +471,27 @@
     /* Spacer so content scrolls under fixed hero — must match .hero height */
     .hero-spacer{height:100vh;height:100dvh;height:100svh;pointer-events:none}
 
-    /* ── PATH / TIMELINE — cinematic journey ── */
+    /* ── PATH / TIMELINE — elevated cool stage (journey light) ── */
     .path{
       padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.2);
       background:
-        radial-gradient(ellipse 70% 48% at 50% 42%,rgba(184,184,184,.045),transparent 62%),
-        radial-gradient(ellipse 95% 55% at 50% 0%,rgba(184,184,184,.03),transparent 55%),
-        radial-gradient(ellipse 40% 30% at 15% 70%,rgba(184,184,184,.018),transparent 60%),
-        radial-gradient(ellipse 40% 30% at 85% 70%,rgba(184,184,184,.018),transparent 60%),
-        linear-gradient(180deg,rgba(7,7,7,.92) 0%,transparent 14%),
+        radial-gradient(ellipse 72% 50% at 50% 40%,rgba(184,184,184,.055),transparent 64%),
+        radial-gradient(ellipse 95% 50% at 50% 0%,rgba(184,184,184,.038),transparent 58%),
+        radial-gradient(ellipse 42% 32% at 12% 72%,rgba(184,184,184,.025),transparent 60%),
+        radial-gradient(ellipse 42% 32% at 88% 68%,rgba(184,184,184,.022),transparent 60%),
+        linear-gradient(180deg,rgba(7,7,7,.88) 0%,transparent 16%),
+        linear-gradient(0deg,rgba(5,5,5,.5) 0%,transparent 18%),
         var(--bg-alt);
       position:relative;z-index:3;
       border-top:1px solid var(--border)
     }
     .path::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:180px;pointer-events:none;
-      background:linear-gradient(180deg,rgba(7,7,7,.72),transparent)
+      content:'';position:absolute;top:0;left:0;right:0;height:200px;pointer-events:none;
+      background:linear-gradient(180deg,rgba(7,7,7,.78),transparent)
     }
     .path::after{
-      content:'';position:absolute;bottom:0;left:0;right:0;height:120px;pointer-events:none;
-      background:linear-gradient(0deg,rgba(7,7,7,.4),transparent)
+      content:'';position:absolute;bottom:0;left:0;right:0;height:140px;pointer-events:none;
+      background:linear-gradient(0deg,rgba(5,5,5,.55),transparent)
     }
     /* Label → timeline gap: one beat of section rhythm (~ section-y * 0.55) */
     .path .section-label{text-align:center;margin:0 auto clamp(5rem,9vh,7rem);display:flex}
@@ -599,16 +634,17 @@
       color:rgba(240,239,233,.68)
     }
 
-    /* ── ABOUT — reflective pause ── */
+    /* ── ABOUT — void well (quietest section; pure reflective pause) ── */
     .about{
       min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;
       align-items:center;padding:var(--section-y) var(--pad-x);
       text-align:center;position:relative;z-index:3;
       background:
-        radial-gradient(ellipse 55% 42% at 50% 50%,rgba(184,184,184,.055),transparent 65%),
-        radial-gradient(ellipse 90% 70% at 50% 50%,rgba(184,184,184,.018),transparent 72%),
-        linear-gradient(180deg,rgba(11,11,11,.5) 0%,transparent 16%,transparent 84%,rgba(11,11,11,.45) 100%),
-        var(--bg)
+        radial-gradient(ellipse 52% 40% at 50% 48%,rgba(184,184,184,.065),transparent 62%),
+        radial-gradient(ellipse 85% 65% at 50% 50%,rgba(184,184,184,.02),transparent 72%),
+        radial-gradient(ellipse 100% 40% at 50% 0%,rgba(14,14,15,.65),transparent 55%),
+        radial-gradient(ellipse 100% 40% at 50% 100%,rgba(14,14,15,.55),transparent 55%),
+        var(--bg-void)
     }
     .about::before,.about::after{
       content:'';position:absolute;left:0;right:0;height:1px;pointer-events:none;
@@ -640,14 +676,18 @@
     .about-text.is-revealed em::after{transform:scaleX(1)}
     .about-text br{display:block;content:'';margin-top:.2em}
 
-    /* ── WORK / HORIZONTAL GALLERY ── */
+    /* ── WORK / HORIZONTAL GALLERY — museum void (deepest stage) ── */
     .gallery-wrapper{
-      position:relative;z-index:3;background:var(--bg);
+      position:relative;z-index:3;
       height:auto;min-height:100vh;min-height:100dvh;
-      /* Deep stage: subtle radial pool so panels float on museum dark */
+      /* Deepest black + cool side wash so panels float in a real volume */
+      background-color:var(--bg-void);
       background-image:
-        radial-gradient(ellipse 70% 50% at 50% 55%,rgba(184,184,184,.03),transparent 68%),
-        radial-gradient(ellipse 40% 30% at 80% 20%,rgba(184,184,184,.02),transparent 55%)
+        radial-gradient(ellipse 75% 55% at 50% 55%,rgba(184,184,184,.038),transparent 68%),
+        radial-gradient(ellipse 45% 35% at 82% 22%,rgba(184,184,184,.028),transparent 55%),
+        radial-gradient(ellipse 40% 30% at 12% 80%,rgba(184,184,184,.016),transparent 55%),
+        linear-gradient(180deg,rgba(5,5,5,.9) 0%,transparent 12%),
+        linear-gradient(0deg,rgba(5,5,5,.75) 0%,transparent 14%)
     }
     .gallery-wrapper::before{
       content:'';position:absolute;top:0;left:0;right:0;height:1px;
@@ -655,8 +695,8 @@
       z-index:6;pointer-events:none;opacity:.7
     }
     .gallery-wrapper::after{
-      content:'';position:absolute;top:0;left:0;right:0;height:160px;pointer-events:none;
-      background:linear-gradient(180deg,rgba(7,7,7,.55),transparent);z-index:4
+      content:'';position:absolute;top:0;left:0;right:0;height:180px;pointer-events:none;
+      background:linear-gradient(180deg,rgba(5,5,5,.7),transparent);z-index:4
     }
     .gallery-heading{
       position:relative;z-index:5;
@@ -664,7 +704,7 @@
       padding:clamp(2.75rem,5.5vh,4.25rem) var(--pad-x) clamp(1.5rem,3vh,2.25rem);
       pointer-events:none;opacity:0;
       backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-      background:linear-gradient(to bottom,rgba(7,7,7,.78) 0%,rgba(7,7,7,.35) 55%,rgba(7,7,7,0) 100%)
+      background:linear-gradient(to bottom,rgba(5,5,5,.82) 0%,rgba(5,5,5,.38) 55%,rgba(5,5,5,0) 100%)
     }
     .gallery-heading__label{
       font-size:clamp(.75rem,1.15vw,.875rem);font-weight:600;letter-spacing:.38em;
@@ -897,41 +937,41 @@
     .project-panel:hover .project-panel__desc,
     .project-panel.is-hovered .project-panel__desc{transform:translateY(0);opacity:1}
 
-    /* ── CONTACT — grand finale (mirror hero weight, not footer) ── */
+    /* ── CONTACT — grand finale (brightest silver atmosphere; not a footer) ── */
     .contact{
       min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
       justify-content:center;align-items:center;
       padding:var(--section-y) var(--pad-x) clamp(5rem,10vh,8rem);
       text-align:center;position:relative;z-index:3;overflow:hidden;
       background:
-        radial-gradient(ellipse 72% 52% at 50% 44%,rgba(184,184,184,.09) 0%,rgba(184,184,184,.03) 42%,transparent 68%),
-        radial-gradient(ellipse 40% 30% at 18% 78%,rgba(184,184,184,.035) 0%,transparent 58%),
-        radial-gradient(ellipse 36% 26% at 84% 22%,rgba(184,184,184,.03) 0%,transparent 55%),
-        linear-gradient(180deg,rgba(7,7,7,.7) 0%,transparent 22%),
-        radial-gradient(ellipse 100% 55% at 50% 110%,rgba(0,0,0,.55) 0%,transparent 50%),
+        radial-gradient(ellipse 74% 54% at 50% 44%,rgba(184,184,184,.11) 0%,rgba(184,184,184,.04) 42%,transparent 68%),
+        radial-gradient(ellipse 42% 32% at 16% 78%,rgba(184,184,184,.042) 0%,transparent 58%),
+        radial-gradient(ellipse 38% 28% at 86% 20%,rgba(184,184,184,.036) 0%,transparent 55%),
+        linear-gradient(180deg,rgba(5,5,5,.85) 0%,transparent 24%),
+        radial-gradient(ellipse 100% 55% at 50% 110%,rgba(0,0,0,.6) 0%,transparent 50%),
         var(--bg-alt);
       border-top:1px solid var(--border)
     }
     .contact::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:220px;pointer-events:none;z-index:0;
-      background:linear-gradient(180deg,rgba(7,7,7,.72),transparent)
+      content:'';position:absolute;top:0;left:0;right:0;height:240px;pointer-events:none;z-index:0;
+      background:linear-gradient(180deg,rgba(5,5,5,.82),transparent)
     }
     /* Living silver bloom behind email — finale atmosphere */
     .contact-glow{
       position:absolute;inset:0;pointer-events:none;z-index:0;
       opacity:0;
       background:
-        radial-gradient(ellipse 48% 36% at 50% 48%,rgba(184,184,184,.14) 0%,rgba(184,184,184,.05) 36%,transparent 64%),
-        radial-gradient(ellipse 28% 20% at 50% 52%,rgba(240,239,233,.06) 0%,transparent 60%)
+        radial-gradient(ellipse 50% 38% at 50% 48%,rgba(184,184,184,.16) 0%,rgba(184,184,184,.055) 36%,transparent 64%),
+        radial-gradient(ellipse 30% 22% at 50% 52%,rgba(240,239,233,.07) 0%,transparent 60%)
     }
     .contact-glow::after{
       content:'';position:absolute;inset:0;
-      background:radial-gradient(circle at 50% 48%,transparent 0%,transparent 32%,rgba(7,7,7,.28) 70%,rgba(7,7,7,.5) 100%);
+      background:radial-gradient(circle at 50% 48%,transparent 0%,transparent 30%,rgba(7,7,7,.26) 68%,rgba(7,7,7,.48) 100%);
       animation:contactBreathe 12s ease-in-out infinite alternate
     }
     @keyframes contactBreathe{
-      0%{opacity:.55;transform:scale(1)}
-      100%{opacity:1;transform:scale(1.05)}
+      0%{opacity:.5;transform:scale(1)}
+      100%{opacity:1;transform:scale(1.06)}
     }
     .contact .section-label,
     .contact-email,
@@ -1014,7 +1054,9 @@
     /* ── RESPONSIVE (mobile type uses HIGHER vw — relatively bigger than desktop) ── */
     @media(max-width:768px){
       body{cursor:default}
-      .cursor-ring,.cursor-dot,.grain,.vignette{display:none!important}
+      /* Grain + ambient off on mobile (perf); keep soft vignette so dark still feels like space */
+      .cursor-ring,.cursor-dot,.grain,.ambient{display:none!important}
+      .vignette{opacity:.72}
       body.cursor-active{cursor:auto}
       body.cursor-active a,body.cursor-active .project-panel{cursor:pointer}
 
@@ -1254,7 +1296,7 @@
       .reveal{opacity:1!important;transform:none!important}
       .preloader{display:none!important}
       .cursor-ring,.cursor-dot{display:none!important}
-      .grain,.vignette{display:none!important}
+      .grain,.vignette,.ambient{display:none!important}
       .scroll-line::after{display:none}
       .hero-name .char{transform:none!important;opacity:1!important;filter:none!important}
       .preloader-name .pre-char{transform:none!important;opacity:1!important}
@@ -1319,6 +1361,7 @@
 <body>
   <a class="skip-link" href="#path">Skip to content</a>
 
+  <div class="ambient" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
@@ -2662,18 +2705,19 @@
       });
     });
 
-    /* ── Scroll progress bar — glow intensifies near page end ── */
+    /* ── Scroll progress + atmosphere (--scroll-p drives grain/vignette/ambient) ── */
     var progressBar = document.getElementById('scroll-progress');
-    if (progressBar && typeof ScrollTrigger !== 'undefined') {
-      gsap.to(progressBar, {
-        width: '100%',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: document.body,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.25,
-          onUpdate: function (self) {
+    var rootStyle = document.documentElement.style;
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 0.35,
+        onUpdate: function (self) {
+          rootStyle.setProperty('--scroll-p', self.progress.toFixed(4));
+          if (progressBar) {
+            progressBar.style.width = (self.progress * 100) + '%';
             if (self.progress > 0.88) progressBar.classList.add('is-end');
             else progressBar.classList.remove('is-end');
           }
