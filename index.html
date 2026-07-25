@@ -434,8 +434,7 @@
     }
     .hero-name .line{
       display:block;overflow:hidden;white-space:nowrap;
-      /* Horizontal air so overflow:hidden mask doesn't clip glyph sides; vertical anti-clip descenders */
-      padding:0 .08em .04em;margin:0 -.08em -.04em;
+      padding-bottom:.04em;margin-bottom:-.04em; /* anti-clip descenders / optical air */
       perspective:800px;transform-style:preserve-3d;position:relative;z-index:1
     }
     /* Per-char silver falloff — only after JS split; parent stays solid for noscript/RM */
@@ -1067,12 +1066,13 @@
       font-size:clamp(2.55rem,11.2vw,8.75rem);font-weight:300;
       letter-spacing:-.045em;color:var(--text);
       display:inline-block;position:relative;
-      transition:color .5s var(--ease),text-shadow .5s var(--ease),filter .5s var(--ease);
+      transition:color .5s var(--ease),text-shadow .5s var(--ease);
       line-height:.95;padding-bottom:.22em;
       white-space:nowrap;max-width:100%;
-      /* Hard depth only — soft glow via drop-shadow so mask overflow cannot box-clip it */
-      text-shadow:0 2px 0 rgba(0,0,0,.12);
-      filter:drop-shadow(0 0 60px rgba(184,184,184,.18)) drop-shadow(0 0 28px rgba(184,184,184,.1))
+      text-shadow:
+        0 0 100px rgba(184,184,184,.14),
+        0 0 40px rgba(184,184,184,.07),
+        0 2px 0 rgba(0,0,0,.12)
     }
     .contact-email__mask{
       display:block;overflow:hidden;white-space:nowrap;
@@ -1088,9 +1088,11 @@
     }
     .contact-email:hover{
       color:var(--accent);
-      animation:none; /* let hover filter win over emailHold */
-      text-shadow:0 2px 0 rgba(0,0,0,.1);
-      filter:drop-shadow(0 0 72px rgba(184,184,184,.32)) drop-shadow(0 0 36px rgba(184,184,184,.18))
+      animation:none; /* let hover text-shadow win over emailHold */
+      text-shadow:
+        0 0 120px rgba(184,184,184,.28),
+        0 0 48px rgba(184,184,184,.16),
+        0 2px 0 rgba(0,0,0,.1)
     }
     .contact-email:hover::after,
     .contact-email.is-underlined::after{transform:scaleX(1);transform-origin:center}
@@ -1134,14 +1136,8 @@
       animation:emailHold 5.5s ease-in-out infinite alternate
     }
     @keyframes emailHold{
-      0%{
-        text-shadow:0 2px 0 rgba(0,0,0,.12);
-        filter:drop-shadow(0 0 60px rgba(184,184,184,.18)) drop-shadow(0 0 28px rgba(184,184,184,.1))
-      }
-      100%{
-        text-shadow:0 2px 0 rgba(0,0,0,.1);
-        filter:drop-shadow(0 0 78px rgba(184,184,184,.3)) drop-shadow(0 0 40px rgba(184,184,184,.16))
-      }
+      0%{text-shadow:0 0 100px rgba(184,184,184,.14),0 0 40px rgba(184,184,184,.07),0 2px 0 rgba(0,0,0,.12)}
+      100%{text-shadow:0 0 130px rgba(184,184,184,.26),0 0 56px rgba(184,184,184,.14),0 2px 0 rgba(0,0,0,.1)}
     }
 
     /* ── RESPONSIVE (mobile type uses HIGHER vw — relatively bigger than desktop) ── */
@@ -1950,11 +1946,11 @@
     if (!isTouch) {
       document.querySelectorAll('[data-magnetic]').forEach(function (el) {
         var isCta = el.classList.contains('contact-email');
-        var pull = isCta ? 0.28 : 0.18;
+        var pull = isCta ? 0.52 : 0.32;
         var scaleAmt = isCta ? 1.035 : 1.04;
-        var xTo = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'power3.out' });
-        var yTo = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'power3.out' });
-        var sTo = gsap.quickTo(el, 'scale', { duration: 0.5, ease: 'power3.out' });
+        var xTo = gsap.quickTo(el, 'x', { duration: 0.38, ease: 'power3.out' });
+        var yTo = gsap.quickTo(el, 'y', { duration: 0.38, ease: 'power3.out' });
+        var sTo = gsap.quickTo(el, 'scale', { duration: 0.38, ease: 'power3.out' });
 
         el.addEventListener('mousemove', function (e) {
           var rect = el.getBoundingClientRect();
@@ -1965,13 +1961,13 @@
           sTo(scaleAmt);
         });
         el.addEventListener('mouseleave', function () {
-          /* Smooth settle — no elastic bounce */
+          /* Slightly damped elastic — present, not cartoon */
           gsap.to(el, {
             x: 0,
             y: 0,
             scale: 1,
-            duration: 0.7,
-            ease: 'expo.out'
+            duration: 0.85,
+            ease: 'elastic.out(1.08, 0.36)'
           });
         });
       });
@@ -2279,10 +2275,8 @@
         });
       });
 
-      /* Steps: hide until the timeline line arrives. Desktop reveal is driven by
-         setPathChapter (same progress as the fill). Touch/mobile keep a staggered
-         entrance aligned to the fill start (auto-cycle owns .active there).
-         Must NOT use .reveal: clearProps would re-apply CSS .reveal{opacity:0}. */
+      /* Steps stagger in as timeline line begins filling — journey chapters.
+         Must NOT use .reveal: clearProps would re-apply CSS .reveal{opacity:0} and hide labels. */
       var pathSteps = gsap.utils.toArray('.step');
       var pathSectionEl = document.querySelector('.path');
       if (pathSteps.length) {
@@ -2292,25 +2286,24 @@
           el.style.transition = 'none';
         });
         gsap.set(pathSteps, { y: 64, opacity: 0, filter: 'blur(6px)', force3D: true });
-        /* Touch/mobile: line fill does not drive chapters — entrance at fill start */
-        if (isTouch || isMobile()) {
-          gsap.to(pathSteps, {
-            y: 0, opacity: 1, filter: 'blur(0px)',
-            duration: 1.2, ease: 'expo.out', stagger: 0.14,
-            scrollTrigger: {
-              trigger: pathSectionEl || pathSteps[0],
-              start: 'top 70%',
-              once: true
-            },
-            onComplete: function () {
-              gsap.set(pathSteps, { clearProps: 'filter,opacity,transform' });
-              pathSteps.forEach(function (el) {
-                el.style.transition = '';
-              });
-            }
-          });
-        }
-        /* Desktop: each step reveals inside setPathChapter when the line reaches it */
+        gsap.to(pathSteps, {
+          y: 0, opacity: 1, filter: 'blur(0px)',
+          duration: 1.2, ease: 'expo.out', stagger: 0.14,
+          scrollTrigger: {
+            /* Section trigger is more reliable than first step (tall path / mobile rail) */
+            trigger: pathSectionEl || pathSteps[0],
+            start: 'top 82%',
+            once: true
+          },
+          onComplete: function () {
+            /* Hand opacity/transform back to CSS (hover lift, mobile dimming).
+               Safe now: steps have no .reveal class to re-hide them. */
+            gsap.set(pathSteps, { clearProps: 'filter,opacity,transform' });
+            pathSteps.forEach(function (el) {
+              el.style.transition = '';
+            });
+          }
+        });
       }
     } else {
       gsap.set('.reveal', { opacity: 1, y: 0 });
@@ -2457,18 +2450,6 @@
           } else {
             step.classList.remove('active');
             step.classList.remove('is-passed');
-          }
-          /* Reveal when the line arrives — same progress as fill, once only */
-          if (i <= idx && step.getAttribute('data-path-revealed') !== '1') {
-            step.setAttribute('data-path-revealed', '1');
-            gsap.to(step, {
-              y: 0, opacity: 1, filter: 'blur(0px)',
-              duration: 0.7, ease: 'expo.out', overwrite: 'auto',
-              onComplete: function () {
-                gsap.set(step, { clearProps: 'filter,opacity,transform' });
-                step.style.transition = '';
-              }
-            });
           }
         });
       }
