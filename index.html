@@ -6,7 +6,7 @@
   <meta name="description" content="Alex Moldovan — Designer & Developer. Târgu Mureș → Oulu, Finland.">
   <meta name="author" content="Alex Moldovan">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#070707">
+  <meta name="theme-color" content="#080809">
   <meta name="color-scheme" content="dark">
   <meta property="og:title" content="Alex Moldovan — Designer & Developer">
   <meta property="og:description" content="Designer & Developer. Târgu Mureș → Oulu, Finland.">
@@ -25,7 +25,7 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23070707'/%3E%3Ctext x='50' y='72' font-family='Inter,sans-serif' font-weight='800' font-size='52' fill='%23b8b8b8' text-anchor='middle' letter-spacing='-2'%3EA%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23080809'/%3E%3Ctext x='50' y='72' font-family='Inter,sans-serif' font-weight='800' font-size='52' fill='%23b8b8b8' text-anchor='middle' letter-spacing='-2'%3EA%3C/text%3E%3C/svg%3E">
 
   <!-- defer: non-blocking parse; scripts run before DOMContentLoaded, after HTML parsed -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
@@ -36,20 +36,26 @@
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
     :root{
-      /* Depth ladder — void → stage → elevated surface (not flat black) */
-      --bg:#070707;
-      --bg-alt:#0e0e0f;          /* cool micro-lift; path/contact stages */
-      --bg-elevated:#151516;     /* cards/panels; readable above void */
-      --bg-void:#050505;         /* museum black — about/gallery wells */
+      /*
+        Depth ladder — void → stage → cool altitude → surface
+        Steps must be FELT as rooms (museum midnight), not micro-nudges.
+        Blue-tinted darks (#080e14…#121e2c) lift path/contact; pure blacks keep wells cold.
+      */
+      --bg-void:#030304;         /* about well — near-black, reflective pause */
+      --bg-gallery:#010101;      /* deepest museum void — panels float here */
+      --bg:#080809;              /* hero / base stage */
+      --bg-alt:#0a1018;          /* path elevated cool (blue-tint #0a1018) */
+      --bg-contact:#0d1520;      /* contact finale stage — brightest cool air */
+      --bg-elevated:#121e2c;     /* cards/panels — cool surface above void */
       --text:#f0efe9;            /* warm cream — human against cool silver */
       --accent:#b8b8b8;          /* cool technical silver (not gold) */
-      /* .55 alpha ≈ 5.3:1 on #070707 — WCAG AA for body/UI text (was .48 ≈ 4.4:1) */
+      /* .55 alpha ≈ 5.2:1 on #080809 — WCAG AA for body/UI text */
       --muted:rgba(240,239,233,.55);
       /* Decorative only — not sole means of conveying info */
       --muted-dim:rgba(240,239,233,.28);
       --border:rgba(240,239,233,.12);
       --border-strong:rgba(240,239,233,.2);
-      --glow:rgba(184,184,184,.12);
+      --glow:rgba(184,184,184,.14);
       /* Scroll atmosphere (0–1) — driven by GSAP; grain/vignette respond */
       --scroll-p:0;
       /* Ease tokens — primary reveals use --ease (expo.out); soft for hovers */
@@ -86,12 +92,13 @@
     .lenis.lenis-stopped{overflow:hidden}
 
     body{
-      /* Space, not a flat swatch: ceiling wash + floor falloff under all sections */
+      /* Dimensional volume under all sections: ceiling silver wash + mid air + floor weight */
       background-color:var(--bg);
       background-image:
-        radial-gradient(ellipse 130% 70% at 50% -15%,rgba(184,184,184,.038),transparent 52%),
-        radial-gradient(ellipse 90% 40% at 50% 50%,rgba(184,184,184,.012),transparent 70%),
-        radial-gradient(ellipse 100% 55% at 50% 115%,rgba(0,0,0,.58),transparent 52%);
+        radial-gradient(ellipse 140% 72% at 50% -18%,rgba(184,184,184,.055),transparent 54%),
+        radial-gradient(ellipse 70% 45% at 18% 40%,rgba(184,184,184,.018),transparent 62%),
+        radial-gradient(ellipse 65% 40% at 84% 55%,rgba(184,184,184,.014),transparent 60%),
+        radial-gradient(ellipse 100% 58% at 50% 118%,rgba(0,0,0,.72),transparent 54%);
       color:var(--text);font-family:var(--font);
       font-weight:400;line-height:1.65;font-size:var(--body-size);overflow-x:clip;
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
@@ -116,15 +123,15 @@
     }
     /* High-contrast double ring so focus never disappears on cream or dark */
     a:focus-visible,button:focus-visible,.contact-email:focus-visible{
-      box-shadow:0 0 0 4px rgba(7,7,7,.9),0 0 0 6px var(--accent)
+      box-shadow:0 0 0 4px rgba(8,8,9,.92),0 0 0 6px var(--accent)
     }
     .project-panel:focus-visible{
       outline-offset:3px;
-      box-shadow:0 0 0 3px rgba(7,7,7,.95),0 0 0 5px var(--accent)
+      box-shadow:0 0 0 3px rgba(8,8,9,.95),0 0 0 5px var(--accent)
     }
     .nav a:focus-visible{
       outline-offset:6px;
-      box-shadow:0 0 0 4px rgba(7,7,7,.9),0 0 0 6px var(--accent)
+      box-shadow:0 0 0 4px rgba(8,8,9,.92),0 0 0 6px var(--accent)
     }
 
     /* ── SKIP LINK (WCAG 2.4.1) ── */
@@ -145,40 +152,42 @@
 
     /* ── ATMOSPHERE: ambient volume + vignette + grain ──
        Layer order (back→front): body wash → content → ambient → vignette → grain
-       Goal: feel INSIDE a cold premium room, not looking at flat black */
+       Goal: feel INSIDE a cold museum at midnight — space you move through */
     .ambient{
       position:fixed;inset:0;z-index:9996;pointer-events:none;
       background:
-        radial-gradient(ellipse 72% 52% at 50% 34%,rgba(184,184,184,.08),transparent 64%),
-        radial-gradient(ellipse 46% 36% at 12% 70%,rgba(184,184,184,.045),transparent 58%),
-        radial-gradient(ellipse 42% 34% at 88% 28%,rgba(184,184,184,.038),transparent 55%),
-        radial-gradient(ellipse 55% 40% at 50% 90%,rgba(184,184,184,.02),transparent 60%);
-      /* soft-light: living air volume without flattening text contrast */
+        radial-gradient(ellipse 78% 56% at 50% 32%,rgba(184,184,184,.11),transparent 66%),
+        radial-gradient(ellipse 50% 40% at 10% 72%,rgba(184,184,184,.06),transparent 60%),
+        radial-gradient(ellipse 46% 38% at 92% 24%,rgba(184,184,184,.05),transparent 58%),
+        radial-gradient(ellipse 60% 44% at 50% 92%,rgba(184,184,184,.028),transparent 62%);
+      /* soft-light: living silver air without crushing cream text contrast */
       mix-blend-mode:soft-light;
-      opacity:calc(.44 + var(--scroll-p) * .3);
-      animation:ambientBreathe 20s ease-in-out infinite alternate
+      /* Stronger presence deeper in the scroll (finale denser air) */
+      opacity:calc(.52 + var(--scroll-p) * .28);
+      /* 18s breathe — felt as air, never a strobe (tight brightness band) */
+      animation:ambientBreathe 18s ease-in-out infinite alternate
     }
     @keyframes ambientBreathe{
-      0%{filter:brightness(.86)}
-      100%{filter:brightness(1.14)}
+      0%{filter:brightness(.93) saturate(.97)}
+      100%{filter:brightness(1.07) saturate(1.03)}
     }
-    /* Room vignette — soft walls + floor weight; center stays open (not a heavy frame) */
+    /* Room vignette — soft walls + floor weight; center open (frames, never crushes) */
     .vignette{
       position:fixed;inset:0;z-index:9997;pointer-events:none;
       background:
-        radial-gradient(ellipse 90% 74% at 50% 40%,transparent 28%,rgba(0,0,0,.24) 68%,rgba(0,0,0,.56) 100%),
-        radial-gradient(ellipse 100% 85% at 50% 100%,rgba(0,0,0,.5),transparent 50%),
-        radial-gradient(ellipse 48% 55% at 0% 50%,rgba(0,0,0,.24),transparent 58%),
-        radial-gradient(ellipse 48% 55% at 100% 50%,rgba(0,0,0,.24),transparent 58%);
-      opacity:calc(.88 + var(--scroll-p) * .12)
+        radial-gradient(ellipse 92% 78% at 50% 42%,transparent 32%,rgba(0,0,0,.18) 72%,rgba(0,0,0,.48) 100%),
+        radial-gradient(ellipse 100% 70% at 50% 100%,rgba(0,0,0,.42),transparent 52%),
+        radial-gradient(ellipse 42% 58% at 0% 50%,rgba(0,0,0,.2),transparent 62%),
+        radial-gradient(ellipse 42% 58% at 100% 50%,rgba(0,0,0,.2),transparent 62%);
+      opacity:calc(.72 + var(--scroll-p) * .16)
     }
-    /* Film grain — present but not noisy; scroll-drift via transform (GPU) */
+    /* Film grain — 4–6% range; scroll-drift via GPU transform */
     .grain{
-      position:fixed;inset:-20%;z-index:9998;pointer-events:none;opacity:.078;
-      background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-      background-repeat:repeat;background-size:140px 140px;
+      position:fixed;inset:-22%;z-index:9998;pointer-events:none;opacity:.055;
+      background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-repeat:repeat;background-size:160px 160px;
       mix-blend-mode:overlay;
-      transform:translate3d(calc(var(--scroll-p) * -32px),calc(var(--scroll-p) * 64px),0);
+      transform:translate3d(calc(var(--scroll-p) * -40px),calc(var(--scroll-p) * 72px),0);
       will-change:transform
     }
 
@@ -358,7 +367,7 @@
     .about-line__inner{display:inline-block;will-change:transform,opacity,filter}
     .email-char{display:inline-block;will-change:transform,opacity}
 
-    /* ── HERO ── */
+    /* ── HERO — silver bloom stage (opening light in the dark) ── */
     .hero{
       position:fixed;top:0;left:0;right:0;z-index:2;
       /* Progressive: 100vh → 100dvh (modern) → 100svh (stable fixed hero vs iOS URL bar) */
@@ -372,41 +381,42 @@
         max(5.5rem,calc(var(--safe-bottom) + 3.5rem))
         max(var(--pad-x),var(--safe-left));
       background:
-        radial-gradient(ellipse 90% 60% at 50% 100%,rgba(0,0,0,.45),transparent 55%),
+        radial-gradient(ellipse 95% 55% at 50% 100%,rgba(0,0,0,.62),transparent 58%),
+        radial-gradient(ellipse 80% 50% at 50% 0%,rgba(184,184,184,.03),transparent 55%),
         var(--bg);
       overflow:hidden
     }
-    /* Cinematic multi-layer light: core bloom + corner washes + floor falloff + slow drift */
+    /* Cinematic multi-layer silver: core bloom + corner washes + floor falloff + slow drift */
     .hero-glow{
       position:absolute;inset:0;pointer-events:none;z-index:0;
       background:
-        radial-gradient(ellipse 62% 48% at 50% 46%,rgba(184,184,184,.165) 0%,rgba(184,184,184,.052) 38%,transparent 66%),
-        radial-gradient(ellipse 40% 32% at 14% 78%,rgba(184,184,184,.07) 0%,transparent 55%),
-        radial-gradient(ellipse 36% 28% at 86% 18%,rgba(184,184,184,.058) 0%,transparent 55%),
-        radial-gradient(ellipse 100% 70% at 50% 115%,rgba(0,0,0,.8) 0%,transparent 52%)
+        radial-gradient(ellipse 64% 50% at 50% 46%,rgba(184,184,184,.2) 0%,rgba(184,184,184,.065) 36%,transparent 68%),
+        radial-gradient(ellipse 42% 34% at 12% 78%,rgba(184,184,184,.085) 0%,transparent 56%),
+        radial-gradient(ellipse 38% 30% at 88% 16%,rgba(184,184,184,.07) 0%,transparent 56%),
+        radial-gradient(ellipse 100% 72% at 50% 118%,rgba(0,0,0,.85) 0%,transparent 52%)
     }
     .hero-glow::before{
       content:'';position:absolute;inset:-8%;
       background:
-        radial-gradient(ellipse 46% 40% at 48% 42%,rgba(240,239,233,.085) 0%,transparent 58%),
-        radial-gradient(ellipse 32% 26% at 62% 58%,rgba(184,184,184,.055) 0%,transparent 60%);
+        radial-gradient(ellipse 48% 42% at 48% 42%,rgba(240,239,233,.09) 0%,transparent 58%),
+        radial-gradient(ellipse 34% 28% at 62% 58%,rgba(184,184,184,.065) 0%,transparent 60%);
       animation:heroDrift 18s ease-in-out infinite alternate;
       will-change:transform,opacity
     }
     .hero-glow::after{
       content:'';position:absolute;inset:0;
       background:
-        radial-gradient(circle at 50% 46%,transparent 0%,transparent 24%,rgba(7,7,7,.3) 68%,rgba(7,7,7,.6) 100%);
+        radial-gradient(circle at 50% 46%,transparent 0%,transparent 26%,rgba(8,8,9,.28) 70%,rgba(8,8,9,.58) 100%);
       animation:heroBreathe 14s ease-in-out infinite alternate
     }
     @keyframes heroBreathe{
-      0%{opacity:.48;transform:scale(1)}
-      100%{opacity:1;transform:scale(1.07)}
+      0%{opacity:.5;transform:scale(1)}
+      100%{opacity:1;transform:scale(1.06)}
     }
     @keyframes heroDrift{
-      0%{transform:translate(-2.5%,1.5%) scale(1);opacity:.68}
-      50%{transform:translate(1.5%,-2%) scale(1.045);opacity:1}
-      100%{transform:translate(2.5%,1%) scale(1.02);opacity:.82}
+      0%{transform:translate(-2.5%,1.5%) scale(1);opacity:.7}
+      50%{transform:translate(1.5%,-2%) scale(1.04);opacity:1}
+      100%{transform:translate(2.5%,1%) scale(1.02);opacity:.84}
     }
     .hero-label,.hero-name,.hero-role{position:relative;z-index:1}
     .hero-bottom{z-index:1}
@@ -433,9 +443,9 @@
       font-size:clamp(4.15rem,16.8vw,19.5rem);font-weight:800;
       letter-spacing:var(--display-track);line-height:.76;color:var(--text);
       text-shadow:
-        0 0 140px rgba(184,184,184,.16),
-        0 0 56px rgba(184,184,184,.08),
-        0 2px 0 rgba(0,0,0,.18)
+        0 0 160px rgba(184,184,184,.2),
+        0 0 64px rgba(184,184,184,.1),
+        0 2px 0 rgba(0,0,0,.2)
     }
     /* Signature moment: one silver shear across the name after entrance */
     .hero-name .name-shear{
@@ -539,28 +549,28 @@
     /* Spacer so content scrolls under fixed hero — must match .hero height */
     .hero-spacer{height:100vh;height:100dvh;height:100svh;pointer-events:none}
 
-    /* ── PATH / TIMELINE — elevated cool stage (journey light) ── */
+    /* ── PATH / TIMELINE — elevated cool stage (blue-tinted journey altitude) ── */
     .path{
       padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.25);
       background:
-        radial-gradient(ellipse 74% 52% at 50% 40%,rgba(184,184,184,.065),transparent 64%),
-        radial-gradient(ellipse 95% 50% at 50% 0%,rgba(184,184,184,.042),transparent 58%),
-        radial-gradient(ellipse 42% 32% at 12% 72%,rgba(184,184,184,.03),transparent 60%),
-        radial-gradient(ellipse 42% 32% at 88% 68%,rgba(184,184,184,.026),transparent 60%),
-        linear-gradient(180deg,rgba(7,7,7,.92) 0%,transparent 22%),
-        linear-gradient(0deg,rgba(5,5,5,.72) 0%,transparent 26%),
+        radial-gradient(ellipse 78% 54% at 50% 38%,rgba(184,184,184,.09),transparent 66%),
+        radial-gradient(ellipse 48% 38% at 8% 70%,rgba(140,160,185,.045),transparent 58%),
+        radial-gradient(ellipse 48% 38% at 92% 65%,rgba(140,160,185,.035),transparent 58%),
+        radial-gradient(ellipse 100% 55% at 50% 0%,rgba(13,24,36,.55),transparent 60%),
+        linear-gradient(180deg,rgba(8,8,9,.96) 0%,transparent 24%),
+        linear-gradient(0deg,rgba(3,3,4,.88) 0%,transparent 28%),
         var(--bg-alt);
       position:relative;z-index:3
     }
-    /* Film dissolve in from hero void */
+    /* Film dissolve in from hero stage → cool altitude */
     .path::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:min(28vh,280px);pointer-events:none;z-index:0;
-      background:linear-gradient(180deg,rgba(7,7,7,.92) 0%,rgba(7,7,7,.45) 40%,transparent 100%)
+      content:'';position:absolute;top:0;left:0;right:0;height:min(30vh,300px);pointer-events:none;z-index:0;
+      background:linear-gradient(180deg,rgba(8,8,9,.95) 0%,rgba(8,8,9,.4) 42%,transparent 100%)
     }
     /* Film dissolve out into about void */
     .path::after{
-      content:'';position:absolute;bottom:0;left:0;right:0;height:min(22vh,220px);pointer-events:none;z-index:0;
-      background:linear-gradient(0deg,rgba(5,5,5,.85) 0%,rgba(5,5,5,.35) 45%,transparent 100%)
+      content:'';position:absolute;bottom:0;left:0;right:0;height:min(24vh,240px);pointer-events:none;z-index:0;
+      background:linear-gradient(0deg,rgba(3,3,4,.92) 0%,rgba(3,3,4,.4) 48%,transparent 100%)
     }
     /* Label → timeline gap: one beat of section rhythm (~ section-y * 0.55) */
     .path .section-label{text-align:center;margin:0 auto clamp(5.5rem,10vh,8rem);display:flex;position:relative;z-index:1}
@@ -609,7 +619,7 @@
     .step:hover{transform:translateY(-10px)}
     .step-dot{
       position:absolute;top:0;left:50%;transform:translateX(-50%);
-      width:20px;height:20px;border-radius:50%;background:var(--bg-alt);
+      width:20px;height:20px;border-radius:50%;background:var(--bg-void);
       border:1.5px solid rgba(240,239,233,.4);transition:all .65s var(--ease);z-index:2
     }
     /* Hit expand + outer halo ring */
@@ -705,16 +715,16 @@
       color:rgba(240,239,233,.72)
     }
 
-    /* ── ABOUT — void well (quietest section; pure reflective pause) ── */
+    /* ── ABOUT — void well (quietest room; pure reflective pause) ── */
     .about{
       min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;
       align-items:center;padding:calc(var(--section-y) * 1.05) var(--pad-x);
       text-align:center;position:relative;z-index:3;
       background:
-        radial-gradient(ellipse 54% 42% at 50% 48%,rgba(184,184,184,.072),transparent 62%),
-        radial-gradient(ellipse 85% 65% at 50% 50%,rgba(184,184,184,.022),transparent 72%),
-        radial-gradient(ellipse 100% 48% at 50% 0%,rgba(14,14,15,.75),transparent 58%),
-        radial-gradient(ellipse 100% 48% at 50% 100%,rgba(14,14,15,.7),transparent 58%),
+        radial-gradient(ellipse 50% 40% at 50% 48%,rgba(184,184,184,.055),transparent 64%),
+        radial-gradient(ellipse 90% 70% at 50% 50%,rgba(184,184,184,.014),transparent 74%),
+        radial-gradient(ellipse 100% 42% at 50% 0%,rgba(10,16,24,.5),transparent 55%),
+        radial-gradient(ellipse 100% 42% at 50% 100%,rgba(1,1,1,.85),transparent 55%),
         var(--bg-void)
     }
     /* Soft film edges — dissolve in/out rather than hard rule cuts */
@@ -722,12 +732,12 @@
       content:'';position:absolute;left:0;right:0;pointer-events:none
     }
     .about::before{
-      top:0;height:min(18vh,160px);
-      background:linear-gradient(180deg,rgba(5,5,5,.55) 0%,transparent 100%)
+      top:0;height:min(20vh,180px);
+      background:linear-gradient(180deg,rgba(3,3,4,.7) 0%,transparent 100%)
     }
     .about::after{
-      bottom:0;height:min(18vh,160px);
-      background:linear-gradient(0deg,rgba(5,5,5,.65) 0%,transparent 100%)
+      bottom:0;height:min(22vh,200px);
+      background:linear-gradient(0deg,rgba(1,1,1,.85) 0%,transparent 100%)
     }
     .about .section-label{margin-bottom:clamp(4rem,8vh,6.25rem);position:relative;z-index:1}
     .about-text{
@@ -754,28 +764,28 @@
     .about-text.is-revealed em::after{transform:scaleX(1)}
     .about-text br{display:block;content:'';margin-top:.22em}
 
-    /* ── WORK / HORIZONTAL GALLERY — museum void (deepest stage) ── */
+    /* ── WORK / HORIZONTAL GALLERY — deepest museum void (panels float in black) ── */
     .gallery-wrapper{
       position:relative;z-index:3;
       height:auto;min-height:100vh;min-height:100dvh;
-      /* Deepest black + cool side wash so panels float in a real volume */
-      background-color:var(--bg-void);
+      /* Absolute void — barely any fill light so work reads as lit objects in a room */
+      background-color:var(--bg-gallery);
       background-image:
-        radial-gradient(ellipse 78% 58% at 50% 55%,rgba(184,184,184,.045),transparent 68%),
-        radial-gradient(ellipse 45% 35% at 82% 22%,rgba(184,184,184,.032),transparent 55%),
-        radial-gradient(ellipse 40% 30% at 12% 80%,rgba(184,184,184,.02),transparent 55%),
-        linear-gradient(180deg,rgba(5,5,5,.95) 0%,transparent 18%),
-        linear-gradient(0deg,rgba(5,5,5,.88) 0%,transparent 20%)
+        radial-gradient(ellipse 70% 52% at 50% 58%,rgba(184,184,184,.028),transparent 70%),
+        radial-gradient(ellipse 38% 30% at 88% 18%,rgba(184,184,184,.018),transparent 55%),
+        radial-gradient(ellipse 34% 26% at 8% 82%,rgba(184,184,184,.012),transparent 55%),
+        linear-gradient(180deg,rgba(1,1,1,.98) 0%,transparent 16%),
+        linear-gradient(0deg,rgba(1,1,1,.94) 0%,transparent 18%)
     }
     .gallery-wrapper::before{
       content:'';position:absolute;top:0;left:0;right:0;height:1px;
       background:linear-gradient(90deg,transparent 0%,var(--border-strong) 18%,var(--accent) 50%,var(--border-strong) 82%,transparent 100%);
-      z-index:6;pointer-events:none;opacity:.8;
-      box-shadow:0 0 20px rgba(184,184,184,.15)
+      z-index:6;pointer-events:none;opacity:.7;
+      box-shadow:0 0 24px rgba(184,184,184,.12)
     }
     .gallery-wrapper::after{
-      content:'';position:absolute;top:0;left:0;right:0;height:min(22vh,220px);pointer-events:none;
-      background:linear-gradient(180deg,rgba(5,5,5,.85) 0%,rgba(5,5,5,.35) 50%,transparent 100%);z-index:4
+      content:'';position:absolute;top:0;left:0;right:0;height:min(24vh,240px);pointer-events:none;
+      background:linear-gradient(180deg,rgba(1,1,1,.92) 0%,rgba(1,1,1,.4) 52%,transparent 100%);z-index:4
     }
     .gallery-heading{
       position:relative;z-index:5;
@@ -783,7 +793,7 @@
       padding:clamp(3rem,6vh,4.75rem) var(--pad-x) clamp(1.65rem,3.2vh,2.5rem);
       pointer-events:none;opacity:0;
       backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-      background:linear-gradient(to bottom,rgba(5,5,5,.88) 0%,rgba(5,5,5,.42) 55%,rgba(5,5,5,0) 100%)
+      background:linear-gradient(to bottom,rgba(1,1,1,.92) 0%,rgba(1,1,1,.45) 55%,rgba(1,1,1,0) 100%)
     }
     .gallery-heading__label{
       font-size:clamp(.75rem,1.15vw,.9rem);font-weight:600;letter-spacing:.4em;
@@ -835,11 +845,14 @@
       border-radius:12px;will-change:transform;
       transform-style:preserve-3d;perspective:1400px;
       contain:layout paint;
-      border:1px solid rgba(240,239,233,.11);
+      border:1px solid rgba(240,239,233,.1);
+      /* Dimensional mass in the void — cast shadow + cool contact plane */
       box-shadow:
-        0 0 0 1px rgba(0,0,0,.55),
-        0 36px 90px rgba(0,0,0,.58),
-        0 10px 28px rgba(0,0,0,.38);
+        0 0 0 1px rgba(0,0,0,.65),
+        0 28px 64px rgba(0,0,0,.55),
+        0 48px 120px rgba(0,0,0,.72),
+        0 8px 20px rgba(0,0,0,.4),
+        0 0 0 1px rgba(18,30,44,.15) inset;
       transition:
         border-color .65s var(--ease),
         box-shadow .75s var(--ease),
@@ -849,19 +862,20 @@
     /* Neighbors recede when a panel holds the museum spotlight */
     @media(min-width:769px) and (hover:hover){
       .track:has(.project-panel.is-focused) .project-panel:not(.is-focused):not(:hover):not(.is-hovered):not(:focus-visible){
-        opacity:.62;
+        opacity:.55;
         transition:opacity .75s var(--ease),border-color .65s var(--ease),box-shadow .75s var(--ease)
       }
     }
-    /* Museum spotlight: hover + center-focus + keyboard — silver rim (GSAP owns scale) */
+    /* Museum spotlight: hover + center-focus + keyboard — silver rim + lift (GSAP owns scale) */
     .project-panel:hover,.project-panel.is-hovered,
     .project-panel.is-focused,.project-panel:focus-visible{
-      border-color:rgba(184,184,184,.45);
+      border-color:rgba(184,184,184,.5);
       box-shadow:
-        0 0 0 1px rgba(184,184,184,.25),
-        0 52px 120px rgba(0,0,0,.68),
-        0 0 120px rgba(184,184,184,.14),
-        0 0 0 1px rgba(184,184,184,.1) inset
+        0 0 0 1px rgba(184,184,184,.28),
+        0 40px 90px rgba(0,0,0,.62),
+        0 64px 140px rgba(0,0,0,.78),
+        0 0 100px rgba(184,184,184,.16),
+        0 0 0 1px rgba(184,184,184,.12) inset
     }
     .project-panel__img-wrap{
       position:absolute;inset:0;overflow:hidden;
@@ -891,13 +905,13 @@
     .project-panel:focus-visible .project-panel__img-wrap::after{
       transform:translateX(130%) skewX(-12deg)
     }
-    /* Soft edge vignette — depth at rest, lifts on hover */
+    /* Soft edge vignette — depth at rest in the void, lifts on hover */
     .project-panel__img-wrap::before{
       content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
       background:
-        radial-gradient(ellipse 90% 80% at 50% 45%,transparent 35%,rgba(0,0,0,.38) 100%),
-        linear-gradient(180deg,rgba(0,0,0,.22) 0%,transparent 28%);
-      opacity:.88;transition:opacity .7s var(--ease);border-radius:11px
+        radial-gradient(ellipse 88% 78% at 50% 44%,transparent 32%,rgba(0,0,0,.48) 100%),
+        linear-gradient(180deg,rgba(0,0,0,.28) 0%,transparent 30%);
+      opacity:.92;transition:opacity .7s var(--ease);border-radius:11px
     }
     .project-panel:hover .project-panel__img-wrap::before,
     .project-panel.is-hovered .project-panel__img-wrap::before,
@@ -916,14 +930,14 @@
     .project-panel:focus-visible .project-panel__img{
       filter:grayscale(0%) contrast(1.04) brightness(1.05)
     }
-    /* Friendby teaser — cool depth field; blue-tints lift off pure #050505 void (decorative only) */
+    /* Friendby teaser — cool depth field; blue-tints lift off pure gallery void (decorative only) */
     .project-panel__placeholder{
       width:100%;height:120%;position:absolute;top:-10%;left:0;
       background:
         radial-gradient(ellipse 55% 45% at 28% 22%,rgba(184,184,184,.22),transparent 55%),
         radial-gradient(ellipse 40% 35% at 78% 72%,rgba(140,160,185,.12),transparent 50%),
-        radial-gradient(ellipse 60% 50% at 50% 50%,rgba(22,34,48,.52),transparent 70%),
-        linear-gradient(155deg,#0c1420 0%,#152434 38%,#101c2a 68%,#0a121c 100%);
+        radial-gradient(ellipse 60% 50% at 50% 50%,rgba(18,30,44,.55),transparent 70%),
+        linear-gradient(155deg,#080e14 0%,#0d1824 36%,#121e2c 68%,#0a1018 100%);
       filter:grayscale(30%) brightness(.94);transition:filter .9s var(--ease)
     }
     .project-panel__placeholder::before{
@@ -974,7 +988,7 @@
       font-size:clamp(.625rem,.9vw,.7rem);font-weight:600;letter-spacing:.42em;
       text-transform:uppercase;color:var(--accent);
       padding:.55rem 1.15rem;border:1px solid rgba(184,184,184,.28);
-      border-radius:100px;background:rgba(7,7,7,.35);
+      border-radius:100px;background:rgba(1,1,1,.42);
       backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
       box-shadow:0 0 24px rgba(184,184,184,.08);
       transition:border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease)
@@ -1015,10 +1029,10 @@
       position:relative;z-index:2;width:100%;padding:3.25rem 2rem 2.25rem;
       background:linear-gradient(
         transparent 0%,
-        rgba(7,7,7,.06) 10%,
-        rgba(7,7,7,.52) 40%,
-        rgba(7,7,7,.94) 72%,
-        rgba(7,7,7,.99) 100%
+        rgba(1,1,1,.08) 10%,
+        rgba(1,1,1,.55) 40%,
+        rgba(1,1,1,.95) 72%,
+        rgba(1,1,1,.99) 100%
       );
       opacity:0;transform:translateY(36px);
       transition:opacity .65s var(--ease) .06s,transform .8s var(--ease) .06s
@@ -1059,41 +1073,41 @@
     .project-panel.is-focused .project-panel__desc,
     .project-panel:focus-visible .project-panel__desc{transform:translateY(0);opacity:1}
 
-    /* ── CONTACT — grand finale (brightest silver atmosphere; not a footer) ── */
+    /* ── CONTACT — grand finale (brightest silver air; cool altitude after void) ── */
     .contact{
       min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
       justify-content:center;align-items:center;
       padding:var(--section-y) var(--pad-x) clamp(5.5rem,11vh,9rem);
       text-align:center;position:relative;z-index:3;overflow:hidden;
       background:
-        radial-gradient(ellipse 76% 56% at 50% 44%,rgba(184,184,184,.13) 0%,rgba(184,184,184,.048) 42%,transparent 68%),
-        radial-gradient(ellipse 44% 34% at 16% 78%,rgba(184,184,184,.05) 0%,transparent 58%),
-        radial-gradient(ellipse 40% 30% at 86% 20%,rgba(184,184,184,.042) 0%,transparent 55%),
-        linear-gradient(180deg,rgba(5,5,5,.92) 0%,transparent 28%),
-        radial-gradient(ellipse 100% 55% at 50% 110%,rgba(0,0,0,.62) 0%,transparent 50%),
-        var(--bg-alt)
+        radial-gradient(ellipse 80% 58% at 50% 42%,rgba(184,184,184,.175) 0%,rgba(184,184,184,.06) 40%,transparent 70%),
+        radial-gradient(ellipse 48% 36% at 14% 78%,rgba(184,184,184,.07) 0%,transparent 58%),
+        radial-gradient(ellipse 44% 32% at 88% 18%,rgba(184,184,184,.055) 0%,transparent 56%),
+        radial-gradient(ellipse 70% 45% at 50% 100%,rgba(8,14,20,.8) 0%,transparent 55%),
+        linear-gradient(180deg,rgba(1,1,1,.96) 0%,transparent 30%),
+        var(--bg-contact)
     }
-    /* Film dissolve in from gallery void */
+    /* Film dissolve in from gallery void → silver finale */
     .contact::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:min(28vh,280px);pointer-events:none;z-index:0;
-      background:linear-gradient(180deg,rgba(5,5,5,.9) 0%,rgba(5,5,5,.4) 45%,transparent 100%)
+      content:'';position:absolute;top:0;left:0;right:0;height:min(32vh,300px);pointer-events:none;z-index:0;
+      background:linear-gradient(180deg,rgba(1,1,1,.96) 0%,rgba(1,1,1,.45) 48%,transparent 100%)
     }
-    /* Living silver bloom behind email — finale atmosphere */
+    /* Living silver bloom behind email — finale atmosphere (matches hero silver language) */
     .contact-glow{
       position:absolute;inset:0;pointer-events:none;z-index:0;
       opacity:0;
       background:
-        radial-gradient(ellipse 52% 40% at 50% 48%,rgba(184,184,184,.185) 0%,rgba(184,184,184,.065) 36%,transparent 66%),
-        radial-gradient(ellipse 32% 24% at 50% 52%,rgba(240,239,233,.085) 0%,transparent 60%)
+        radial-gradient(ellipse 56% 44% at 50% 48%,rgba(184,184,184,.22) 0%,rgba(184,184,184,.075) 36%,transparent 68%),
+        radial-gradient(ellipse 34% 26% at 50% 52%,rgba(240,239,233,.09) 0%,transparent 60%)
     }
     .contact-glow::after{
       content:'';position:absolute;inset:0;
-      background:radial-gradient(circle at 50% 48%,transparent 0%,transparent 28%,rgba(7,7,7,.24) 66%,rgba(7,7,7,.5) 100%);
+      background:radial-gradient(circle at 50% 48%,transparent 0%,transparent 28%,rgba(8,8,9,.22) 66%,rgba(8,8,9,.48) 100%);
       animation:contactBreathe 13s ease-in-out infinite alternate
     }
     @keyframes contactBreathe{
-      0%{opacity:.48;transform:scale(1)}
-      100%{opacity:1;transform:scale(1.08)}
+      0%{opacity:.5;transform:scale(1)}
+      100%{opacity:1;transform:scale(1.07)}
     }
     .contact .section-label,
     .contact-email,
@@ -1102,7 +1116,7 @@
     .contact .section-label{
       margin-bottom:clamp(3rem,6.5vh,5.25rem);
       letter-spacing:.42em;color:var(--accent);
-      text-shadow:0 0 40px rgba(184,184,184,.2)
+      text-shadow:0 0 48px rgba(184,184,184,.28),0 0 80px rgba(184,184,184,.1)
     }
     /* MASSIVE closing CTA — Guglieri-scale statement type (up to ~160px) */
     .contact-email{
@@ -1115,9 +1129,9 @@
       /* Desktop min touch height for the CTA */
       min-height:44px;
       text-shadow:
-        0 0 120px rgba(184,184,184,.18),
-        0 0 48px rgba(184,184,184,.09),
-        0 2px 0 rgba(0,0,0,.14)
+        0 0 140px rgba(184,184,184,.24),
+        0 0 56px rgba(184,184,184,.12),
+        0 2px 0 rgba(0,0,0,.16)
     }
     .contact-email__mask{
       display:block;overflow:hidden;white-space:nowrap;
@@ -1135,8 +1149,8 @@
       color:var(--accent);
       animation:none; /* let hover text-shadow win over emailHold */
       text-shadow:
-        0 0 140px rgba(184,184,184,.34),
-        0 0 56px rgba(184,184,184,.2),
+        0 0 160px rgba(184,184,184,.4),
+        0 0 64px rgba(184,184,184,.24),
         0 2px 0 rgba(0,0,0,.1)
     }
     .contact-email:hover::after,
@@ -1181,8 +1195,8 @@
       animation:emailHold 5.5s ease-in-out infinite alternate
     }
     @keyframes emailHold{
-      0%{text-shadow:0 0 120px rgba(184,184,184,.18),0 0 48px rgba(184,184,184,.09),0 2px 0 rgba(0,0,0,.14)}
-      100%{text-shadow:0 0 150px rgba(184,184,184,.3),0 0 64px rgba(184,184,184,.16),0 2px 0 rgba(0,0,0,.1)}
+      0%{text-shadow:0 0 140px rgba(184,184,184,.24),0 0 56px rgba(184,184,184,.12),0 2px 0 rgba(0,0,0,.16)}
+      100%{text-shadow:0 0 170px rgba(184,184,184,.36),0 0 72px rgba(184,184,184,.18),0 2px 0 rgba(0,0,0,.1)}
     }
 
     /* ── RESPONSIVE — mobile-native type (higher vw), tight rhythm, ≥44px targets ── */
@@ -1190,7 +1204,8 @@
       body{cursor:default}
       /* Grain + ambient off on mobile (perf); keep soft vignette so dark still feels like space */
       .cursor-ring,.cursor-dot,.grain,.ambient{display:none!important}
-      .vignette{opacity:.72}
+      /* Lighter vignette — frames without crushing small screens */
+      .vignette{opacity:.55}
       body.cursor-active{cursor:auto}
       body.cursor-active a,body.cursor-active .project-panel{cursor:pointer}
       /* Kill desktop will-change / 3D cost on phones */
@@ -1210,7 +1225,7 @@
         top:0;right:0;gap:.85rem;
         padding:max(1rem,calc(var(--safe-top) + .35rem)) max(1rem,var(--safe-right)) 1rem .75rem;
         font-size:.75rem;letter-spacing:.12em;font-weight:500;
-        background:linear-gradient(180deg,rgba(7,7,7,.96),rgba(7,7,7,.62) 72%,transparent);
+        background:linear-gradient(180deg,rgba(8,8,9,.97),rgba(8,8,9,.64) 72%,transparent);
         backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)
       }
       .nav a{
@@ -1367,10 +1382,10 @@
         opacity:1;transform:none;padding:2.25rem 1.25rem 1.55rem;
         background:linear-gradient(
           transparent 0%,
-          rgba(7,7,7,.14) 12%,
-          rgba(7,7,7,.74) 46%,
-          rgba(7,7,7,.97) 78%,
-          rgba(7,7,7,.99) 100%
+          rgba(1,1,1,.16) 12%,
+          rgba(1,1,1,.76) 46%,
+          rgba(1,1,1,.97) 78%,
+          rgba(1,1,1,.99) 100%
         )
       }
       .project-panel__title,.project-panel__meta,.project-panel__desc{
