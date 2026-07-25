@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
   <link rel="dns-prefetch" href="https://unpkg.com">
-  <!-- Only weights actually used: 300,400,500,600,700,800 (dropped 200/900); display=swap avoids FOIT -->
+  <!-- Weights 300–800 only; display=swap avoids FOIT; preload kicks CSS fetch early -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -61,14 +61,22 @@
       /* Museum breathing — taller vertical beats between narrative chapters */
       --section-y:clamp(9.5rem,20vh,16.5rem);
       /* Type scale tokens — micro labels vs display tension */
-      --label-size:.6875rem;           /* 11px — technical micro */
+      --label-size:.75rem;             /* 12px — AA-friendly micro (was 11px) */
       --label-track:.32em;
       --display-track:-.056em;         /* display optical tightness */
-      --body-size:1rem;
+      --body-size:1.0625rem;           /* 17px — mobile-first readable body */
       --safe-top:env(safe-area-inset-top,0px);
       --safe-right:env(safe-area-inset-right,0px);
       --safe-bottom:env(safe-area-inset-bottom,0px);
       --safe-left:env(safe-area-inset-left,0px);
+    }
+
+    /* Desktop: slightly tighter micro labels + classic 16px body */
+    @media(min-width:769px){
+      :root{
+        --label-size:.6875rem;         /* 11px desktop micro */
+        --body-size:1rem
+      }
     }
 
     /* overflow-x:clip (not hidden) — hidden forces overflow-y:auto and breaks position:sticky */
@@ -101,15 +109,22 @@
     ::-webkit-scrollbar{display:none}
     *{scrollbar-width:none;-ms-overflow-style:none}
 
-    a:focus-visible,button:focus-visible,.project-panel:focus-visible,.skip-link:focus-visible{
-      outline:2px solid var(--accent);outline-offset:6px;border-radius:2px
+    /* Custom silver focus ring — every interactive control (WCAG 2.4.7) */
+    a:focus-visible,button:focus-visible,.project-panel:focus-visible,.skip-link:focus-visible,
+    [role="link"]:focus-visible,[tabindex]:not([tabindex="-1"]):focus-visible{
+      outline:2px solid var(--accent);outline-offset:4px;border-radius:2px
     }
-    /* High-contrast focus ring for links/buttons (panels use outline + museum rim) */
-    a:focus-visible,button:focus-visible{
-      box-shadow:0 0 0 6px rgba(7,7,7,.85),0 0 0 8px var(--accent)
+    /* High-contrast double ring so focus never disappears on cream or dark */
+    a:focus-visible,button:focus-visible,.contact-email:focus-visible{
+      box-shadow:0 0 0 4px rgba(7,7,7,.9),0 0 0 6px var(--accent)
     }
     .project-panel:focus-visible{
-      outline-offset:4px
+      outline-offset:3px;
+      box-shadow:0 0 0 3px rgba(7,7,7,.95),0 0 0 5px var(--accent)
+    }
+    .nav a:focus-visible{
+      outline-offset:6px;
+      box-shadow:0 0 0 4px rgba(7,7,7,.9),0 0 0 6px var(--accent)
     }
 
     /* ── SKIP LINK (WCAG 2.4.1) ── */
@@ -901,15 +916,15 @@
     .project-panel:focus-visible .project-panel__img{
       filter:grayscale(0%) contrast(1.04) brightness(1.05)
     }
-    /* Friendby teaser — intentional “coming” field; blue-tinted darks as depth only */
+    /* Friendby teaser — cool depth field; blue-tints lift off pure #050505 void (decorative only) */
     .project-panel__placeholder{
       width:100%;height:120%;position:absolute;top:-10%;left:0;
       background:
-        radial-gradient(ellipse 55% 45% at 28% 22%,rgba(184,184,184,.2),transparent 55%),
-        radial-gradient(ellipse 40% 35% at 78% 72%,rgba(120,140,160,.1),transparent 50%),
-        radial-gradient(ellipse 60% 50% at 50% 50%,rgba(18,28,40,.48),transparent 70%),
-        linear-gradient(155deg,#0a1018 0%,#121e2c 38%,#0d1824 68%,#080e14 100%);
-      filter:grayscale(35%) brightness(.92);transition:filter .9s var(--ease)
+        radial-gradient(ellipse 55% 45% at 28% 22%,rgba(184,184,184,.22),transparent 55%),
+        radial-gradient(ellipse 40% 35% at 78% 72%,rgba(140,160,185,.12),transparent 50%),
+        radial-gradient(ellipse 60% 50% at 50% 50%,rgba(22,34,48,.52),transparent 70%),
+        linear-gradient(155deg,#0c1420 0%,#152434 38%,#101c2a 68%,#0a121c 100%);
+      filter:grayscale(30%) brightness(.94);transition:filter .9s var(--ease)
     }
     .project-panel__placeholder::before{
       content:'';position:absolute;inset:0;
@@ -1097,6 +1112,8 @@
       transition:color .5s var(--ease),text-shadow .5s var(--ease);
       line-height:.92;padding-bottom:.24em;
       white-space:nowrap;max-width:100%;
+      /* Desktop min touch height for the CTA */
+      min-height:44px;
       text-shadow:
         0 0 120px rgba(184,184,184,.18),
         0 0 48px rgba(184,184,184,.09),
@@ -1147,11 +1164,11 @@
     }
     .contact-links a:hover{color:var(--text)}
     .contact-links a:hover::after{transform:scaleX(1);transform-origin:left}
-    /* Quiet signature — present, not competing with the CTA */
+    /* Quiet signature — muted (not muted-dim) so copyright meets AA ≥4.5:1 */
     .contact-footer{
       margin-top:clamp(5rem,11vh,8.5rem);
       padding-top:clamp(1.85rem,3.8vh,2.75rem);
-      font-size:.625rem;color:var(--muted-dim);letter-spacing:.22em;
+      font-size:.75rem;color:var(--muted);letter-spacing:.2em;
       text-transform:uppercase;position:relative
     }
     .contact-footer::before{
@@ -1168,7 +1185,7 @@
       100%{text-shadow:0 0 150px rgba(184,184,184,.3),0 0 64px rgba(184,184,184,.16),0 2px 0 rgba(0,0,0,.1)}
     }
 
-    /* ── RESPONSIVE (mobile type uses HIGHER vw — relatively bigger than desktop) ── */
+    /* ── RESPONSIVE — mobile-native type (higher vw), tight rhythm, ≥44px targets ── */
     @media(max-width:768px){
       body{cursor:default}
       /* Grain + ambient off on mobile (perf); keep soft vignette so dark still feels like space */
@@ -1176,51 +1193,61 @@
       .vignette{opacity:.72}
       body.cursor-active{cursor:auto}
       body.cursor-active a,body.cursor-active .project-panel{cursor:pointer}
+      /* Kill desktop will-change / 3D cost on phones */
+      .project-panel,.track,.char,.email-char,.about-line__inner{will-change:auto}
+      .project-panel{transform-style:flat;perspective:none}
 
-      /* Designed mobile rhythm — still museum space, never cramped */
+      /* Mobile-first rhythm: 4.5rem beats, 1.25rem side air, 12px labels, 17px body */
       :root{
-        --section-y:clamp(6rem,15vh,9.5rem);
-        --pad-x:1.35rem;
-        --label-track:.26em
+        --section-y:clamp(4.5rem,12vh,7.5rem);
+        --pad-x:1.25rem;
+        --label-size:.75rem;           /* 12px — never 11px on a phone */
+        --label-track:.22em;
+        --body-size:1.0625rem         /* 17px */
       }
 
       .nav{
-        top:0;right:0;gap:1.05rem;
-        padding:max(1.05rem,calc(var(--safe-top) + .4rem)) max(1.15rem,var(--safe-right)) 1.05rem .9rem;
-        font-size:.625rem;letter-spacing:.16em;
-        background:linear-gradient(180deg,rgba(7,7,7,.94),rgba(7,7,7,.58) 70%,transparent);
+        top:0;right:0;gap:.85rem;
+        padding:max(1rem,calc(var(--safe-top) + .35rem)) max(1rem,var(--safe-right)) 1rem .75rem;
+        font-size:.75rem;letter-spacing:.12em;font-weight:500;
+        background:linear-gradient(180deg,rgba(7,7,7,.96),rgba(7,7,7,.62) 72%,transparent);
         backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)
       }
-      .nav a{min-height:44px;padding:.55rem .25rem}
+      .nav a{
+        min-height:44px;min-width:44px;padding:.65rem .35rem;
+        display:inline-flex;align-items:center;justify-content:center
+      }
 
       /* Optical center + safe areas; horizontal pad matches --pad-x / sections */
       .hero{
         padding:
-          max(1.85rem,var(--safe-top))
+          max(1.65rem,var(--safe-top))
           var(--pad-x)
-          max(4.5rem,calc(var(--safe-bottom) + 2.65rem))
+          max(4rem,calc(var(--safe-bottom) + 2.35rem))
       }
-      .hero-label{font-size:.625rem;letter-spacing:.32em;gap:.9rem;margin-bottom:1.85rem}
-      .hero-label::before,.hero-label::after{width:1.6rem}
-      /* Mobile: full-bleed statement type with a hair of side air */
+      .hero-label{font-size:.75rem;letter-spacing:.28em;gap:.75rem;margin-bottom:1.65rem}
+      .hero-label::before,.hero-label::after{width:1.4rem}
+      /* ~69px @ 375 — full-bleed statement name, not a desktop scale-down */
       .hero-name{
-        font-size:clamp(3.35rem,17.8vw,5.9rem);
-        letter-spacing:-.055em;line-height:.78
+        font-size:clamp(3.5rem,18.5vw,6.5rem);
+        letter-spacing:-.055em;line-height:.76
       }
-      .hero-role{font-size:clamp(1.2rem,4.8vw,1.35rem);margin-top:1.65rem}
-      .hero-bottom{padding-bottom:max(1.65rem,calc(var(--safe-bottom) + .75rem));gap:.85rem}
-      .hero-location{font-size:.625rem;letter-spacing:.14em;gap:.55rem}
-      .hero-location::before,.hero-location::after{width:.85rem}
+      .hero-role{font-size:clamp(1.25rem,5vw,1.45rem);margin-top:1.5rem}
+      .hero-bottom{padding-bottom:max(1.5rem,calc(var(--safe-bottom) + .7rem));gap:.75rem}
+      .hero-location{font-size:.75rem;letter-spacing:.12em;gap:.5rem}
+      .hero-location::before,.hero-location::after{width:.75rem}
       .scroll-hint{pointer-events:none}
-      .scroll-hint span{font-size:.5rem;letter-spacing:.36em}
-      .scroll-line{height:42px;margin-top:12px}
-      .preloader{gap:1.35rem}
-      .preloader-bar{width:148px}
-      .preloader-name{letter-spacing:.36em;font-size:.75rem;padding-left:.36em}
+      .scroll-hint span{font-size:.625rem;letter-spacing:.32em}
+      .scroll-line{height:40px;margin-top:12px}
+      .preloader{gap:1.25rem}
+      .preloader-bar{width:140px}
+      .preloader-name{letter-spacing:.32em;font-size:.8125rem;padding-left:.32em}
+      .skip-link{font-size:.75rem;min-height:44px;padding:.9rem 1.2rem}
 
-      .path{padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.2)}
-      .path .section-label{margin-bottom:clamp(3.25rem,9vw,3.85rem)}
-      .timeline{flex-direction:column;gap:3.35rem;padding:0 0 0 .5rem}
+      .path{padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.15)}
+      .path .section-label{margin-bottom:clamp(2.5rem,8vw,3.25rem);font-size:.75rem}
+      .section-label{font-size:.75rem;letter-spacing:.2em}
+      .timeline{flex-direction:column;gap:2.85rem;padding:0 0 0 .35rem}
       /* Designed vertical journey rail — not a desktop fallback */
       .timeline::before{
         top:0;bottom:0;left:8px;right:auto;width:2px;height:auto;
@@ -1244,8 +1271,8 @@
         width:12px;height:12px
       }
       .step{
-        text-align:left;padding:0 0 0 3rem;
-        min-height:44px;padding-bottom:0;
+        text-align:left;padding:0 0 0 2.75rem;
+        min-height:48px;padding-bottom:0;
         transition:opacity .5s var(--ease),transform .55s var(--ease)
       }
       .step:hover{transform:none}
@@ -1255,138 +1282,149 @@
       .step-dot{left:0;top:3px;transform:none;width:16px;height:16px}
       .step.is-passed .step-dot{transform:scale(1.1)}
       .step:hover .step-dot,.step.active .step-dot{transform:scale(1.35)}
+      /* Chapter titles ~12vw statement scale on the rail */
       .step-label{
-        margin-top:0;font-size:clamp(1.2rem,5.2vw,1.45rem);letter-spacing:.16em;
-        color:rgba(240,239,233,.62)
+        margin-top:0;font-size:clamp(1.35rem,6.4vw,1.65rem);letter-spacing:.14em;
+        color:rgba(240,239,233,.68)
       }
       .step.active .step-label{
-        color:var(--accent);transform:none;letter-spacing:.14em;
+        color:var(--accent);transform:none;letter-spacing:.12em;
         text-shadow:0 0 28px rgba(184,184,184,.35)
       }
-      .step-year{font-size:.6875rem;letter-spacing:.16em}
-      /* Always-visible descriptions on mobile; active step is more prominent */
+      .step-year{font-size:.75rem;letter-spacing:.14em}
+      /* Always-visible descriptions; 16px+ body on the journey rail */
       .step-desc,.step:hover .step-desc,.step.active .step-desc{
-        max-height:none;opacity:1;margin-top:.75rem;max-width:none;
-        font-size:.975rem;line-height:1.7;transform:none
+        max-height:none;opacity:1;margin-top:.7rem;max-width:none;
+        font-size:1rem;line-height:1.68;transform:none
       }
-      .step:not(.active) .step-desc{color:var(--muted);opacity:.85}
-      .step.active .step-desc{color:rgba(240,239,233,.85);opacity:1}
+      .step:not(.active) .step-desc{color:var(--muted);opacity:.9}
+      .step.active .step-desc{color:rgba(240,239,233,.88);opacity:1}
 
       .about{min-height:auto;padding:var(--section-y) var(--pad-x)}
-      .about .section-label{margin-bottom:clamp(2.75rem,7vw,3.25rem)}
-      /* ~8vw on 375px ≈ 30px — statement scale, not body copy */
+      .about .section-label{margin-bottom:clamp(2.25rem,6vw,2.85rem);font-size:.75rem}
+      /* ~12vw @ 375 ≈ 45px — statement about copy (max must clear 45px) */
       .about-text{
-        font-size:clamp(1.55rem,8vw,2.15rem);line-height:1.44;
+        font-size:clamp(1.75rem,12vw,2.85rem);line-height:1.4;
         max-width:none;text-wrap:pretty
       }
-      .about-line{margin-top:.45em}
+      .about-line{margin-top:.4em}
 
       .gallery-wrapper{
         height:auto;
         background-image:
           radial-gradient(ellipse 90% 40% at 50% 0%,rgba(184,184,184,.04),transparent 55%)
       }
-      /* Deliberate mobile gallery — editorial stack, not a squeezed desktop track */
+      /* Vertical editorial stack — native scroll, no broken horizontal swipe */
       .gallery-heading{
-        position:relative;padding:4rem var(--pad-x) 1.5rem;
+        position:relative;padding:clamp(3.25rem,10vw,4.25rem) var(--pad-x) 1.25rem;
         backdrop-filter:none;-webkit-backdrop-filter:none;background:none;opacity:1;
-        flex-wrap:wrap;gap:.9rem 1.35rem
+        flex-wrap:wrap;gap:.75rem 1.15rem
       }
-      .gallery-heading__label{font-size:.72rem;letter-spacing:.34em}
-      .gallery-heading__count{font-size:.625rem;letter-spacing:.24em}
-      .gallery-heading__line{width:100%;flex:1 1 100%;order:3;margin-top:.2rem}
+      .gallery-heading__label{font-size:.8125rem;letter-spacing:.28em}
+      .gallery-heading__count{font-size:.75rem;letter-spacing:.2em}
+      .gallery-heading__line{width:100%;flex:1 1 100%;order:3;margin-top:.15rem}
       .sticky-track{
         position:relative;height:auto;overflow:visible;
         flex-direction:column;align-items:stretch
       }
       .track{
-        flex-direction:column;gap:2.5rem;
-        padding:0 var(--pad-x) max(5.25rem,calc(var(--safe-bottom) + 4rem));
-        width:100%
+        flex-direction:column;gap:2.15rem;
+        padding:0 var(--pad-x) max(4.5rem,calc(var(--safe-bottom) + 3.5rem));
+        width:100%;
+        /* Native vertical gallery — soft snap between cards (no broken horizontal swipe) */
+        scroll-snap-type:y proximity
       }
       .project-panel{
         flex-shrink:unset;width:100%;height:auto;aspect-ratio:3/4;
         perspective:none;transform-style:flat;
-        border-radius:16px;max-height:none;
+        border-radius:14px;max-height:none;
+        scroll-snap-align:start;
+        /* ≥44px interactive surface via full card */
+        min-height:44px;
+        touch-action:manipulation;
         box-shadow:
-          0 28px 64px rgba(0,0,0,.5),
+          0 24px 56px rgba(0,0,0,.48),
           0 0 0 1px rgba(240,239,233,.09);
-        /* Native-feeling press feedback (paired with JS touch handlers) */
-        transition:border-color .35s var(--ease),box-shadow .45s var(--ease),transform .22s var(--ease-soft)
+        transition:border-color .35s var(--ease),box-shadow .45s var(--ease),transform .2s var(--ease-soft)
       }
       .project-panel:hover,.project-panel.is-hovered,
       .project-panel.is-focused,.project-panel:focus-visible{
-        border-color:rgba(240,239,233,.14);
-        box-shadow:0 24px 56px rgba(0,0,0,.48),0 0 0 1px rgba(240,239,233,.08)
+        border-color:rgba(240,239,233,.16);
+        box-shadow:0 20px 48px rgba(0,0,0,.46),0 0 0 1px rgba(240,239,233,.1)
       }
-      .project-panel.is-pressed{transform:scale(.982)}
+      .project-panel.is-pressed{transform:scale(.978)}
       .project-panel[data-url]{cursor:pointer;-webkit-tap-highlight-color:transparent}
-      .project-panel__img-wrap{transform-style:flat;border-radius:15px}
+      .project-panel__img-wrap{transform-style:flat;border-radius:13px}
       .project-panel__img-wrap::after{display:none} /* no light sweep on touch */
       .project-panel__img-wrap::before{opacity:.45}
       .project-panel__img,.project-panel__placeholder{
         filter:grayscale(0%) brightness(1.02) contrast(1.02);height:115%;top:-7.5%
       }
-      /* Mobile index — composition mark, larger than desktop rest state */
-      .project-panel__number{
-        top:1.15rem;left:1.15rem;opacity:1
-      }
-      .project-panel__num{font-size:clamp(1.5rem,6.5vw,1.85rem)}
-      .project-panel__num-total{font-size:.7rem;letter-spacing:.18em}
+      .project-panel__number{top:1rem;left:1rem;opacity:1}
+      .project-panel__num{font-size:clamp(1.45rem,6.5vw,1.8rem)}
+      .project-panel__num-total{font-size:.75rem;letter-spacing:.16em}
       .project-panel__info{
-        opacity:1;transform:none;padding:2.5rem 1.35rem 1.75rem;
+        opacity:1;transform:none;padding:2.25rem 1.25rem 1.55rem;
         background:linear-gradient(
           transparent 0%,
-          rgba(7,7,7,.12) 14%,
-          rgba(7,7,7,.72) 48%,
-          rgba(7,7,7,.96) 78%,
+          rgba(7,7,7,.14) 12%,
+          rgba(7,7,7,.74) 46%,
+          rgba(7,7,7,.97) 78%,
           rgba(7,7,7,.99) 100%
         )
       }
       .project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1;transform:none
       }
-      .project-panel__title{font-size:clamp(1.95rem,9vw,2.45rem);letter-spacing:-.042em}
-      .project-panel__meta{font-size:.65rem;margin-top:.7rem;letter-spacing:.18em}
-      .project-panel__desc{font-size:.95rem;max-width:none;margin-top:.85rem;line-height:1.65}
-      /* Teaser always reads as designed on mobile */
-      .project-panel__soon-mark{font-size:clamp(3.4rem,19vw,4.75rem);color:rgba(240,239,233,.11)}
-      .project-panel__soon-label{font-size:.625rem;letter-spacing:.36em;padding:.55rem 1.05rem}
+      /* Project titles ~12vw / 45px @ 375 — thumb-distance reading */
+      .project-panel__title{font-size:clamp(2.15rem,12vw,2.85rem);letter-spacing:-.04em}
+      .project-panel__meta{font-size:.75rem;margin-top:.65rem;letter-spacing:.16em}
+      .project-panel__desc{font-size:1rem;max-width:none;margin-top:.8rem;line-height:1.62}
+      .project-panel__soon-mark{font-size:clamp(3.25rem,18vw,4.5rem);color:rgba(240,239,233,.12)}
+      .project-panel__soon-label{font-size:.75rem;letter-spacing:.28em;padding:.55rem 1rem}
       .project-panel__placeholder::before{animation:none;opacity:.55}
 
-      .contact{min-height:auto;padding:var(--section-y) var(--pad-x) max(5.25rem,calc(var(--safe-bottom) + 4rem))}
-      /* Fluid but nowrap — scale to fit full email on one line */
+      .contact{min-height:auto;padding:var(--section-y) var(--pad-x) max(4.5rem,calc(var(--safe-bottom) + 3.5rem))}
+      .contact .section-label{font-size:.75rem;margin-bottom:clamp(2rem,6vw,2.75rem)}
+      /* Full-width tappable CTA — fluid type still ≥ ~36px @ 375 */
       .contact-email{
-        font-size:clamp(1.6rem,9.6vw,2.75rem);letter-spacing:-.032em;
-        min-height:48px;padding:.4rem 0;max-width:100%
+        font-size:clamp(1.55rem,10.5vw,2.85rem);letter-spacing:-.03em;
+        min-height:52px;padding:.75rem .35rem;max-width:100%;
+        display:inline-flex;align-items:center;justify-content:center;
+        width:100%;box-sizing:border-box
       }
       .contact-links{
-        gap:clamp(1.45rem,6vw,2.15rem);flex-wrap:wrap;margin-top:3rem;
-        font-size:.78rem;letter-spacing:.26em
+        gap:clamp(1.25rem,5vw,2rem);flex-wrap:wrap;margin-top:2.5rem;
+        font-size:.8125rem;letter-spacing:.2em;justify-content:center
       }
-      .contact-links a{min-height:48px;padding:.6rem .4rem}
-      .contact-footer{margin-top:4rem;font-size:.6rem}
+      .contact-links a{
+        min-height:48px;min-width:48px;padding:.7rem .55rem;
+        display:inline-flex;align-items:center;justify-content:center
+      }
+      .contact-footer{margin-top:3.25rem;font-size:.75rem;letter-spacing:.16em}
 
     }
 
-    /* Small phones (≤380px — covers classic 320 CSS px + compact modern) */
+    /* Small phones (≤380px — 320 CSS px + compact modern) */
     @media(max-width:380px){
-      :root{--pad-x:1.1rem}
-      .hero-name{font-size:clamp(2.95rem,17.2vw,4rem);line-height:.78}
-      .hero-role{font-size:clamp(1.1rem,5vw,1.25rem)}
-      .hero-location{letter-spacing:.1em;font-size:.5625rem}
+      :root{--pad-x:1.1rem;--body-size:1rem}
+      /* Still dramatic: ~58px @ 320, ~65px @ 375 with 18vw */
+      .hero-name{font-size:clamp(3.15rem,18vw,4.35rem);line-height:.76}
+      .hero-role{font-size:clamp(1.15rem,5.2vw,1.3rem)}
+      .hero-location{letter-spacing:.1em;font-size:.6875rem}
       .hero-location::before,.hero-location::after{display:none}
-      .nav{gap:.6rem;font-size:.55rem;letter-spacing:.1em}
-      .nav a{padding:.55rem .1rem;min-height:44px}
-      .about-text{font-size:clamp(1.4rem,8vw,1.9rem)}
-      .contact-email{font-size:clamp(1.45rem,9vw,2.25rem);letter-spacing:-.028em}
-      .contact-links{gap:1.2rem;font-size:.72rem;letter-spacing:.2em}
-      .project-panel__title{font-size:clamp(1.6rem,8.8vw,2.1rem)}
-      .project-panel__info{padding:2.25rem 1.2rem 1.55rem}
-      .project-panel__num{font-size:1.45rem}
-      .track{gap:2rem}
-      .step{padding-left:2.5rem}
-      .step-desc{font-size:.9rem}
+      .nav{gap:.35rem;font-size:.6875rem;letter-spacing:.06em}
+      .nav a{padding:.6rem .15rem;min-height:44px;min-width:44px}
+      .about-text{font-size:clamp(1.55rem,12vw,2.45rem)}
+      .contact-email{font-size:clamp(1.4rem,10.5vw,2.35rem);letter-spacing:-.026em}
+      .contact-links{gap:1rem;font-size:.75rem;letter-spacing:.16em}
+      .project-panel__title{font-size:clamp(1.9rem,12vw,2.5rem)}
+      .project-panel__info{padding:2rem 1.1rem 1.4rem}
+      .project-panel__num{font-size:1.4rem}
+      .track{gap:1.85rem}
+      .step{padding-left:2.35rem}
+      .step-label{font-size:clamp(1.25rem,6.2vw,1.5rem)}
+      .step-desc{font-size:.9375rem}
     }
 
     /* Ultra-wide: keep content from feeling sparse without bloating type */
@@ -1419,6 +1457,8 @@
       .nav a:active::after,.contact-links a:active::after,.contact-email:active::after{
         transform:scaleX(1);transform-origin:left
       }
+      /* Instant press feedback without 300ms tap delay residue */
+      a,.project-panel[data-url],.contact-email{touch-action:manipulation}
     }
 
     /* ── REDUCED MOTION ── */
@@ -1510,9 +1550,9 @@
   <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
 
   <!-- PRELOADER -->
-  <div class="preloader" id="preloader" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+  <div class="preloader" id="preloader" role="status" aria-live="polite" aria-busy="true" aria-label="Loading portfolio">
     <div class="preloader-count" id="preloader-count" aria-hidden="true">00</div>
-    <div class="preloader-name" id="preloader-name">ALEX MOLDOVAN</div>
+    <div class="preloader-name" id="preloader-name" aria-hidden="true">ALEX MOLDOVAN</div>
     <div class="preloader-bar" aria-hidden="true">
       <div class="preloader-bar-inner" id="preloader-bar"></div>
     </div>
@@ -1530,10 +1570,10 @@
   <section id="home" class="hero" aria-label="Hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="hero-label" id="hero-label">DESIGNER · DEVELOPER · BUILDER</div>
-    <h1 class="hero-name">
+    <h1 class="hero-name" aria-label="Alexandru Moldovan">
       <span class="name-shear" aria-hidden="true"></span>
-      <span class="line" data-split>ALEXANDRU</span>
-      <span class="line" data-split>MOLDOVAN</span>
+      <span class="line" data-split aria-hidden="true">ALEXANDRU</span>
+      <span class="line" data-split aria-hidden="true">MOLDOVAN</span>
     </h1>
     <div class="hero-role" aria-live="polite" aria-atomic="true">
       <span class="role-mask"><span class="role-text">Designer</span></span>
@@ -1595,12 +1635,14 @@
     </p>
   </section>
 
-  <!-- WORK — HORIZONTAL GALLERY -->
+  <!-- WORK — HORIZONTAL GALLERY (desktop pin) / vertical stack (mobile) -->
   <section id="work" class="gallery-wrapper" aria-label="Selected work">
     <div class="gallery-heading" id="gallery-heading">
-      <span class="gallery-heading__label">SELECTED WORK</span>
-      <span class="gallery-heading__count" aria-hidden="true"><span class="gallery-heading__index" id="gallery-index">01</span> / 05</span>
-      <span class="gallery-heading__line" id="gallery-heading-line"></span>
+      <span class="gallery-heading__label" id="gallery-heading-label">SELECTED WORK</span>
+      <span class="gallery-heading__count" aria-live="polite" aria-atomic="true">
+        <span class="gallery-heading__index" id="gallery-index">01</span> / 05
+      </span>
+      <span class="gallery-heading__line" id="gallery-heading-line" aria-hidden="true"></span>
     </div>
 
     <div class="sticky-track">
@@ -1610,7 +1652,7 @@
         <article class="project-panel" data-url="https://gentsclub.ro" tabindex="0" role="link" aria-label="GentsClub — open project">
           <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">01</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
-            <img class="project-panel__img" src="assets/projects/gentsclub.jpg" alt="GentsClub website screenshot" loading="lazy" decoding="async" width="900" height="1200">
+            <img class="project-panel__img" src="assets/projects/gentsclub.jpg" alt="GentsClub website screenshot" loading="lazy" decoding="async" width="900" height="1200" sizes="(max-width:768px) 92vw, min(42vw, 660px)">
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">GENTSCLUB</h2>
@@ -1623,7 +1665,7 @@
         <article class="project-panel" data-url="https://delirat.com" tabindex="0" role="link" aria-label="Delirat — open project">
           <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">02</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
-            <img class="project-panel__img" src="assets/projects/delirat.jpg" alt="Delirat website screenshot" loading="lazy" decoding="async" width="900" height="1200">
+            <img class="project-panel__img" src="assets/projects/delirat.jpg" alt="Delirat website screenshot" loading="lazy" decoding="async" width="900" height="1200" sizes="(max-width:768px) 92vw, min(42vw, 660px)">
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">DELIRAT</h2>
@@ -1633,7 +1675,7 @@
         </article>
 
         <!-- 03 FRIENDBY — intentional teaser (no live URL), not focusable as a link -->
-        <article class="project-panel project-panel--soon" aria-label="Friendby project">
+        <article class="project-panel project-panel--soon" aria-label="Friendby — social discovery app, coming soon">
           <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">03</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
             <div class="project-panel__placeholder" role="img" aria-label="Friendby abstract gradient teaser"></div>
@@ -1650,10 +1692,10 @@
         </article>
 
         <!-- 04 WHUMPLE — no live URL yet, not focusable as a link -->
-        <article class="project-panel" aria-label="Whumple project">
+        <article class="project-panel" aria-label="Whumple — Discord bot platform">
           <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">04</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
-            <img class="project-panel__img" src="assets/projects/whumple.jpg" alt="Whumple website screenshot" loading="lazy" decoding="async" width="900" height="1200">
+            <img class="project-panel__img" src="assets/projects/whumple.jpg" alt="Whumple website screenshot" loading="lazy" decoding="async" width="900" height="1200" sizes="(max-width:768px) 92vw, min(42vw, 660px)">
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">WHUMPLE</h2>
@@ -1666,7 +1708,7 @@
         <article class="project-panel" data-url="https://nowa-silueta.ro" tabindex="0" role="link" aria-label="Nowa Silueta — open project">
           <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">05</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
-            <img class="project-panel__img" src="assets/projects/nowa-silueta.jpg" alt="Nowa Silueta website screenshot" loading="lazy" decoding="async" width="900" height="1200">
+            <img class="project-panel__img" src="assets/projects/nowa-silueta.jpg" alt="Nowa Silueta website screenshot" loading="lazy" decoding="async" width="900" height="1200" sizes="(max-width:768px) 92vw, min(42vw, 660px)">
           </div>
           <div class="project-panel__info">
             <h2 class="project-panel__title">NOWA SILUETA</h2>
@@ -1720,6 +1762,7 @@
       if (pre) {
         pre.style.display = 'none';
         pre.setAttribute('aria-busy', 'false');
+        pre.setAttribute('aria-label', 'Content loaded');
       }
       var gh = document.getElementById('gallery-heading');
       if (gh) gh.style.opacity = '1';
@@ -1798,15 +1841,17 @@
       gsap.registerPlugin(ScrollTrigger);
     }
 
-    /* ── Char split for hero name (per-line for staged reveal) ── */
+    /* ── Char split for hero name (visual only — h1 has aria-label "Alexandru Moldovan") ── */
     function splitIntoChars(element) {
       var text = element.textContent;
-      element.setAttribute('aria-label', text);
+      /* Keep decorative split out of the accessibility tree (parent already labeled) */
+      element.setAttribute('aria-hidden', 'true');
       element.textContent = '';
       var chars = [];
       Array.prototype.forEach.call(text, function (char) {
         var span = document.createElement('span');
         span.className = 'char';
+        span.setAttribute('aria-hidden', 'true');
         span.textContent = char === ' ' ? '\u00A0' : char;
         element.appendChild(span);
         chars.push(span);
@@ -1822,16 +1867,17 @@
       allChars = allChars.concat(chars);
     });
 
-    /* Preloader name: letter-split for branded entrance */
+    /* Preloader name: letter-split for branded entrance (preloader role=status owns announcement) */
     var preNameEl = document.getElementById('preloader-name');
     var preChars = [];
     if (preNameEl) {
       var preText = preNameEl.textContent;
-      preNameEl.setAttribute('aria-label', preText);
+      preNameEl.setAttribute('aria-hidden', 'true');
       preNameEl.textContent = '';
       Array.prototype.forEach.call(preText, function (ch) {
         var s = document.createElement('span');
         s.className = 'pre-char';
+        s.setAttribute('aria-hidden', 'true');
         s.textContent = ch === ' ' ? '\u00A0' : ch;
         preNameEl.appendChild(s);
         preChars.push(s);
@@ -2235,6 +2281,7 @@
           if (preloader) {
             preloader.style.display = 'none';
             preloader.setAttribute('aria-busy', 'false');
+            preloader.setAttribute('aria-label', 'Content loaded');
           }
         }
       }, '+=0.08')
