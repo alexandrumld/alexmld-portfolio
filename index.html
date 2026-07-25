@@ -566,170 +566,218 @@
     /* Spacer so content scrolls under fixed hero — must match .hero height */
     .hero-spacer{height:100vh;height:100dvh;height:100svh;pointer-events:none}
 
-    /* ── PATH / TIMELINE — elevated cool stage (blue-tinted journey altitude) ── */
+    /* ── PATH / TIMELINE — elevated cool stage (chapters of a life, not a list) ── */
     .path{
-      padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.25);
+      padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.35);
       background:
-        radial-gradient(ellipse 78% 54% at 50% 38%,rgba(184,184,184,.09),transparent 66%),
-        radial-gradient(ellipse 48% 38% at 8% 70%,rgba(140,160,185,.045),transparent 58%),
-        radial-gradient(ellipse 48% 38% at 92% 65%,rgba(140,160,185,.035),transparent 58%),
-        radial-gradient(ellipse 100% 55% at 50% 0%,rgba(13,24,36,.55),transparent 60%),
-        linear-gradient(180deg,rgba(8,8,9,.96) 0%,transparent 24%),
-        linear-gradient(0deg,rgba(3,3,4,.88) 0%,transparent 28%),
+        radial-gradient(ellipse 72% 50% at 50% 40%,rgba(184,184,184,.12),transparent 64%),
+        radial-gradient(ellipse 44% 36% at 6% 72%,rgba(130,155,185,.06),transparent 56%),
+        radial-gradient(ellipse 44% 36% at 94% 68%,rgba(130,155,185,.05),transparent 56%),
+        radial-gradient(ellipse 90% 42% at 50% 18%,rgba(20,36,52,.45),transparent 62%),
+        radial-gradient(ellipse 100% 55% at 50% 0%,rgba(13,24,36,.6),transparent 60%),
+        linear-gradient(180deg,rgba(8,8,9,.97) 0%,transparent 26%),
+        linear-gradient(0deg,rgba(3,3,4,.92) 0%,transparent 30%),
         var(--bg-alt);
       position:relative;z-index:3
     }
     /* Film dissolve in from hero stage → cool altitude */
     .path::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:min(30vh,300px);pointer-events:none;z-index:0;
-      background:linear-gradient(180deg,rgba(8,8,9,.95) 0%,rgba(8,8,9,.4) 42%,transparent 100%)
+      content:'';position:absolute;top:0;left:0;right:0;height:min(34vh,340px);pointer-events:none;z-index:0;
+      background:linear-gradient(180deg,rgba(8,8,9,.97) 0%,rgba(8,8,9,.45) 40%,transparent 100%)
     }
-    /* Film dissolve out into about void */
+    /* Film dissolve out into about void — longer soft landing into WHO */
     .path::after{
-      content:'';position:absolute;bottom:0;left:0;right:0;height:min(24vh,240px);pointer-events:none;z-index:0;
-      background:linear-gradient(0deg,rgba(3,3,4,.92) 0%,rgba(3,3,4,.4) 48%,transparent 100%)
+      content:'';position:absolute;bottom:0;left:0;right:0;height:min(28vh,280px);pointer-events:none;z-index:0;
+      background:linear-gradient(0deg,rgba(3,3,4,.95) 0%,rgba(3,3,4,.45) 46%,transparent 100%)
     }
-    /* Label → timeline gap: one beat of section rhythm (~ section-y * 0.55) */
-    .path .section-label{text-align:center;margin:0 auto clamp(5.5rem,10vh,8rem);display:flex;position:relative;z-index:1}
+    /* Label → timeline gap: one full beat before the journey begins */
+    .path .section-label{text-align:center;margin:0 auto clamp(5.75rem,11vh,8.5rem);display:flex;position:relative;z-index:1}
     .timeline{
-      display:flex;justify-content:space-between;position:relative;
-      max-width:1320px;margin:0 auto;padding:0 1.5rem;z-index:1
+      display:flex;justify-content:space-between;align-items:flex-start;position:relative;
+      max-width:1360px;margin:0 auto;padding:0 1.25rem 0.5rem;z-index:1
     }
-    /* Ambient rail glow behind the track — journey depth */
+    /* Ambient rail glow — path-through-space depth behind the track */
     .timeline::before{
-      content:'';position:absolute;top:9px;left:1.5rem;right:1.5rem;height:2px;
-      background:linear-gradient(90deg,transparent,rgba(184,184,184,.12),transparent);
-      box-shadow:0 0 36px 8px rgba(184,184,184,.08);
+      content:'';position:absolute;top:11px;left:1.25rem;right:1.25rem;height:2px;
+      background:linear-gradient(90deg,transparent 0%,rgba(184,184,184,.16) 18%,rgba(184,184,184,.2) 50%,rgba(184,184,184,.16) 82%,transparent 100%);
+      box-shadow:
+        0 0 28px 6px rgba(184,184,184,.1),
+        0 0 64px 14px rgba(184,184,184,.055);
       pointer-events:none;z-index:0
     }
     .timeline-line{
-      position:absolute;top:9px;left:1.5rem;right:1.5rem;height:2px;
-      background:rgba(240,239,233,.1);overflow:visible;z-index:0
+      position:absolute;top:11px;left:1.25rem;right:1.25rem;height:2px;
+      background:rgba(240,239,233,.09);overflow:visible;z-index:0
     }
     .timeline-line-fill{
       position:absolute;top:0;left:0;height:100%;width:0%;
       background:linear-gradient(90deg,
-        rgba(184,184,184,.2) 0%,
-        var(--accent) 35%,
-        rgba(240,239,233,.95) 70%,
-        rgba(184,184,184,.55) 100%);
+        rgba(184,184,184,.18) 0%,
+        rgba(184,184,184,.75) 22%,
+        var(--accent) 48%,
+        rgba(240,239,233,.98) 78%,
+        rgba(184,184,184,.7) 100%);
       box-shadow:
-        0 0 14px rgba(184,184,184,.5),
-        0 0 32px rgba(184,184,184,.25),
-        0 0 56px rgba(184,184,184,.12);
-      border-radius:1px
+        0 0 10px rgba(184,184,184,.55),
+        0 0 28px rgba(184,184,184,.35),
+        0 0 52px rgba(184,184,184,.18),
+        0 0 80px rgba(184,184,184,.08);
+      border-radius:1px;will-change:width
     }
-    /* Leading tip bloom on the fill trail */
+    /* Leading tip bloom — living edge of the journey */
     .timeline-line-fill::after{
       content:'';position:absolute;right:0;top:50%;transform:translate(50%,-50%);
-      width:12px;height:12px;border-radius:50%;
-      background:radial-gradient(circle,rgba(240,239,233,.98) 0%,rgba(184,184,184,.45) 45%,transparent 70%);
-      box-shadow:0 0 18px rgba(184,184,184,.6),0 0 36px rgba(184,184,184,.3);
-      pointer-events:none
+      width:14px;height:14px;border-radius:50%;
+      background:radial-gradient(circle,rgba(240,239,233,1) 0%,rgba(184,184,184,.55) 40%,transparent 72%);
+      box-shadow:
+        0 0 14px rgba(184,184,184,.85),
+        0 0 32px rgba(184,184,184,.45),
+        0 0 56px rgba(184,184,184,.22);
+      pointer-events:none;
+      animation:pathTipBloomX 1.7s var(--ease-soft) infinite
     }
+    @keyframes pathTipBloomX{
+      0%,100%{transform:translate(50%,-50%) scale(1);opacity:1}
+      50%{transform:translate(50%,-50%) scale(1.42);opacity:.88}
+    }
+    /* Chapter column — reserve desc air so switches never jump the rail */
     .step{
-      flex:1;text-align:center;position:relative;padding-top:3rem;
-      transition:transform .7s var(--ease);
-      /* Reserve desc air so chapter switches don't shift the rail */
-      min-height:12.5rem;padding-bottom:1.15rem;z-index:1
+      flex:1;text-align:center;position:relative;padding-top:3.35rem;
+      transition:transform .75s var(--ease),opacity .55s var(--ease);
+      min-height:14.5rem;padding-bottom:1.25rem;z-index:1
     }
-    .step:hover{transform:translateY(-10px)}
+    /* Future chapters sleep; history warms; active is the only lit room */
+    .step:not(.is-passed):not(:hover){opacity:.55}
+    .step.is-passed:not(.active):not(:hover){opacity:.88}
+    .step.active,.step:hover{opacity:1;z-index:2}
+    .step:hover{transform:translateY(-12px)}
+    .step.active{transform:translateY(-6px)}
+    .step.active:hover{transform:translateY(-12px)}
     .step-dot{
       position:absolute;top:0;left:50%;transform:translateX(-50%);
-      width:20px;height:20px;border-radius:50%;background:var(--bg-void);
-      border:1.5px solid rgba(240,239,233,.4);transition:all .65s var(--ease);z-index:2
+      width:18px;height:18px;border-radius:50%;background:var(--bg-void);
+      border:1.5px solid rgba(240,239,233,.28);transition:
+        background .65s var(--ease),border-color .65s var(--ease),
+        box-shadow .65s var(--ease),transform .7s var(--ease);z-index:2
     }
-    /* Hit expand + outer halo ring */
+    /* Hit expand */
     .step-dot::before{
-      content:'';position:absolute;inset:-18px;border-radius:50%
+      content:'';position:absolute;inset:-20px;border-radius:50%
     }
+    /* Outer halo / ripple ring */
     .step-dot::after{
-      content:'';position:absolute;inset:-10px;border-radius:50%;
+      content:'';position:absolute;inset:-12px;border-radius:50%;
       border:1px solid transparent;
-      transition:border-color .6s var(--ease),transform .65s var(--ease),opacity .55s var(--ease);
-      transform:scale(.4);opacity:0
+      transition:border-color .55s var(--ease),opacity .5s var(--ease);
+      transform:scale(.35);opacity:0;pointer-events:none
     }
-    /* Passed chapters: luminous trail (story already told — readable history) */
+    /* Passed chapters: luminous trail (story already told) */
     .step.is-passed .step-dot{
-      background:rgba(184,184,184,.68);border-color:rgba(184,184,184,.85);
+      background:rgba(184,184,184,.55);border-color:rgba(184,184,184,.78);
       box-shadow:
-        0 0 16px rgba(184,184,184,.38),
-        0 0 32px rgba(184,184,184,.18);
-      transform:translateX(-50%) scale(1.16)
+        0 0 12px rgba(184,184,184,.42),
+        0 0 28px rgba(184,184,184,.2),
+        0 0 48px rgba(184,184,184,.08);
+      transform:translateX(-50%) scale(1.18)
     }
     .step.is-passed .step-dot::after{
-      border-color:rgba(184,184,184,.32);transform:scale(.95);opacity:.85
+      border-color:rgba(184,184,184,.28);transform:scale(.92);opacity:.75
     }
-    .step.is-passed .step-label{color:rgba(240,239,233,.86)}
-    .step.is-passed .step-year{color:rgba(240,239,233,.55)}
+    .step.is-passed .step-num{color:rgba(184,184,184,.5)}
+    .step.is-passed .step-label{color:rgba(240,239,233,.82)}
+    .step.is-passed .step-year{color:rgba(240,239,233,.48)}
     .step:hover .step-dot,.step.active .step-dot{
-      background:var(--accent);border-color:var(--accent);
+      background:var(--accent);border-color:rgba(240,239,233,.95);
       box-shadow:
-        0 0 0 7px rgba(184,184,184,.14),
-        0 0 0 16px rgba(184,184,184,.06),
-        0 0 42px rgba(184,184,184,.6),
-        0 0 72px rgba(184,184,184,.25);
-      transform:translateX(-50%) scale(1.42)
+        0 0 0 6px rgba(184,184,184,.16),
+        0 0 0 14px rgba(184,184,184,.07),
+        0 0 36px rgba(184,184,184,.65),
+        0 0 68px rgba(184,184,184,.3),
+        0 0 100px rgba(184,184,184,.12);
+      transform:translateX(-50%) scale(1.48)
     }
-    .step:hover .step-dot::after,.step.active .step-dot::after{
-      border-color:rgba(184,184,184,.5);transform:scale(1.08);opacity:1
+    .step:hover .step-dot::after{
+      border-color:rgba(184,184,184,.55);transform:scale(1.05);opacity:1
     }
-    /* Ripple pulse on the active chapter — journey heartbeat (alive, not frantic) */
+    /* Heartbeat + expanding ripple — chapter is alive (visible at Awwwards distance) */
     .step.active .step-dot{
-      animation:stepDotPulse 2.15s var(--ease-soft) infinite
+      animation:stepDotPulse 2.05s var(--ease-soft) infinite
+    }
+    .step.active .step-dot::after{
+      border-color:rgba(184,184,184,.65);
+      animation:stepRingRipple 2.05s var(--ease-soft) infinite
     }
     @keyframes stepDotPulse{
       0%,100%{
         box-shadow:
-          0 0 0 7px rgba(184,184,184,.14),
-          0 0 0 16px rgba(184,184,184,.06),
-          0 0 42px rgba(184,184,184,.6),
-          0 0 72px rgba(184,184,184,.25)
+          0 0 0 6px rgba(184,184,184,.16),
+          0 0 0 14px rgba(184,184,184,.07),
+          0 0 36px rgba(184,184,184,.65),
+          0 0 68px rgba(184,184,184,.3),
+          0 0 100px rgba(184,184,184,.12)
       }
       50%{
         box-shadow:
-          0 0 0 11px rgba(184,184,184,.2),
-          0 0 0 28px rgba(184,184,184,.06),
-          0 0 60px rgba(184,184,184,.75),
-          0 0 100px rgba(184,184,184,.36)
+          0 0 0 10px rgba(184,184,184,.24),
+          0 0 0 26px rgba(184,184,184,.08),
+          0 0 56px rgba(184,184,184,.85),
+          0 0 96px rgba(184,184,184,.42),
+          0 0 140px rgba(184,184,184,.18)
       }
     }
+    @keyframes stepRingRipple{
+      0%{transform:scale(.55);opacity:.85;border-color:rgba(184,184,184,.7)}
+      65%{transform:scale(2.05);opacity:0;border-color:rgba(184,184,184,.15)}
+      100%{transform:scale(2.05);opacity:0;border-color:transparent}
+    }
+    /* Chapter index — museum plate above the title */
+    .step-num{
+      font-size:var(--label-size);font-weight:500;
+      letter-spacing:.32em;margin-top:1.45rem;line-height:1;
+      font-variant-numeric:tabular-nums;color:rgba(240,239,233,.28);
+      transition:color .5s var(--ease),text-shadow .55s var(--ease),letter-spacing .55s var(--ease);
+      padding-left:.32em /* optical center for tracked caps */
+    }
+    .step:hover .step-num,.step.active .step-num{
+      color:var(--accent);letter-spacing:.28em;
+      text-shadow:0 0 22px rgba(184,184,184,.4)
+    }
     .step-label{
-      font-size:clamp(1.05rem,1.85vw,1.5rem);font-weight:700;
-      letter-spacing:.24em;margin-top:1.55rem;line-height:1.15;
-      transition:color .45s var(--ease),transform .55s var(--ease),letter-spacing .55s var(--ease),text-shadow .55s var(--ease);
-      text-transform:uppercase;color:rgba(240,239,233,.72)
+      font-size:clamp(1.05rem,1.9vw,1.55rem);font-weight:700;
+      letter-spacing:.22em;margin-top:.55rem;line-height:1.12;
+      transition:color .5s var(--ease),transform .6s var(--ease),letter-spacing .55s var(--ease),text-shadow .55s var(--ease);
+      text-transform:uppercase;color:rgba(240,239,233,.42)
     }
     .step:hover .step-label,.step.active .step-label{
       color:var(--accent);
-      transform:scale(1.08);
-      letter-spacing:.18em;
-      text-shadow:0 0 32px rgba(184,184,184,.35)
+      transform:scale(1.07);
+      letter-spacing:.16em;
+      text-shadow:0 0 36px rgba(184,184,184,.4),0 0 64px rgba(184,184,184,.15)
     }
     .step-year{
-      font-size:var(--label-size);color:var(--muted);margin-top:.7rem;
-      font-variant-numeric:tabular-nums;letter-spacing:.18em;
-      transition:color .45s var(--ease),opacity .45s var(--ease)
+      font-size:var(--label-size);color:rgba(240,239,233,.28);margin-top:.65rem;
+      font-variant-numeric:tabular-nums;letter-spacing:.2em;
+      transition:color .5s var(--ease),opacity .45s var(--ease),letter-spacing .5s var(--ease)
     }
     .step:hover .step-year,.step.active .step-year{
-      color:rgba(240,239,233,.78)
+      color:rgba(240,239,233,.78);letter-spacing:.18em
     }
     .step-desc{
       max-height:0;opacity:0;overflow:hidden;
-      transform:translateY(12px);
+      transform:translateY(14px);
       transition:
-        max-height .85s var(--ease),
-        opacity .55s var(--ease),
-        margin .55s var(--ease),
-        transform .65s var(--ease),
-        color .4s var(--ease);
-      font-size:.925rem;color:var(--muted);line-height:1.75;
-      max-width:250px;margin:0 auto;font-weight:400
+        max-height .9s var(--ease),
+        opacity .6s var(--ease) .05s,
+        margin .6s var(--ease),
+        transform .7s var(--ease),
+        color .45s var(--ease);
+      font-size:.9375rem;color:var(--muted);line-height:1.72;
+      max-width:255px;margin:0 auto;font-weight:400
     }
-    /* Journey reveal: active (scroll) + hover — story unfolds, not a feature list */
+    /* Journey reveal: active (scroll) + hover — story unfolds, layout reserved */
     .step:hover .step-desc,.step.active .step-desc{
-      max-height:280px;opacity:1;margin-top:1.45rem;transform:translateY(0);
-      color:rgba(240,239,233,.72)
+      max-height:300px;opacity:1;margin-top:1.35rem;transform:translateY(0);
+      color:rgba(240,239,233,.76)
     }
 
     /* ── ABOUT — void well (quietest room; pure reflective pause) ── */
@@ -1358,61 +1406,79 @@
       .preloader-name{letter-spacing:.3em;font-size:.6875rem;padding-left:.3em}
       .skip-link{font-size:.75rem;min-height:44px;padding:.9rem 1.2rem}
 
-      .path{padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.15)}
-      .path .section-label{margin-bottom:clamp(2.5rem,8vw,3.25rem);font-size:.75rem}
+      .path{padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.2)}
+      .path .section-label{margin-bottom:clamp(2.75rem,8.5vw,3.5rem);font-size:.75rem}
       .section-label{font-size:.75rem;letter-spacing:.2em}
-      .timeline{flex-direction:column;gap:2.85rem;padding:0 0 0 .35rem}
-      /* Designed vertical journey rail — not a desktop fallback */
+      .timeline{flex-direction:column;gap:3.15rem;padding:0 0 .25rem .35rem}
+      /* Designed vertical journey rail — path through altitude, not a desktop fallback */
       .timeline::before{
         top:0;bottom:0;left:8px;right:auto;width:2px;height:auto;
-        background:linear-gradient(180deg,transparent,rgba(184,184,184,.1),transparent);
-        box-shadow:0 0 24px 4px rgba(184,184,184,.05)
+        background:linear-gradient(180deg,transparent 0%,rgba(184,184,184,.14) 12%,rgba(184,184,184,.18) 50%,rgba(184,184,184,.14) 88%,transparent 100%);
+        box-shadow:0 0 28px 6px rgba(184,184,184,.08),0 0 48px 10px rgba(184,184,184,.04)
       }
       .timeline-line{top:0;bottom:0;left:8px;width:2px;height:auto;right:auto}
       .timeline-line-fill{
-        width:100%!important;height:0%;
+        width:100%!important;height:0%;will-change:height;
         background:linear-gradient(180deg,
-          rgba(184,184,184,.25) 0%,
-          var(--accent) 40%,
-          rgba(240,239,233,.9) 100%);
+          rgba(184,184,184,.22) 0%,
+          rgba(184,184,184,.7) 25%,
+          var(--accent) 55%,
+          rgba(240,239,233,.95) 100%);
         box-shadow:
-          0 0 12px rgba(184,184,184,.4),
-          0 0 28px rgba(184,184,184,.18)
+          0 0 12px rgba(184,184,184,.5),
+          0 0 28px rgba(184,184,184,.22),
+          0 0 48px rgba(184,184,184,.1)
       }
       .timeline-line-fill::after{
         right:auto;left:50%;top:auto;bottom:0;
-        transform:translate(-50%,50%);
-        width:12px;height:12px
+        width:14px;height:14px;
+        animation:pathTipBloomY 1.7s var(--ease-soft) infinite
+      }
+      @keyframes pathTipBloomY{
+        0%,100%{transform:translate(-50%,50%) scale(1);opacity:1}
+        50%{transform:translate(-50%,50%) scale(1.42);opacity:.88}
       }
       .step{
-        text-align:left;padding:0 0 0 2.75rem;
-        min-height:48px;padding-bottom:0;
-        transition:opacity .5s var(--ease),transform .55s var(--ease)
+        text-align:left;padding:0 0 0 2.85rem;
+        min-height:0;padding-bottom:0;
+        /* No !important on base transform — GSAP owns entrance y/scale */
+        transition:opacity .55s var(--ease)
       }
-      .step:hover{transform:none}
-      /* Inactive chapters dim slightly so auto-cycle reads as designed */
-      .step:not(.active){opacity:.72}
-      .step.active{opacity:1}
-      .step-dot{left:0;top:3px;transform:none;width:16px;height:16px}
-      .step.is-passed .step-dot{transform:scale(1.1)}
-      .step:hover .step-dot,.step.active .step-dot{transform:scale(1.35)}
-      /* Chapter titles ~12vw statement scale on the rail */
+      /* Kill desktop lift on touch layouts after CSS takes over from GSAP */
+      .step:hover,.step.active,.step.active:hover,.step.is-passed{transform:none}
+      /* Future / history / present — vertical chapter rhythm
+         :not(:hover) matches desktop specificity so mobile dims win the cascade */
+      .step:not(.is-passed):not(.active):not(:hover){opacity:.58}
+      .step.is-passed:not(.active):not(:hover){opacity:.86}
+      .step.active,.step:hover{opacity:1}
+      .step-dot{left:0;top:4px;transform:none;width:16px;height:16px}
+      .step.is-passed .step-dot{transform:scale(1.12)}
+      .step:hover .step-dot,.step.active .step-dot{transform:scale(1.38)}
+      .step-num{
+        margin-top:0;margin-bottom:.2rem;padding-left:0;
+        letter-spacing:.24em;font-size:.6875rem
+      }
+      .step.active .step-num{
+        color:var(--accent);text-shadow:0 0 18px rgba(184,184,184,.35)
+      }
+      /* Chapter titles — statement scale on the vertical rail */
       .step-label{
-        margin-top:0;font-size:clamp(1.35rem,6.4vw,1.65rem);letter-spacing:.14em;
-        color:rgba(240,239,233,.68)
+        margin-top:0;font-size:clamp(1.4rem,6.6vw,1.7rem);letter-spacing:.12em;
+        color:rgba(240,239,233,.5)
       }
+      .step.is-passed .step-label{color:rgba(240,239,233,.78)}
       .step.active .step-label{
-        color:var(--accent);transform:none;letter-spacing:.12em;
-        text-shadow:0 0 28px rgba(184,184,184,.35)
+        color:var(--accent);transform:none;letter-spacing:.1em;
+        text-shadow:0 0 28px rgba(184,184,184,.4),0 0 48px rgba(184,184,184,.12)
       }
-      .step-year{font-size:.75rem;letter-spacing:.14em}
+      .step-year{font-size:.75rem;letter-spacing:.14em;margin-top:.5rem}
       /* Always-visible descriptions; 16px+ body on the journey rail */
       .step-desc,.step:hover .step-desc,.step.active .step-desc{
-        max-height:none;opacity:1;margin-top:.7rem;max-width:none;
+        max-height:none;opacity:1;margin-top:.75rem;max-width:none;
         font-size:1rem;line-height:1.68;transform:none
       }
-      .step:not(.active) .step-desc{color:var(--muted);opacity:.9}
-      .step.active .step-desc{color:rgba(240,239,233,.88);opacity:1}
+      .step:not(.active) .step-desc{color:var(--muted);opacity:.88}
+      .step.active .step-desc{color:rgba(240,239,233,.9);opacity:1}
 
       .about{min-height:auto;padding:var(--section-y) var(--pad-x)}
       .about .section-label{margin-bottom:clamp(2.25rem,6vw,2.85rem);font-size:.75rem}
@@ -1548,8 +1614,9 @@
       .project-panel__info{padding:2.15rem 1.15rem 1.45rem}
       .project-panel__num{font-size:clamp(2rem,12vw,2.65rem)}
       .track{gap:2.1rem}
-      .step{padding-left:2.35rem}
-      .step-label{font-size:clamp(1.25rem,6.2vw,1.5rem)}
+      .step{padding-left:2.4rem}
+      .step-label{font-size:clamp(1.28rem,6.3vw,1.52rem)}
+      .step-num{font-size:.625rem}
       .step-desc{font-size:.9375rem}
     }
 
@@ -1599,9 +1666,12 @@
       .preloader-name .pre-char{transform:none!important;opacity:1!important}
       .about-line__inner,.email-char{transform:none!important;opacity:1!important;filter:none!important}
       .about-text em::after{transform:scaleX(1)!important}
-      .step.active .step-dot{animation:none!important}
+      .step.active .step-dot,.step.active .step-dot::after,.timeline-line-fill::after{animation:none!important}
+      .step,.step:not(.is-passed):not(:hover),.step.is-passed:not(.active):not(:hover){opacity:1!important}
       .step-desc{max-height:none!important;opacity:1!important;transform:none!important;margin-top:1.1rem!important}
-      .step-label{transform:none!important}
+      .step-label,.step-num{transform:none!important}
+      .step-num{color:var(--accent)!important}
+      .step{transform:none!important}
       .project-panel__img,.project-panel__placeholder{filter:grayscale(0%)!important;transform:none!important}
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1!important;transform:none!important
@@ -1645,7 +1715,8 @@
       .contact-email::after{transform:scaleX(1)!important}
       .about-text em::after{transform:scaleX(1)!important}
       .step-desc{max-height:none!important;opacity:1!important;transform:none!important;margin-top:1.1rem!important}
-      .step-label{color:var(--accent)!important}
+      .step,.step:not(.is-passed){opacity:1!important}
+      .step-label,.step-num{color:var(--accent)!important}
       .gallery-heading{opacity:1!important}
       .gallery-heading__line{width:100%!important}
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
@@ -1722,26 +1793,30 @@
         <div class="timeline-line-fill" id="timeline-fill"></div>
       </div>
       <!-- Steps omit .reveal — custom GSAP path handler owns entrance; .reveal + clearProps was re-hiding them -->
-      <div class="step" role="listitem">
+      <div class="step" role="listitem" data-chapter="01">
         <div class="step-dot" aria-hidden="true"></div>
+        <div class="step-num" aria-hidden="true">01</div>
         <div class="step-label">FRAMES</div>
         <div class="step-year">2019—2023</div>
         <div class="step-desc">In front of cameras. Modeling taught me composition. Acting taught me timing.</div>
       </div>
-      <div class="step" role="listitem">
+      <div class="step" role="listitem" data-chapter="02">
         <div class="step-dot" aria-hidden="true"></div>
+        <div class="step-num" aria-hidden="true">02</div>
         <div class="step-label">CANVAS</div>
         <div class="step-year">2023—2024</div>
         <div class="step-desc">Graphic design. Logos, brands, visual identity. Making things look the way they feel.</div>
       </div>
-      <div class="step" role="listitem">
+      <div class="step" role="listitem" data-chapter="03">
         <div class="step-dot" aria-hidden="true"></div>
+        <div class="step-num" aria-hidden="true">03</div>
         <div class="step-label">CODE</div>
         <div class="step-year">2024—2026</div>
         <div class="step-desc">I started building. Bots, apps, websites. From Figma to deploy. Everything clicked.</div>
       </div>
-      <div class="step" role="listitem">
+      <div class="step" role="listitem" data-chapter="04">
         <div class="step-dot" aria-hidden="true"></div>
+        <div class="step-num" aria-hidden="true">04</div>
         <div class="step-label">OULU</div>
         <div class="step-year">2026→</div>
         <div class="step-desc">Computer Science at University of Oulu. The work continues.</div>
@@ -2541,7 +2616,7 @@
         );
       });
 
-      /* Steps stagger in as timeline line begins filling — journey chapters.
+      /* Steps stagger in as chapters of a life — doors open left→right / top→bottom.
          Must NOT use .reveal: clearProps would re-apply CSS .reveal{opacity:0} and hide labels. */
       var pathSteps = gsap.utils.toArray('.step');
       var pathSectionEl = document.querySelector('.path');
@@ -2551,20 +2626,23 @@
           /* Kill CSS transition so GSAP opacity/transform aren't double-interpolated (mobile dim rules) */
           el.style.transition = 'none';
         });
-        gsap.set(pathSteps, { y: 68, opacity: 0, filter: 'blur(6px)', force3D: true });
+        gsap.set(pathSteps, {
+          y: 84, opacity: 0, filter: 'blur(10px)', scale: 0.94,
+          force3D: true, transformOrigin: '50% 0%'
+        });
         gsap.to(pathSteps, {
-          y: 0, opacity: 1, filter: 'blur(0px)',
-          duration: 1.2, ease: 'expo.out', stagger: 0.12,
+          y: 0, opacity: 1, filter: 'blur(0px)', scale: 1,
+          duration: 1.32, ease: 'expo.out', stagger: 0.17,
           scrollTrigger: {
             /* Section trigger is more reliable than first step (tall path / mobile rail) */
             trigger: pathSectionEl || pathSteps[0],
-            start: 'top 84%',
+            start: 'top 86%',
             once: true
           },
           onComplete: function () {
-            /* Hand opacity/transform back to CSS (hover lift, mobile dimming).
+            /* Hand opacity/transform back to CSS (hover lift, dormancy dimming, mobile dim).
                Safe now: steps have no .reveal class to re-hide them. */
-            gsap.set(pathSteps, { clearProps: 'filter,opacity,transform' });
+            gsap.set(pathSteps, { clearProps: 'filter,opacity,transform,transformOrigin' });
             pathSteps.forEach(function (el) {
               el.style.transition = '';
             });
@@ -2692,7 +2770,8 @@
 
     /* ── Timeline connecting line + sequential chapter activation ──
        One active chapter at a time, driven by path scroll progress —
-       so the story unfolds left→right (desktop) / top→bottom (mobile line). */
+       story unfolds left→right (desktop) / top→bottom (mobile rail).
+       Fill tip + trail show distance walked; heartbeat marks "you are here". */
     if (typeof ScrollTrigger !== 'undefined') {
       var timelineFill = document.getElementById('timeline-fill');
       var pathSection = document.querySelector('.path');
@@ -2701,29 +2780,38 @@
       function setPathChapter(progress) {
         if (!pathStepsAll.length) return;
         /* Map 0→1 progress to chapter index; last step holds at the end */
-        var idx = Math.min(
-          pathStepsAll.length - 1,
-          Math.floor(progress * pathStepsAll.length)
-        );
-        /* Near-complete fill locks final chapter */
-        if (progress >= 0.92) idx = pathStepsAll.length - 1;
+        var n = pathStepsAll.length;
+        var idx = Math.min(n - 1, Math.floor(progress * n));
+        /* Near-complete fill locks final chapter (OULU holds) */
+        if (progress >= 0.9) idx = n - 1;
+        /* Tiny progress still opens chapter 01 — journey has a front door */
+        if (progress > 0 && progress < 0.02) idx = 0;
         pathStepsAll.forEach(function (step, i) {
           if (i === idx) {
             step.classList.add('active');
             step.classList.add('is-passed');
+            step.setAttribute('aria-current', 'step');
           } else if (i < idx) {
             step.classList.remove('active');
             step.classList.add('is-passed');
+            step.removeAttribute('aria-current');
           } else {
             step.classList.remove('active');
             step.classList.remove('is-passed');
+            step.removeAttribute('aria-current');
           }
         });
       }
 
+      /* Seed first chapter so the path isn't all-dormant before first ST tick */
+      if (pathStepsAll[0] && !isTouch && !isMobile()) {
+        pathStepsAll[0].classList.add('active', 'is-passed');
+        pathStepsAll[0].setAttribute('aria-current', 'step');
+      }
+
       if (timelineFill && pathSection) {
         var tlMm = gsap.matchMedia();
-        /* scrub 0.75 — line glides with soft inertia; chapters still snap on thresholds */
+        /* scrub 0.85 — line glides with soft cinema inertia; chapters snap on thresholds */
         tlMm.add('(max-width: 768px)', function () {
           gsap.set(timelineFill, { width: '100%', height: '0%' });
           var tw = gsap.to(timelineFill, {
@@ -2731,9 +2819,9 @@
             ease: 'none',
             scrollTrigger: {
               trigger: pathSection,
-              start: 'top 72%',
-              end: 'bottom 42%',
-              scrub: 0.75,
+              start: 'top 78%',
+              end: 'bottom 38%',
+              scrub: 0.85,
               /* Touch auto-cycle owns .active on phones; only drive the fill */
               onUpdate: isTouch || isMobile() ? undefined : function (self) {
                 setPathChapter(self.progress);
@@ -2745,6 +2833,7 @@
             gsap.set(timelineFill, { clearProps: 'height,width' });
             pathStepsAll.forEach(function (s) {
               s.classList.remove('active', 'is-passed');
+              s.removeAttribute('aria-current');
             });
           };
         });
@@ -2755,13 +2844,12 @@
             ease: 'none',
             scrollTrigger: {
               trigger: pathSection,
-              start: 'top 72%',
-              end: 'bottom 42%',
-              scrub: 0.75,
+              start: 'top 76%',
+              end: 'bottom 36%',
+              scrub: 0.85,
               onUpdate: function (self) {
                 /* Desktop pointer-fine: sequential chapters via progress.
-                   Touch tablets in landscape: still sequential (no auto-cycle fight
-                   when !isMobile — auto-cycle runs for isTouch || isMobile). */
+                   Touch tablets in landscape: auto-cycle owns .active when isTouch. */
                 if (!isTouch) setPathChapter(self.progress);
               }
             }
@@ -2771,6 +2859,7 @@
             gsap.set(timelineFill, { clearProps: 'height,width' });
             pathStepsAll.forEach(function (s) {
               s.classList.remove('active', 'is-passed');
+              s.removeAttribute('aria-current');
             });
           };
         });
@@ -3345,25 +3434,39 @@
     }
 
     /* ── Touch/mobile: timeline auto-cycle while path is on screen ──
-       Designed vertical journey — one chapter glows at a time. */
+       Vertical journey — one chapter glows; trail marks chapters already told. */
     if (isTouch || isMobile()) {
       var steps = document.querySelectorAll('.step');
       var pathForCycle = document.querySelector('.path');
       var cur = 0;
-      /* Slightly longer dwell so each chapter reads as a beat */
-      var cycleInterval = isMobile() ? 2800 : 3200;
+      /* Longer dwell so each chapter reads as a full beat */
+      var cycleInterval = isMobile() ? 3000 : 3400;
+      var applyCycleChapter = function (idx) {
+        steps.forEach(function (s, i) {
+          s.classList.remove('active');
+          s.removeAttribute('aria-current');
+          if (i < idx) {
+            s.classList.add('is-passed');
+          } else if (i === idx) {
+            s.classList.add('active');
+            s.classList.add('is-passed');
+            s.setAttribute('aria-current', 'step');
+          } else {
+            s.classList.remove('is-passed');
+          }
+        });
+      };
       var cycle = function () {
         if (pathForCycle) {
           var r = pathForCycle.getBoundingClientRect();
           var pathInView = r.top < window.innerHeight * 0.9 && r.bottom > window.innerHeight * 0.12;
           if (!pathInView) return;
         }
-        steps.forEach(function (s) { s.classList.remove('active'); });
-        if (steps[cur]) steps[cur].classList.add('active');
+        applyCycleChapter(cur);
         cur = (cur + 1) % steps.length;
       };
-      if (steps[0]) steps[0].classList.add('active');
-      /* Next tick advances to chapter 1 — avoid double-dwell on FRAMES */
+      /* Open on FRAMES with trail seed; next tick advances to CANVAS */
+      if (steps[0]) applyCycleChapter(0);
       cur = 1;
       setInterval(cycle, cycleInterval);
     }
