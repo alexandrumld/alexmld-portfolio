@@ -231,7 +231,7 @@
       position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
       font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
       color:var(--bg);opacity:0;pointer-events:none;white-space:nowrap;
-      transition:opacity .35s var(--ease-soft);mix-blend-mode:normal
+      transition:opacity .3s var(--ease-soft);mix-blend-mode:normal
     }
     /* Idle pulse via box-shadow — avoids fighting GSAP transform */
     body.cursor--idle .cursor-ring{
@@ -456,15 +456,20 @@
       /* Break out of hero pad-x — name uses nearly full viewport width */
       width:100vw;max-width:100vw;
       margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
-      padding:0 clamp(.6rem,1.6vw,1.25rem);box-sizing:border-box;
-      /* 15.8vw @ 1440 ≈ 228px — fitted to viewport − edge air for 9-letter ALEXANDRU */
-      font-size:clamp(4rem,15.8vw,18.75rem);font-weight:800;
+      padding:0 clamp(.75rem,2vw,1.5rem);box-sizing:border-box;
+      /* 14.2vw — longest word (ALEXANDRU) always fits viewport − pad at all widths */
+      font-size:clamp(3.5rem,14.2vw,16rem);font-weight:800;
       letter-spacing:-.055em;line-height:.74;color:var(--text);
-      text-shadow:
-        0 0 180px rgba(184,184,184,.28),
-        0 0 80px rgba(184,184,184,.14),
-        0 0 24px rgba(184,184,184,.08),
-        0 3px 0 rgba(0,0,0,.22)
+      /* Hard depth only — soft glow lives on ::before so line mask never clips it */
+      text-shadow:0 3px 0 rgba(0,0,0,.22)
+    }
+    /* Unclipped silver bloom — sits behind text, outside overflow-hidden lines */
+    .hero-name::before{
+      content:'';position:absolute;inset:-28% -18%;z-index:0;pointer-events:none;
+      background:
+        radial-gradient(ellipse 58% 48% at 50% 48%,rgba(184,184,184,.32) 0%,rgba(184,184,184,.12) 38%,transparent 72%),
+        radial-gradient(ellipse 80% 62% at 50% 52%,rgba(184,184,184,.1) 0%,transparent 68%);
+      filter:blur(2px)
     }
     /* Signature moment: one silver shear across the name after entrance */
     .hero-name .name-shear{
@@ -493,7 +498,10 @@
       100%{transform:translateX(130%) skewX(-16deg);opacity:0}
     }
     .hero-name .line{
-      display:block;overflow:hidden;white-space:nowrap;
+      display:block;white-space:nowrap;
+      /* Y-axis mask for char rise; horizontal bleed so glyphs never clip at edges */
+      overflow:hidden;
+      clip-path:inset(0 -8% 0 -8%);
       padding-bottom:.05em;margin-bottom:-.05em; /* anti-clip descenders / optical air */
       perspective:900px;transform-style:preserve-3d;position:relative;z-index:1
     }
@@ -569,7 +577,7 @@
     /* Spacer so content scrolls under fixed hero — must match .hero height */
     .hero-spacer{height:100vh;height:100dvh;height:100svh;pointer-events:none}
 
-    /* ── PATH / TIMELINE — elevated cool stage (chapters of a life, not a list) ── */
+    /* ── PATH / TIMELINE — journey through dark space (chapters, not a list) ── */
     .path{
       padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.35);
       background:
@@ -597,71 +605,84 @@
     .path .section-label{text-align:center;margin:0 auto clamp(5.75rem,11vh,8.5rem);display:flex;position:relative;z-index:1}
     .timeline{
       display:flex;justify-content:space-between;align-items:flex-start;position:relative;
-      max-width:1360px;margin:0 auto;padding:0 1.25rem 0.5rem;z-index:1
+      max-width:1360px;margin:0 auto;padding:0 1.25rem 0.5rem;z-index:1;
+      /* Subtle perspective — path recedes into space, not a flat list */
+      perspective:1800px;perspective-origin:50% 0%
     }
     /* Ambient rail glow — path-through-space depth behind the track */
     .timeline::before{
-      content:'';position:absolute;top:11px;left:1.25rem;right:1.25rem;height:2px;
-      background:linear-gradient(90deg,transparent 0%,rgba(184,184,184,.16) 18%,rgba(184,184,184,.2) 50%,rgba(184,184,184,.16) 82%,transparent 100%);
+      content:'';position:absolute;top:11px;left:1.25rem;right:1.25rem;height:3px;
+      background:linear-gradient(90deg,
+        transparent 0%,
+        rgba(184,184,184,.1) 8%,
+        rgba(184,184,184,.2) 28%,
+        rgba(184,184,184,.24) 50%,
+        rgba(184,184,184,.2) 72%,
+        rgba(184,184,184,.1) 92%,
+        transparent 100%);
       box-shadow:
-        0 0 28px 6px rgba(184,184,184,.1),
-        0 0 64px 14px rgba(184,184,184,.055);
-      pointer-events:none;z-index:0
+        0 0 32px 8px rgba(184,184,184,.12),
+        0 0 72px 18px rgba(184,184,184,.06),
+        0 4px 24px rgba(0,0,0,.35);
+      pointer-events:none;z-index:0;
+      border-radius:2px;
+      transform:scaleX(1.01)
     }
     .timeline-line{
       position:absolute;top:11px;left:1.25rem;right:1.25rem;height:2px;
-      background:rgba(240,239,233,.09);overflow:visible;z-index:0
+      background:rgba(240,239,233,.08);overflow:visible;z-index:0;
+      box-shadow:0 1px 0 rgba(0,0,0,.4)
     }
     .timeline-line-fill{
       position:absolute;top:0;left:0;height:100%;width:0%;
       background:linear-gradient(90deg,
-        rgba(184,184,184,.18) 0%,
-        rgba(184,184,184,.75) 22%,
-        var(--accent) 48%,
-        rgba(240,239,233,.98) 78%,
-        rgba(184,184,184,.7) 100%);
+        rgba(184,184,184,.14) 0%,
+        rgba(184,184,184,.7) 18%,
+        var(--accent) 42%,
+        rgba(240,239,233,1) 72%,
+        rgba(184,184,184,.85) 100%);
       box-shadow:
-        0 0 10px rgba(184,184,184,.55),
-        0 0 28px rgba(184,184,184,.35),
-        0 0 52px rgba(184,184,184,.18),
-        0 0 80px rgba(184,184,184,.08);
+        0 0 12px rgba(184,184,184,.6),
+        0 0 32px rgba(184,184,184,.38),
+        0 0 60px rgba(184,184,184,.2),
+        0 0 96px rgba(184,184,184,.1);
       border-radius:1px;will-change:width
     }
     /* Leading tip bloom — living edge of the journey */
     .timeline-line-fill::after{
       content:'';position:absolute;right:0;top:50%;transform:translate(50%,-50%);
-      width:14px;height:14px;border-radius:50%;
-      background:radial-gradient(circle,rgba(240,239,233,1) 0%,rgba(184,184,184,.55) 40%,transparent 72%);
+      width:16px;height:16px;border-radius:50%;
+      background:radial-gradient(circle,rgba(240,239,233,1) 0%,rgba(184,184,184,.6) 36%,transparent 72%);
       box-shadow:
-        0 0 14px rgba(184,184,184,.85),
-        0 0 32px rgba(184,184,184,.45),
-        0 0 56px rgba(184,184,184,.22);
+        0 0 16px rgba(184,184,184,.95),
+        0 0 36px rgba(184,184,184,.5),
+        0 0 64px rgba(184,184,184,.25);
       pointer-events:none;
       animation:pathTipBloomX 1.7s var(--ease-soft) infinite
     }
     @keyframes pathTipBloomX{
       0%,100%{transform:translate(50%,-50%) scale(1);opacity:1}
-      50%{transform:translate(50%,-50%) scale(1.42);opacity:.88}
+      50%{transform:translate(50%,-50%) scale(1.48);opacity:.9}
     }
     /* Chapter column — reserve desc air so switches never jump the rail */
     .step{
-      flex:1;text-align:center;position:relative;padding-top:3.35rem;
-      transition:transform .75s var(--ease),opacity .55s var(--ease);
-      min-height:14.5rem;padding-bottom:1.25rem;z-index:1
+      flex:1;text-align:center;position:relative;padding-top:3.5rem;
+      transition:transform .8s var(--ease),opacity .6s var(--ease),filter .65s var(--ease);
+      min-height:15rem;padding-bottom:1.35rem;z-index:1
     }
-    /* Future chapters sleep; history warms; active is the only lit room */
-    .step:not(.is-passed):not(:hover){opacity:.55}
-    .step.is-passed:not(.active):not(:hover){opacity:.88}
-    .step.active,.step:hover{opacity:1;z-index:2}
-    .step:hover{transform:translateY(-12px)}
-    .step.active{transform:translateY(-6px)}
-    .step.active:hover{transform:translateY(-12px)}
+    /* Future chapters sleep in the dark; history cools; active is the only lit room */
+    .step:not(.is-passed):not(:hover){opacity:.48;filter:brightness(.88)}
+    .step.is-passed:not(.active):not(:hover){opacity:.82;filter:brightness(.94)}
+    .step.active,.step:hover{opacity:1;z-index:2;filter:none}
+    .step:hover{transform:translateY(-14px)}
+    .step.active{transform:translateY(-8px)}
+    .step.active:hover{transform:translateY(-14px)}
     .step-dot{
       position:absolute;top:0;left:50%;transform:translateX(-50%);
       width:18px;height:18px;border-radius:50%;background:var(--bg-void);
-      border:1.5px solid rgba(240,239,233,.28);transition:
-        background .65s var(--ease),border-color .65s var(--ease),
-        box-shadow .65s var(--ease),transform .7s var(--ease);z-index:2
+      border:1.5px solid rgba(240,239,233,.22);transition:
+        background .7s var(--ease),border-color .7s var(--ease),
+        box-shadow .75s var(--ease),transform .75s var(--ease);z-index:2
     }
     /* Hit expand */
     .step-dot::before{
@@ -674,113 +695,129 @@
       transition:border-color .55s var(--ease),opacity .5s var(--ease);
       transform:scale(.35);opacity:0;pointer-events:none
     }
-    /* Passed chapters: luminous trail (story already told) */
+    /* Passed chapters: cooling embers — warm trail of story already told */
     .step.is-passed .step-dot{
-      background:rgba(184,184,184,.55);border-color:rgba(184,184,184,.78);
+      background:rgba(184,184,184,.42);border-color:rgba(184,184,184,.58);
       box-shadow:
-        0 0 12px rgba(184,184,184,.42),
-        0 0 28px rgba(184,184,184,.2),
-        0 0 48px rgba(184,184,184,.08);
-      transform:translateX(-50%) scale(1.18)
+        0 0 8px rgba(184,184,184,.28),
+        0 0 18px rgba(184,184,184,.12),
+        0 0 32px rgba(184,184,184,.05);
+      transform:translateX(-50%) scale(1.1)
     }
     .step.is-passed .step-dot::after{
-      border-color:rgba(184,184,184,.28);transform:scale(.92);opacity:.75
+      border-color:rgba(184,184,184,.18);transform:scale(.85);opacity:.45
     }
-    .step.is-passed .step-num{color:rgba(184,184,184,.5)}
-    .step.is-passed .step-label{color:rgba(240,239,233,.82)}
-    .step.is-passed .step-year{color:rgba(240,239,233,.48)}
+    .step.is-passed .step-num{color:rgba(184,184,184,.42)}
+    .step.is-passed .step-label{color:rgba(240,239,233,.72)}
+    .step.is-passed .step-year{color:rgba(240,239,233,.4)}
+    /* Active / hover: BEACON — stronger, larger, only light on the path */
     .step:hover .step-dot,.step.active .step-dot{
-      background:var(--accent);border-color:rgba(240,239,233,.95);
+      background:var(--accent);border-color:rgba(240,239,233,1);
       box-shadow:
-        0 0 0 6px rgba(184,184,184,.16),
-        0 0 0 14px rgba(184,184,184,.07),
-        0 0 36px rgba(184,184,184,.65),
-        0 0 68px rgba(184,184,184,.3),
-        0 0 100px rgba(184,184,184,.12);
-      transform:translateX(-50%) scale(1.48)
+        0 0 0 7px rgba(184,184,184,.18),
+        0 0 0 18px rgba(184,184,184,.08),
+        0 0 28px rgba(184,184,184,.75),
+        0 0 56px rgba(184,184,184,.4),
+        0 0 96px rgba(184,184,184,.2),
+        0 0 140px rgba(184,184,184,.1);
+      transform:translateX(-50%) scale(1.62)
     }
     .step:hover .step-dot::after{
-      border-color:rgba(184,184,184,.55);transform:scale(1.05);opacity:1
+      border-color:rgba(184,184,184,.6);transform:scale(1.1);opacity:1
     }
-    /* Heartbeat + expanding ripple — chapter is alive (visible at Awwwards distance) */
+    /* Heartbeat + expanding ripple — beacon is alive */
     .step.active .step-dot{
       animation:stepDotPulse 2.05s var(--ease-soft) infinite
     }
     .step.active .step-dot::after{
-      border-color:rgba(184,184,184,.65);
+      border-color:rgba(184,184,184,.75);
       animation:stepRingRipple 2.05s var(--ease-soft) infinite
     }
     @keyframes stepDotPulse{
       0%,100%{
         box-shadow:
-          0 0 0 6px rgba(184,184,184,.16),
-          0 0 0 14px rgba(184,184,184,.07),
-          0 0 36px rgba(184,184,184,.65),
-          0 0 68px rgba(184,184,184,.3),
-          0 0 100px rgba(184,184,184,.12)
+          0 0 0 7px rgba(184,184,184,.18),
+          0 0 0 18px rgba(184,184,184,.08),
+          0 0 28px rgba(184,184,184,.75),
+          0 0 56px rgba(184,184,184,.4),
+          0 0 96px rgba(184,184,184,.2),
+          0 0 140px rgba(184,184,184,.1)
       }
       50%{
         box-shadow:
-          0 0 0 10px rgba(184,184,184,.24),
-          0 0 0 26px rgba(184,184,184,.08),
-          0 0 56px rgba(184,184,184,.85),
-          0 0 96px rgba(184,184,184,.42),
-          0 0 140px rgba(184,184,184,.18)
+          0 0 0 12px rgba(184,184,184,.28),
+          0 0 0 32px rgba(184,184,184,.1),
+          0 0 48px rgba(184,184,184,.95),
+          0 0 88px rgba(184,184,184,.5),
+          0 0 130px rgba(184,184,184,.24),
+          0 0 180px rgba(184,184,184,.12)
       }
     }
     @keyframes stepRingRipple{
-      0%{transform:scale(.55);opacity:.85;border-color:rgba(184,184,184,.7)}
-      65%{transform:scale(2.05);opacity:0;border-color:rgba(184,184,184,.15)}
-      100%{transform:scale(2.05);opacity:0;border-color:transparent}
+      0%{transform:scale(.5);opacity:.9;border-color:rgba(184,184,184,.8)}
+      65%{transform:scale(2.2);opacity:0;border-color:rgba(184,184,184,.12)}
+      100%{transform:scale(2.2);opacity:0;border-color:transparent}
     }
-    /* Chapter index — museum plate above the title */
+    /* Chapter index — museum plate (book chapter stamp) */
     .step-num{
-      font-size:var(--label-size);font-weight:500;
-      letter-spacing:.32em;margin-top:1.45rem;line-height:1;
-      font-variant-numeric:tabular-nums;color:rgba(240,239,233,.28);
-      transition:color .5s var(--ease),text-shadow .55s var(--ease),letter-spacing .55s var(--ease);
-      padding-left:.32em /* optical center for tracked caps */
+      font-size:var(--label-size);font-weight:600;
+      letter-spacing:.36em;margin-top:1.55rem;line-height:1;
+      font-variant-numeric:tabular-nums;color:rgba(240,239,233,.24);
+      transition:color .55s var(--ease),text-shadow .6s var(--ease),letter-spacing .6s var(--ease);
+      padding-left:.36em /* optical center for tracked caps */
     }
     .step:hover .step-num,.step.active .step-num{
-      color:var(--accent);letter-spacing:.28em;
-      text-shadow:0 0 22px rgba(184,184,184,.4)
+      color:var(--accent);letter-spacing:.3em;
+      text-shadow:0 0 28px rgba(184,184,184,.5),0 0 48px rgba(184,184,184,.2)
     }
+    /* Book-chapter titles — dramatic, not list items */
     .step-label{
-      font-size:clamp(1.05rem,1.9vw,1.55rem);font-weight:700;
-      letter-spacing:.22em;margin-top:.55rem;line-height:1.12;
-      transition:color .5s var(--ease),transform .6s var(--ease),letter-spacing .55s var(--ease),text-shadow .55s var(--ease);
-      text-transform:uppercase;color:rgba(240,239,233,.42)
+      font-size:clamp(1.15rem,2.15vw,1.75rem);font-weight:800;
+      letter-spacing:.2em;margin-top:.6rem;line-height:1.08;
+      transition:color .55s var(--ease),transform .7s var(--ease),letter-spacing .6s var(--ease),text-shadow .6s var(--ease);
+      text-transform:uppercase;color:rgba(240,239,233,.38)
     }
     .step:hover .step-label,.step.active .step-label{
       color:var(--accent);
-      transform:scale(1.07);
-      letter-spacing:.16em;
-      text-shadow:0 0 36px rgba(184,184,184,.4),0 0 64px rgba(184,184,184,.15)
+      transform:scale(1.1);
+      letter-spacing:.12em;
+      text-shadow:
+        0 0 40px rgba(184,184,184,.48),
+        0 0 72px rgba(184,184,184,.2),
+        0 2px 0 rgba(0,0,0,.25)
     }
+    /* Year stamp — location mark on the journey */
     .step-year{
-      font-size:var(--label-size);color:rgba(240,239,233,.28);margin-top:.65rem;
-      font-variant-numeric:tabular-nums;letter-spacing:.2em;
-      transition:color .5s var(--ease),opacity .45s var(--ease),letter-spacing .5s var(--ease)
+      font-size:var(--label-size);color:rgba(240,239,233,.24);margin-top:.7rem;
+      font-variant-numeric:tabular-nums;letter-spacing:.24em;font-weight:500;
+      transition:color .55s var(--ease),opacity .5s var(--ease),letter-spacing .55s var(--ease),text-shadow .5s var(--ease)
     }
     .step:hover .step-year,.step.active .step-year{
-      color:rgba(240,239,233,.78);letter-spacing:.18em
+      color:rgba(240,239,233,.82);letter-spacing:.2em;
+      text-shadow:0 0 20px rgba(184,184,184,.2)
     }
+    /* Revealed by path light — soft rise + light wash, not a plain fade */
     .step-desc{
       max-height:0;opacity:0;overflow:hidden;
-      transform:translateY(14px);
+      transform:translateY(18px);
+      filter:brightness(.55);
       transition:
-        max-height .9s var(--ease),
-        opacity .6s var(--ease) .05s,
-        margin .6s var(--ease),
-        transform .7s var(--ease),
-        color .45s var(--ease);
-      font-size:.9375rem;color:var(--muted);line-height:1.72;
-      max-width:255px;margin:0 auto;font-weight:400
+        max-height .95s var(--ease),
+        opacity .7s var(--ease) .06s,
+        margin .65s var(--ease),
+        transform .8s var(--ease),
+        filter .85s var(--ease) .08s,
+        color .5s var(--ease),
+        text-shadow .7s var(--ease);
+      font-size:.9375rem;color:var(--muted);line-height:1.74;
+      max-width:260px;margin:0 auto;font-weight:400
     }
-    /* Journey reveal: active (scroll) + hover — story unfolds, layout reserved */
+    /* Journey reveal: path light finds the words */
     .step:hover .step-desc,.step.active .step-desc{
-      max-height:300px;opacity:1;margin-top:1.35rem;transform:translateY(0);
-      color:rgba(240,239,233,.76)
+      max-height:300px;opacity:1;margin-top:1.4rem;
+      transform:translateY(0);filter:brightness(1);
+      color:rgba(240,239,233,.8);
+      text-shadow:0 0 32px rgba(184,184,184,.08)
     }
 
     /* ── ABOUT — void well (quietest room; pure reflective pause) ──
@@ -824,9 +861,10 @@
       /* Optical lift — cream stays human against cool void */
       text-shadow:0 1px 0 rgba(0,0,0,.18)
     }
-    /* Mask-rise lines — overflow clips the fog emergence */
+    /* Mask-rise lines — Y clip for fog emergence; horizontal bleed prevents edge crop */
     .about-line{
-      display:block;overflow:hidden;margin-top:.48em;padding-bottom:.05em
+      display:block;overflow:hidden;clip-path:inset(0 -2% 0 -2%);
+      margin-top:.48em;padding-bottom:.05em
     }
     .about-line:first-child{margin-top:0}
     /* Final line = the period of the manifesto — one beat of silence above */
@@ -1340,23 +1378,28 @@
     /* MASSIVE closing CTA — fills the stage (cydstumpel / hsmkrt); break into pad air for drama */
     .contact-email{
       --underline:0;
-      /* 12.6vw @ 1440 ≈ 181px; cap keeps 14-char email inside ~100vw − edge air */
-      font-size:clamp(2.85rem,12.6vw,11.25rem);font-weight:300;
-      letter-spacing:-.05em;color:var(--text);
+      /* 11vw — 14-char email always fits viewport − edge air (no horizontal clip) */
+      font-size:clamp(2.4rem,11vw,9.5rem);font-weight:300;
+      letter-spacing:-.048em;color:var(--text);
       display:inline-block;position:relative;
       transition:color .5s var(--ease),filter .5s var(--ease);
       line-height:.9;padding-bottom:.28em;
-      white-space:nowrap;
-      max-width:calc(100vw - 2.5rem);
+      max-width:min(100%,calc(100vw - 2.5rem));
+      box-sizing:border-box;
       min-height:44px;
-      /* Outer glow lives on the container so gradient-clipped chars still bloom */
+      /* Outer glow on container — not clipped by mask overflow */
       filter:
         drop-shadow(0 0 48px rgba(184,184,184,.22))
         drop-shadow(0 0 120px rgba(184,184,184,.14));
       text-shadow:0 2px 0 rgba(0,0,0,.14)
     }
     .contact-email__mask{
-      display:block;overflow:hidden;white-space:nowrap;
+      display:block;
+      /* Y-axis mask for char rise; allow horizontal bleed + wrap on very narrow */
+      overflow:hidden;
+      clip-path:inset(0 -4% 0 -4%);
+      white-space:nowrap;
+      max-width:100%;
       padding-bottom:.06em;margin-bottom:-.03em;
       perspective:1000px;transform-style:preserve-3d
     }
@@ -1483,11 +1526,11 @@
       }
       .hero-label{font-size:.75rem;letter-spacing:.28em;gap:.75rem;margin-bottom:1.85rem}
       .hero-label::before,.hero-label::after{width:1.5rem}
-      /* Full-bleed name on phones — edge air via hero-name padding */
+      /* Full-bleed name on phones — clamp keeps ALEXANDRU inside viewport */
       .hero-name{
-        font-size:clamp(3.25rem,15.6vw,5.85rem);
+        font-size:clamp(2.85rem,13.8vw,5.25rem);
         letter-spacing:-.048em;line-height:.74;
-        padding:0 .55rem
+        padding:0 .65rem
       }
       .hero-role{font-size:clamp(1.25rem,5vw,1.45rem);margin-top:1.65rem}
       .hero-bottom{padding-bottom:max(1.65rem,calc(var(--safe-bottom) + .8rem));gap:.85rem}
@@ -1510,76 +1553,93 @@
       .path{padding:var(--section-y) var(--pad-x) calc(var(--section-y) * 1.2)}
       .path .section-label{margin-bottom:clamp(2.75rem,8.5vw,3.5rem);font-size:.75rem}
       .section-label{font-size:.75rem;letter-spacing:.2em}
-      .timeline{flex-direction:column;gap:3.15rem;padding:0 0 .25rem .35rem}
-      /* Designed vertical journey rail — path through altitude, not a desktop fallback */
+      .timeline{
+        flex-direction:column;gap:3.35rem;padding:0 0 .25rem .4rem;
+        perspective:none
+      }
+      /* Vertical journey rail — path through altitude with depth */
       .timeline::before{
-        top:0;bottom:0;left:8px;right:auto;width:2px;height:auto;
-        background:linear-gradient(180deg,transparent 0%,rgba(184,184,184,.14) 12%,rgba(184,184,184,.18) 50%,rgba(184,184,184,.14) 88%,transparent 100%);
-        box-shadow:0 0 28px 6px rgba(184,184,184,.08),0 0 48px 10px rgba(184,184,184,.04)
+        top:0;bottom:0;left:8px;right:auto;width:3px;height:auto;
+        background:linear-gradient(180deg,
+          transparent 0%,
+          rgba(184,184,184,.12) 8%,
+          rgba(184,184,184,.2) 22%,
+          rgba(184,184,184,.22) 50%,
+          rgba(184,184,184,.2) 78%,
+          rgba(184,184,184,.12) 92%,
+          transparent 100%);
+        box-shadow:
+          0 0 32px 8px rgba(184,184,184,.1),
+          0 0 56px 14px rgba(184,184,184,.05),
+          2px 0 16px rgba(0,0,0,.3);
+        transform:none
       }
       .timeline-line{top:0;bottom:0;left:8px;width:2px;height:auto;right:auto}
       .timeline-line-fill{
         width:100%!important;height:0%;will-change:height;
         background:linear-gradient(180deg,
-          rgba(184,184,184,.22) 0%,
-          rgba(184,184,184,.7) 25%,
-          var(--accent) 55%,
-          rgba(240,239,233,.95) 100%);
+          rgba(184,184,184,.18) 0%,
+          rgba(184,184,184,.7) 22%,
+          var(--accent) 48%,
+          rgba(240,239,233,1) 78%,
+          rgba(184,184,184,.85) 100%);
         box-shadow:
-          0 0 12px rgba(184,184,184,.5),
-          0 0 28px rgba(184,184,184,.22),
-          0 0 48px rgba(184,184,184,.1)
+          0 0 14px rgba(184,184,184,.55),
+          0 0 32px rgba(184,184,184,.28),
+          0 0 56px rgba(184,184,184,.12)
       }
       .timeline-line-fill::after{
         right:auto;left:50%;top:auto;bottom:0;
-        width:14px;height:14px;
+        width:16px;height:16px;
         animation:pathTipBloomY 1.7s var(--ease-soft) infinite
       }
       @keyframes pathTipBloomY{
         0%,100%{transform:translate(-50%,50%) scale(1);opacity:1}
-        50%{transform:translate(-50%,50%) scale(1.42);opacity:.88}
+        50%{transform:translate(-50%,50%) scale(1.48);opacity:.9}
       }
       .step{
-        text-align:left;padding:0 0 0 2.85rem;
+        text-align:left;padding:0 0 0 2.95rem;
         min-height:0;padding-bottom:0;
         /* No !important on base transform — GSAP owns entrance y/scale */
-        transition:opacity .55s var(--ease)
+        transition:opacity .6s var(--ease),filter .6s var(--ease)
       }
       /* Kill desktop lift on touch layouts after CSS takes over from GSAP */
       .step:hover,.step.active,.step.active:hover,.step.is-passed{transform:none}
-      /* Future / history / present — vertical chapter rhythm
-         :not(:hover) matches desktop specificity so mobile dims win the cascade */
-      .step:not(.is-passed):not(.active):not(:hover){opacity:.58}
-      .step.is-passed:not(.active):not(:hover){opacity:.86}
-      .step.active,.step:hover{opacity:1}
-      .step-dot{left:0;top:4px;transform:none;width:16px;height:16px}
-      .step.is-passed .step-dot{transform:scale(1.12)}
-      .step:hover .step-dot,.step.active .step-dot{transform:scale(1.38)}
+      /* Future / history / present — vertical chapter rhythm */
+      .step:not(.is-passed):not(.active):not(:hover){opacity:.5;filter:brightness(.9)}
+      .step.is-passed:not(.active):not(:hover){opacity:.84;filter:brightness(.95)}
+      .step.active,.step:hover{opacity:1;filter:none}
+      .step-dot{left:0;top:4px;transform:none;width:17px;height:17px}
+      .step.is-passed .step-dot{transform:scale(1.08)}
+      .step:hover .step-dot,.step.active .step-dot{transform:scale(1.48)}
       .step-num{
-        margin-top:0;margin-bottom:.2rem;padding-left:0;
-        letter-spacing:.24em;font-size:.6875rem
+        margin-top:0;margin-bottom:.22rem;padding-left:0;
+        letter-spacing:.28em;font-size:.6875rem
       }
       .step.active .step-num{
-        color:var(--accent);text-shadow:0 0 18px rgba(184,184,184,.35)
+        color:var(--accent);text-shadow:0 0 22px rgba(184,184,184,.4)
       }
-      /* Chapter titles — statement scale on the vertical rail */
+      /* Chapter titles — book-scale on the vertical rail */
       .step-label{
-        margin-top:0;font-size:clamp(1.4rem,6.6vw,1.7rem);letter-spacing:.12em;
-        color:rgba(240,239,233,.5)
+        margin-top:0;font-size:clamp(1.45rem,6.8vw,1.8rem);letter-spacing:.1em;
+        color:rgba(240,239,233,.48);font-weight:800
       }
-      .step.is-passed .step-label{color:rgba(240,239,233,.78)}
+      .step.is-passed .step-label{color:rgba(240,239,233,.74)}
       .step.active .step-label{
-        color:var(--accent);transform:none;letter-spacing:.1em;
-        text-shadow:0 0 28px rgba(184,184,184,.4),0 0 48px rgba(184,184,184,.12)
+        color:var(--accent);transform:none;letter-spacing:.08em;
+        text-shadow:0 0 32px rgba(184,184,184,.45),0 0 56px rgba(184,184,184,.15)
       }
-      .step-year{font-size:.75rem;letter-spacing:.14em;margin-top:.5rem}
-      /* Always-visible descriptions; 16px+ body on the journey rail */
+      .step-year{font-size:.75rem;letter-spacing:.16em;margin-top:.55rem}
+      /* Always-visible descriptions lit by the path */
       .step-desc,.step:hover .step-desc,.step.active .step-desc{
-        max-height:none;opacity:1;margin-top:.75rem;max-width:none;
-        font-size:1rem;line-height:1.68;transform:none
+        max-height:none;opacity:1;margin-top:.8rem;max-width:none;
+        font-size:1rem;line-height:1.7;transform:none;filter:none
       }
-      .step:not(.active) .step-desc{color:var(--muted);opacity:.88}
-      .step.active .step-desc{color:rgba(240,239,233,.9);opacity:1}
+      .step:not(.active) .step-desc{color:var(--muted);opacity:.86}
+      .step.active .step-desc{
+        color:rgba(240,239,233,.9);opacity:1;
+        text-shadow:0 0 28px rgba(184,184,184,.06)
+      }
 
       .about{
         min-height:auto;
@@ -1691,12 +1751,13 @@
 
       .contact{min-height:auto;padding:var(--section-y) var(--pad-x) max(4.75rem,calc(var(--safe-bottom) + 3.75rem))}
       .contact .section-label{font-size:.75rem;margin-bottom:clamp(1.85rem,5.5vw,2.5rem);letter-spacing:.36em}
-      /* Full-width tappable CTA — statement type still ~42px @ 375, single line */
+      /* Full-width tappable CTA — fits 14-char email without clip at 320–414 */
       .contact-email{
-        font-size:clamp(1.75rem,11.2vw,3rem);letter-spacing:-.032em;
+        font-size:clamp(1.55rem,9.8vw,2.65rem);letter-spacing:-.032em;
         min-height:52px;padding:.8rem .25rem;max-width:100%;
         display:inline-flex;align-items:center;justify-content:center;
-        width:100%;box-sizing:border-box;line-height:.92
+        width:100%;box-sizing:border-box;line-height:.92;
+        white-space:nowrap
       }
       .contact-links{
         gap:clamp(1.35rem,5.5vw,2.25rem);flex-wrap:wrap;margin-top:2.65rem;
@@ -1714,7 +1775,7 @@
     @media(max-width:380px){
       :root{--pad-x:1.1rem;--body-size:1rem}
       /* Compact phones — keep full name legible */
-      .hero-name{font-size:clamp(3rem,15.2vw,4.1rem);line-height:.74;letter-spacing:-.045em;padding:0 .45rem}
+      .hero-name{font-size:clamp(2.65rem,13.2vw,3.75rem);line-height:.74;letter-spacing:-.045em;padding:0 .55rem}
       .hero-role{font-size:clamp(1.15rem,5.2vw,1.3rem)}
       .hero-location{letter-spacing:.1em;font-size:.6875rem}
       .hero-location::before,.hero-location::after{display:none}
@@ -1725,7 +1786,11 @@
       .about-text{font-size:clamp(1.55rem,11.5vw,2.55rem);line-height:1.4}
       .about-line:last-child{margin-top:.85em}
       .about-rule{width:36px;margin-top:1.85rem}
-      .contact-email{font-size:clamp(1.55rem,11vw,2.45rem);letter-spacing:-.028em}
+      .contact-email{
+        font-size:clamp(1.4rem,9.5vw,2.2rem);letter-spacing:-.028em;
+        white-space:normal;word-break:break-word
+      }
+      .contact-email__mask{white-space:normal}
       .contact-links{gap:1.1rem;font-size:.75rem;letter-spacing:.16em}
       .project-panel__title{font-size:clamp(1.95rem,12vw,2.55rem)}
       .project-panel__info{padding:2.15rem 1.15rem 1.45rem}
@@ -1745,8 +1810,8 @@
       }
       .timeline{max-width:1480px}
       .about-text{max-width:min(24em,1080px);font-size:clamp(1.95rem,2.9vw,3.55rem)}
-      .hero-name{font-size:clamp(4rem,14.2vw,20rem);letter-spacing:-.055em}
-      .contact-email{font-size:clamp(3rem,11.2vw,12rem)}
+      .hero-name{font-size:clamp(4rem,12.5vw,15rem);letter-spacing:-.055em}
+      .contact-email{font-size:clamp(3rem,9.5vw,10rem)}
       .project-panel{height:min(84vh,960px)}
     }
 
@@ -1785,11 +1850,12 @@
       .about-text em::after{transform:scaleX(1)!important}
       .about-rule{opacity:1!important;transform:scaleX(1)!important}
       .step.active .step-dot,.step.active .step-dot::after,.timeline-line-fill::after{animation:none!important}
-      .step,.step:not(.is-passed):not(:hover),.step.is-passed:not(.active):not(:hover){opacity:1!important}
-      .step-desc{max-height:none!important;opacity:1!important;transform:none!important;margin-top:1.1rem!important}
+      .step,.step:not(.is-passed):not(:hover),.step.is-passed:not(.active):not(:hover){opacity:1!important;filter:none!important}
+      .step-desc{max-height:none!important;opacity:1!important;transform:none!important;filter:none!important;margin-top:1.1rem!important}
       .step-label,.step-num{transform:none!important}
       .step-num{color:var(--accent)!important}
-      .step{transform:none!important}
+      .step{transform:none!important;filter:none!important}
+      .hero-name::before{opacity:.85!important;filter:none!important}
       .project-panel__img,.project-panel__placeholder{filter:grayscale(0%)!important;transform:none!important}
       .project-panel__info,.project-panel__title,.project-panel__meta,.project-panel__desc{
         opacity:1!important;transform:none!important
@@ -2407,33 +2473,37 @@
       window.addEventListener('mouseup', function () { ringScale(1); });
     }
 
-    /* ── Magnetic links — CTA pulls harder than nav; subtle scale under pull ── */
+    /* ── Magnetic links — soft 4–6px pull with lag (never snappy) ── */
     if (!isTouch) {
       document.querySelectorAll('[data-magnetic]').forEach(function (el) {
         var isCta = el.classList.contains('contact-email');
-        var pull = isCta ? 0.55 : 0.34;
-        var scaleAmt = isCta ? 1.038 : 1.045;
-        /* 0.3s pull = tactile magnet; slower feels sluggish */
-        var xTo = gsap.quickTo(el, 'x', { duration: 0.3, ease: 'power3.out' });
-        var yTo = gsap.quickTo(el, 'y', { duration: 0.3, ease: 'power3.out' });
-        var sTo = gsap.quickTo(el, 'scale', { duration: 0.3, ease: 'power3.out' });
+        var pull = isCta ? 0.12 : 0.1;
+        var maxPull = isCta ? 6 : 4.5;
+        var scaleAmt = isCta ? 1.02 : 1.028;
+        /* 0.45s lag — velvet magnet, not a jump */
+        var xTo = gsap.quickTo(el, 'x', { duration: 0.45, ease: 'power3.out' });
+        var yTo = gsap.quickTo(el, 'y', { duration: 0.45, ease: 'power3.out' });
+        var sTo = gsap.quickTo(el, 'scale', { duration: 0.4, ease: 'power3.out' });
 
         el.addEventListener('mousemove', function (e) {
           var rect = el.getBoundingClientRect();
           var x = e.clientX - rect.left - rect.width / 2;
           var y = e.clientY - rect.top - rect.height / 2;
-          xTo(x * pull);
-          yTo(y * pull);
+          var dx = Math.max(-maxPull, Math.min(maxPull, x * pull));
+          var dy = Math.max(-maxPull, Math.min(maxPull, y * pull));
+          xTo(dx);
+          yTo(dy);
           sTo(scaleAmt);
         });
         el.addEventListener('mouseleave', function () {
-          /* Damped elastic settle — present, not cartoon */
+          /* Soft settle — no elastic snap */
           gsap.to(el, {
             x: 0,
             y: 0,
             scale: 1,
-            duration: 0.72,
-            ease: 'elastic.out(1.05, 0.38)'
+            duration: 0.55,
+            ease: 'power3.out',
+            overwrite: 'auto'
           });
         });
       });
@@ -3027,7 +3097,7 @@
 
       if (timelineFill && pathSection) {
         var tlMm = gsap.matchMedia();
-        /* scrub 0.85 — line glides with soft cinema inertia; chapters snap on thresholds */
+        /* scrub 1 — line glides with soft cinema inertia; chapters open on thresholds */
         tlMm.add('(max-width: 768px)', function () {
           gsap.set(timelineFill, { width: '100%', height: '0%' });
           var tw = gsap.to(timelineFill, {
@@ -3037,7 +3107,7 @@
               trigger: pathSection,
               start: 'top 78%',
               end: 'bottom 38%',
-              scrub: 0.85,
+              scrub: 1,
               /* Touch auto-cycle owns .active on phones; only drive the fill */
               onUpdate: isTouch || isMobile() ? undefined : function (self) {
                 setPathChapter(self.progress);
@@ -3062,7 +3132,7 @@
               trigger: pathSection,
               start: 'top 76%',
               end: 'bottom 36%',
-              scrub: 0.85,
+              scrub: 1,
               onUpdate: function (self) {
                 /* Desktop pointer-fine: sequential chapters via progress.
                    Touch tablets in landscape: auto-cycle owns .active when isTouch. */
@@ -3211,7 +3281,7 @@
             })
           : null;
 
-        /* scrub 0.85 + fastScrollEnd — velvet museum glide; no sticky lag on exit */
+        /* scrub 1 — velvet museum glide; no fastScrollEnd snap on exit */
         var horizontalTween = gsap.to(track, {
           x: getScrollDistance,
           ease: 'none',
@@ -3220,8 +3290,7 @@
             start: 'top top',
             end: function () { return '+=' + getPinScrollLength(); },
             pin: true,
-            scrub: 0.85,
-            fastScrollEnd: true,
+            scrub: 1,
             invalidateOnRefresh: true,
             anticipatePin: 1
           }
@@ -3237,7 +3306,7 @@
             trigger: stickyTrack,
             start: 'top top',
             end: function () { return '+=' + getPinScrollLength(); },
-            scrub: 0.85,
+            scrub: 1,
             invalidateOnRefresh: true
           }
         });
@@ -3443,7 +3512,7 @@
     });
 
     /* ── 3D panel hover tilt + cursor specular (desktop) ──
-       Single gsap.to for combined transform — keeps matrix3d coherent.
+       quickTo lag — tilt follows cursor smoothly, never snaps.
        Specular light tracks pointer via --spec-x / --spec-y on img-wrap. */
     if (!isTouch && typeof ScrollTrigger !== 'undefined') {
       gsap.matchMedia().add('(min-width: 769px)', function () {
@@ -3459,19 +3528,13 @@
             transformOrigin: '50% 50%'
           });
 
-          function tiltTo(vars) {
-            var cfg = {
-              duration: 0.32,
-              ease: 'power3.out',
-              overwrite: 'auto',
-              force3D: true
-            };
-            var k;
-            for (k in vars) {
-              if (Object.prototype.hasOwnProperty.call(vars, k)) cfg[k] = vars[k];
-            }
-            gsap.to(imgWrap, cfg);
-          }
+          /* 0.5s lag — velvet 3D follow; max ~12° so near-edge hover stays calm */
+          var rotYTo = gsap.quickTo(imgWrap, 'rotateY', { duration: 0.5, ease: 'power3.out' });
+          var rotXTo = gsap.quickTo(imgWrap, 'rotateX', { duration: 0.5, ease: 'power3.out' });
+          var scaleTo = gsap.quickTo(imgWrap, 'scale', { duration: 0.48, ease: 'power3.out' });
+          var zTo = gsap.quickTo(imgWrap, 'z', { duration: 0.48, ease: 'power3.out' });
+          var xTo = gsap.quickTo(imgWrap, 'x', { duration: 0.5, ease: 'power3.out' });
+          var yTo = gsap.quickTo(imgWrap, 'y', { duration: 0.5, ease: 'power3.out' });
 
           function setSpecular(e) {
             var rect = panel.getBoundingClientRect();
@@ -3484,36 +3547,30 @@
 
           function onEnter(e) {
             setSpecular(e);
-            tiltTo({ scale: 1.12, z: 28 });
+            scaleTo(1.08);
+            zTo(22);
           }
           function onMove(e) {
             var rect = panel.getBoundingClientRect();
             var x = (e.clientX - rect.left) / rect.width - 0.5;
             var y = (e.clientY - rect.top) / rect.height - 0.5;
             setSpecular(e);
-            /* Real dimensional depth — not a polite card tilt */
-            tiltTo({
-              rotateY: x * 22,
-              rotateX: -y * 16,
-              scale: 1.16,
-              z: 56,
-              x: x * 26,
-              y: y * 22
-            });
+            rotYTo(x * 12);
+            rotXTo(-y * 10);
+            scaleTo(1.1);
+            zTo(36);
+            xTo(x * 12);
+            yTo(y * 10);
           }
           function onLeave() {
             imgWrap.style.setProperty('--spec-x', '50%');
             imgWrap.style.setProperty('--spec-y', '42%');
-            tiltTo({
-              rotateY: 0,
-              rotateX: 0,
-              scale: 1,
-              z: 0,
-              x: 0,
-              y: 0,
-              duration: 0.65,
-              ease: 'power2.out'
-            });
+            rotYTo(0);
+            rotXTo(0);
+            scaleTo(1);
+            zTo(0);
+            xTo(0);
+            yTo(0);
           }
 
           panel.addEventListener('mouseenter', onEnter);
