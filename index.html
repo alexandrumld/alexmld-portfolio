@@ -12,9 +12,14 @@
   <meta property="og:description" content="Designer & Developer. Târgu Mureș → Oulu, Finland.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://alexandrumld.github.io/alexmld-portfolio/">
+  <meta property="og:image" content="https://alexandrumld.github.io/alexmld-portfolio/assets/projects/gentsclub.jpg">
+  <meta property="og:image:alt" content="GentsClub — selected work by Alex Moldovan">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Alex Moldovan — Designer & Developer">
   <meta name="twitter:description" content="Designer & Developer. Târgu Mureș → Oulu, Finland.">
+  <meta name="twitter:image" content="https://alexandrumld.github.io/alexmld-portfolio/assets/projects/gentsclub.jpg">
+  <link rel="canonical" href="https://alexandrumld.github.io/alexmld-portfolio/">
   <title>Alex Moldovan — Designer & Developer</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -181,14 +186,13 @@
         radial-gradient(ellipse 42% 58% at 100% 50%,rgba(0,0,0,.2),transparent 62%);
       opacity:calc(.72 + var(--scroll-p) * .16)
     }
-    /* Film grain — 4–6% range; scroll-drift via GPU transform */
+    /* Film grain — 4–6% range; scroll-drift via CSS var (no permanent will-change layer tax) */
     .grain{
       position:fixed;inset:-22%;z-index:9998;pointer-events:none;opacity:.055;
       background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
       background-repeat:repeat;background-size:160px 160px;
       mix-blend-mode:overlay;
-      transform:translate3d(calc(var(--scroll-p) * -40px),calc(var(--scroll-p) * 72px),0);
-      will-change:transform
+      transform:translate3d(calc(var(--scroll-p) * -40px),calc(var(--scroll-p) * 72px),0)
     }
 
     /* ── SCROLL PROGRESS ── */
@@ -343,6 +347,8 @@
 
     /* ── SHARED ── */
     section{position:relative}
+    /* Skip/nav landings — clear the fixed corner chrome without shifting composition */
+    #path,#about,#work,#contact{scroll-margin-top:max(1.25rem,var(--safe-top))}
     .section-label{
       font-size:var(--label-size);letter-spacing:var(--label-track);font-weight:500;
       color:var(--muted);text-transform:uppercase;
@@ -987,7 +993,14 @@
       content:'';position:absolute;z-index:4;pointer-events:none;
       width:1.15rem;height:1.15rem;
       border-color:rgba(184,184,184,.22);border-style:solid;
-      opacity:.55;transition:opacity .6s var(--ease),border-color .6s var(--ease)
+      opacity:.55;transition:opacity .6s var(--ease),border-color .6s var(--ease),
+        width .6s var(--ease),height .6s var(--ease)
+    }
+    .project-panel:hover::before,.project-panel.is-hovered::before,
+    .project-panel.is-focused::before,.project-panel:focus-visible::before,
+    .project-panel:hover::after,.project-panel.is-hovered::after,
+    .project-panel.is-focused::after,.project-panel:focus-visible::after{
+      width:1.35rem;height:1.35rem
     }
     .project-panel::before{
       top:.85rem;left:.85rem;border-width:1px 0 0 1px
@@ -1002,6 +1015,8 @@
       opacity:1;border-color:rgba(184,184,184,.55)
     }
     .project-panel[data-url]{cursor:pointer}
+    /* Sealed / non-link exhibits — browsable, never a false link affordance */
+    .project-panel:not([data-url]),.project-panel--soon{cursor:default}
     /* Neighbors recede hard — center panel owns the room */
     @media(min-width:769px) and (hover:hover){
       .track:has(.project-panel.is-focused) .project-panel:not(.is-focused):not(:hover):not(.is-hovered):not(:focus-visible){
@@ -1482,7 +1497,6 @@
       .scroll-hint span{font-size:.625rem;letter-spacing:.36em}
       .scroll-line{height:36px;margin-top:12px}
       /* Lighter GPU: slower glow drift on phones */
-      /* Lighter GPU: slower glow drift on phones */
       .hero-glow::before{animation-duration:28s}
       .hero-glow::after{animation-duration:22s}
       .contact-glow::before{animation-duration:26s}
@@ -1634,6 +1648,12 @@
       }
       .project-panel.is-pressed{transform:scale(.978)}
       .project-panel[data-url]{cursor:pointer;-webkit-tap-highlight-color:transparent}
+      .project-panel:not([data-url]),.project-panel--soon{cursor:default;-webkit-tap-highlight-color:transparent}
+      /* Keyboard / assistive focus on stacked exhibits — full info always on, ring still clear */
+      .project-panel:focus-visible{
+        border-color:rgba(184,184,184,.42);
+        box-shadow:0 24px 56px rgba(0,0,0,.5),0 0 0 1px rgba(184,184,184,.22),0 0 0 3px rgba(8,8,9,.95),0 0 0 5px var(--accent)
+      }
       .project-panel__img-wrap{transform-style:flat;border-radius:11px}
       .project-panel__img-wrap::after{display:none} /* no specular on touch */
       .project-panel__img-wrap::before{opacity:.4}
@@ -1699,8 +1719,9 @@
       .hero-location{letter-spacing:.1em;font-size:.6875rem}
       .hero-location::before,.hero-location::after{display:none}
       .preloader-count{font-size:clamp(3.75rem,24vw,5.5rem)}
-      .nav{gap:.35rem;font-size:.6875rem;letter-spacing:.06em}
-      .nav a{padding:.6rem .15rem;min-height:44px;min-width:44px}
+      /* Keep ≥44px hit targets; slightly more letter air so 4 labels still read as UI */
+      .nav{gap:.4rem;font-size:.6875rem;letter-spacing:.08em}
+      .nav a{padding:.6rem .2rem;min-height:44px;min-width:44px}
       .about-text{font-size:clamp(1.55rem,11.5vw,2.55rem);line-height:1.4}
       .about-line:last-child{margin-top:.85em}
       .about-rule{width:36px;margin-top:1.85rem}
@@ -1984,8 +2005,8 @@
           </div>
         </article>
 
-        <!-- 03 FRIENDBY — intentional teaser (no live URL), not focusable as a link -->
-        <article class="project-panel project-panel--soon" aria-label="Friendby — social discovery app, coming soon">
+        <!-- 03 FRIENDBY — intentional teaser (no live URL); focusable for info, not a link -->
+        <article class="project-panel project-panel--soon" tabindex="0" aria-label="Friendby — social discovery app, coming soon">
           <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">03</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
             <div class="project-panel__placeholder" role="img" aria-label="Friendby abstract gradient teaser"></div>
@@ -2001,8 +2022,8 @@
           </div>
         </article>
 
-        <!-- 04 WHUMPLE — no live URL yet, not focusable as a link -->
-        <article class="project-panel" aria-label="Whumple — Discord bot platform">
+        <!-- 04 WHUMPLE — no live URL yet; focusable for info reveal, not a link -->
+        <article class="project-panel" tabindex="0" aria-label="Whumple — Discord bot platform">
           <div class="project-panel__number" aria-hidden="true"><span class="project-panel__num">04</span><span class="project-panel__num-total">/ 05</span></div>
           <div class="project-panel__img-wrap">
             <img class="project-panel__img" src="assets/projects/whumple.jpg" alt="Whumple website screenshot" loading="lazy" decoding="async" width="900" height="1200" sizes="(max-width:768px) 92vw, min(42vw, 660px)">
@@ -2144,10 +2165,33 @@
       });
     }
 
+    /* Deep-link after load (and after preloader when motion runs) */
+    function honorHash(behavior) {
+      var hash = window.location.hash;
+      if (!hash || hash === '#' || hash === '#home') {
+        if (hash === '#home') {
+          if (lenis) lenis.scrollTo(0, { offset: 0 });
+          else window.scrollTo({ top: 0, behavior: behavior || 'auto' });
+        }
+        return;
+      }
+      var target = document.querySelector(hash);
+      if (!target) return;
+      var scrollBehavior = behavior || 'auto';
+      /* Fixed hero: #home handled above; other ids are real document flow */
+      if (lenis) {
+        lenis.scrollTo(target, { offset: 0 });
+      } else {
+        target.scrollIntoView({ behavior: scrollBehavior });
+      }
+    }
+
     /* ── Reduced motion: instant content, no motion systems ── */
     if (prm) {
       showAllContent();
       bindBasicInteractions('auto');
+      honorHash('auto');
+      window.addEventListener('hashchange', function () { honorHash('auto'); });
       return;
     }
 
@@ -2155,6 +2199,8 @@
     if (typeof gsap === 'undefined') {
       showAllContent();
       bindBasicInteractions('smooth');
+      honorHash('smooth');
+      window.addEventListener('hashchange', function () { honorHash('smooth'); });
       return;
     }
 
@@ -2321,20 +2367,27 @@
         var isInteractive = el.closest('a, button, [data-magnetic]');
 
         panels.forEach(function (p) {
-          if (p === hoveredPanel) p.classList.add('is-hovered');
+          /* Keep keyboard focus exhibit lit — mousemove must not strip :focus-visible */
+          if (p === hoveredPanel || p === document.activeElement) p.classList.add('is-hovered');
           else p.classList.remove('is-hovered');
         });
 
         document.body.classList.remove('cursor--link', 'cursor--panel', 'cursor--soon');
 
         if (hoveredPanel && hoveredPanel.getAttribute('data-url')) {
+          /* Live project — enter the room */
           document.body.classList.add('cursor--panel');
           if (cursorLabel) cursorLabel.textContent = 'VIEW';
           if (isIdle) { document.body.classList.remove('cursor--idle'); isIdle = false; }
-        } else if (hoveredPanel) {
-          /* Panels without live URL — SOON label */
+        } else if (hoveredPanel && hoveredPanel.classList.contains('project-panel--soon')) {
+          /* Sealed upcoming exhibit */
           document.body.classList.add('cursor--soon');
           if (cursorLabel) cursorLabel.textContent = 'SOON';
+          if (isIdle) { document.body.classList.remove('cursor--idle'); isIdle = false; }
+        } else if (hoveredPanel) {
+          /* Built work without public URL — museum look, not a false promise */
+          document.body.classList.add('cursor--soon');
+          if (cursorLabel) cursorLabel.textContent = 'LOOK';
           if (isIdle) { document.body.classList.remove('cursor--idle'); isIdle = false; }
         } else if (isInteractive) {
           document.body.classList.add('cursor--link');
@@ -2585,6 +2638,10 @@
               }, { once: true });
             }
           });
+        }
+        /* Honor deep links only after the curtain rises (hash survives preloader) */
+        if (window.location.hash && window.location.hash !== '#home') {
+          gsap.delayedCall(0.05, function () { honorHash('auto'); });
         }
       }
     });
@@ -3097,6 +3154,28 @@
       });
     }
 
+    /* Horizontal pin ST — exposed for keyboard focus → room centering */
+    var galleryPinST = null;
+    var galleryGetScrollDistance = null;
+
+    function scrollGalleryToPanel(panel) {
+      if (!panel || !galleryPinST || !galleryGetScrollDistance || !track) return;
+      if (isMobile() || window.innerWidth < 769) return;
+      var travel = Math.abs(galleryGetScrollDistance());
+      if (travel <= 0) return;
+      /* Live geometry: account for current track x, then center the exhibit */
+      var currentX = 0;
+      try { currentX = parseFloat(gsap.getProperty(track, 'x')) || 0; } catch (err) { currentX = 0; }
+      var rect = panel.getBoundingClientRect();
+      var delta = (rect.left + rect.width / 2) - (window.innerWidth / 2);
+      var targetX = Math.max(-travel, Math.min(0, currentX - delta));
+      var progress = travel > 0 ? Math.abs(targetX) / travel : 0;
+      progress = Math.max(0, Math.min(1, progress));
+      var y = galleryPinST.start + (galleryPinST.end - galleryPinST.start) * progress;
+      if (lenis) lenis.scrollTo(y, { offset: 0, immediate: false });
+      else window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
     /* ── Horizontal scroll gallery (desktop) ──
        Root cause of the shortfall bug: overflow-x:hidden on html/body broke
        position:sticky, so the track scrolled away vertically before X finished.
@@ -3110,6 +3189,7 @@
           var dist = track.scrollWidth - window.innerWidth;
           return dist > 0 ? -dist : 0;
         }
+        galleryGetScrollDistance = getScrollDistance;
 
         function getPinScrollLength() {
           /* Slightly longer than travel — museum linger so each room can breathe.
@@ -3146,6 +3226,7 @@
             anticipatePin: 1
           }
         });
+        galleryPinST = horizontalTween.scrollTrigger;
 
         /* Parallax — depth on images (img is 120% tall; hover scale is separate) */
         var panelImgs = document.querySelectorAll('.project-panel__img, .project-panel__placeholder');
@@ -3288,6 +3369,8 @@
         return function () {
           if (horizontalTween.scrollTrigger) horizontalTween.scrollTrigger.kill();
           horizontalTween.kill();
+          galleryPinST = null;
+          galleryGetScrollDistance = null;
           if (parallaxTween.scrollTrigger) parallaxTween.scrollTrigger.kill();
           parallaxTween.kill();
           if (entranceTween.scrollTrigger) entranceTween.scrollTrigger.kill();
@@ -3348,10 +3431,11 @@
       });
     }
 
-    /* Keyboard: focus-visible already styles panels; keep is-hovered for cursorless environments */
+    /* Keyboard: focus-visible styles + is-hovered; center exhibit in the pinned museum */
     panels.forEach(function (panel) {
       panel.addEventListener('focus', function () {
         panel.classList.add('is-hovered');
+        scrollGalleryToPanel(panel);
       });
       panel.addEventListener('blur', function () {
         panel.classList.remove('is-hovered');
@@ -3648,6 +3732,11 @@
       if (e.persisted && typeof ScrollTrigger !== 'undefined') {
         ScrollTrigger.refresh();
       }
+    });
+
+    /* In-page hash changes (share links, browser history) after boot */
+    window.addEventListener('hashchange', function () {
+      honorHash(lenis ? 'auto' : 'smooth');
     });
 
     /* Non-critical: refresh ST after idle so late font/layout settle doesn't jank intro */
