@@ -371,9 +371,6 @@
     }
     .reveal{opacity:0}
     .char{display:inline-block;will-change:transform,opacity}
-    .about-line{display:block;overflow:hidden;margin-top:.38em;padding-bottom:.04em}
-    .about-line:first-child{margin-top:0}
-    .about-line__inner{display:inline-block;will-change:transform,opacity,filter}
     .email-char{display:inline-block;will-change:transform,opacity}
 
     /* ── HERO — silver bloom stage (opening light in the dark) ── */
@@ -780,54 +777,92 @@
       color:rgba(240,239,233,.76)
     }
 
-    /* ── ABOUT — void well (quietest room; pure reflective pause) ── */
+    /* ── ABOUT — void well (quietest room; pure reflective pause) ──
+       Deeper hush than path, softer than gallery black: a single candle of type
+       in near-total quiet. Manifesto scale, museum negative space, no UI clutter. */
     .about{
       min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;
-      align-items:center;padding:calc(var(--section-y) * 1.05) var(--pad-x);
+      align-items:center;padding:calc(var(--section-y) * 1.12) var(--pad-x) calc(var(--section-y) * 1.2);
       text-align:center;position:relative;z-index:3;
+      /* Barely-there silver breath — quiet enough to hear the words */
       background:
-        radial-gradient(ellipse 50% 40% at 50% 48%,rgba(184,184,184,.055),transparent 64%),
-        radial-gradient(ellipse 90% 70% at 50% 50%,rgba(184,184,184,.014),transparent 74%),
-        radial-gradient(ellipse 100% 42% at 50% 0%,rgba(10,16,24,.5),transparent 55%),
-        radial-gradient(ellipse 100% 42% at 50% 100%,rgba(1,1,1,.85),transparent 55%),
+        radial-gradient(ellipse 42% 34% at 50% 48%,rgba(184,184,184,.028),transparent 68%),
+        radial-gradient(ellipse 88% 72% at 50% 52%,rgba(184,184,184,.008),transparent 78%),
+        radial-gradient(ellipse 100% 48% at 50% 0%,rgba(8,10,14,.55),transparent 58%),
+        radial-gradient(ellipse 100% 50% at 50% 100%,rgba(1,1,1,.92),transparent 58%),
         var(--bg-void)
     }
-    /* Soft film edges — dissolve in/out rather than hard rule cuts */
+    /* Soft film edges — dissolve in from path / out into gallery void */
     .about::before,.about::after{
-      content:'';position:absolute;left:0;right:0;pointer-events:none
+      content:'';position:absolute;left:0;right:0;pointer-events:none;z-index:0
     }
     .about::before{
-      top:0;height:min(20vh,180px);
-      background:linear-gradient(180deg,rgba(3,3,4,.7) 0%,transparent 100%)
+      top:0;height:min(26vh,240px);
+      background:linear-gradient(180deg,rgba(3,3,4,.88) 0%,rgba(3,3,4,.35) 42%,transparent 100%)
     }
     .about::after{
-      bottom:0;height:min(22vh,200px);
-      background:linear-gradient(0deg,rgba(1,1,1,.85) 0%,transparent 100%)
+      bottom:0;height:min(28vh,260px);
+      background:linear-gradient(0deg,rgba(1,1,1,.96) 0%,rgba(1,1,1,.4) 48%,transparent 100%)
     }
-    .about .section-label{margin-bottom:clamp(4rem,8vh,6.25rem);position:relative;z-index:1}
+    /* Ceremonial label — wide track, breath before the manifesto */
+    .about .section-label{
+      margin-bottom:clamp(3.75rem,8.5vh,6.5rem);position:relative;z-index:1;
+      letter-spacing:.42em;color:var(--muted)
+    }
+    /* Manifesto type — statement scale (one quiet frame at 900–1080h) */
     .about-text{
-      font-size:clamp(1.65rem,4.1vw,3.1rem);line-height:1.46;
-      max-width:960px;font-weight:300;color:var(--text);
-      letter-spacing:-.024em;position:relative;z-index:1;
-      text-wrap:balance
+      font-size:clamp(1.8rem,4.55vw,3.4rem);line-height:1.48;
+      max-width:min(24em,1000px);font-weight:300;color:var(--text);
+      letter-spacing:-.028em;position:relative;z-index:1;
+      text-wrap:balance;
+      /* Optical lift — cream stays human against cool void */
+      text-shadow:0 1px 0 rgba(0,0,0,.18)
     }
+    /* Mask-rise lines — overflow clips the fog emergence */
+    .about-line{
+      display:block;overflow:hidden;margin-top:.48em;padding-bottom:.05em
+    }
+    .about-line:first-child{margin-top:0}
+    /* Final line = the period of the manifesto — one beat of silence above */
+    .about-line:last-child{
+      margin-top:.95em;
+      font-weight:400;
+      letter-spacing:-.022em
+    }
+    .about-line__inner{
+      display:inline-block;will-change:transform,opacity,filter
+    }
+    /* Narrative pivot — "code" is the hinge of the life story */
     .about-text em{
       color:var(--accent);font-style:normal;font-weight:500;
       position:relative;display:inline-block;
-      letter-spacing:-.01em;
-      text-shadow:0 0 40px rgba(184,184,184,.28);
-      font-size:1.07em
+      letter-spacing:-.012em;
+      text-shadow:0 0 48px rgba(184,184,184,.32),0 0 80px rgba(184,184,184,.1);
+      font-size:1.06em
     }
-    /* Silver underline draw — narrative pivot on "code" */
+    /* Silver underline draw — solid confidence, draws after line stagger lands */
     .about-text em::after{
-      content:'';position:absolute;left:0;right:0;bottom:.06em;height:1.5px;
-      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      content:'';position:absolute;left:0;right:0;bottom:.04em;height:2px;
+      background:linear-gradient(90deg,transparent 0%,var(--accent) 12%,var(--accent) 88%,transparent 100%);
       transform:scaleX(0);transform-origin:center;
-      transition:transform 1.2s var(--ease);
-      box-shadow:0 0 14px rgba(184,184,184,.4)
+      transition:transform 1.35s var(--ease);
+      box-shadow:0 0 16px rgba(184,184,184,.45),0 0 2px rgba(184,184,184,.6)
     }
     .about-text.is-revealed em::after{transform:scaleX(1)}
     .about-text br{display:block;content:'';margin-top:.22em}
+    /* Quiet signature rule under the statement — pure visual, no extra copy */
+    .about-rule{
+      display:block;width:48px;height:1px;margin:clamp(2.25rem,4.5vh,3.25rem) auto 0;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      box-shadow:0 0 14px rgba(184,184,184,.28);
+      opacity:0;transform:scaleX(0);transform-origin:center;
+      transition:opacity .8s var(--ease-soft),transform 1.2s var(--ease);
+      position:relative;z-index:1
+    }
+    .about-text.is-revealed + .about-rule,
+    .about.is-spoken .about-rule{
+      opacity:1;transform:scaleX(1)
+    }
 
     /* ── WORK / HORIZONTAL GALLERY — deepest museum void (panels = rooms) ── */
     .gallery-wrapper{
@@ -1480,14 +1515,21 @@
       .step:not(.active) .step-desc{color:var(--muted);opacity:.88}
       .step.active .step-desc{color:rgba(240,239,233,.9);opacity:1}
 
-      .about{min-height:auto;padding:var(--section-y) var(--pad-x)}
-      .about .section-label{margin-bottom:clamp(2.25rem,6vw,2.85rem);font-size:.75rem}
-      /* ~12vw @ 375 ≈ 45px — statement about copy (max must clear 45px) */
-      .about-text{
-        font-size:clamp(1.75rem,12vw,2.85rem);line-height:1.4;
-        max-width:none;text-wrap:pretty
+      .about{
+        min-height:auto;
+        padding:calc(var(--section-y) * 1.05) var(--pad-x) calc(var(--section-y) * 1.15)
       }
-      .about-line{margin-top:.4em}
+      .about .section-label{
+        margin-bottom:clamp(2.75rem,8vw,3.5rem);font-size:.75rem;letter-spacing:.36em
+      }
+      /* ~11.8vw @ 375 ≈ 44px — manifesto power on a phone-width stage */
+      .about-text{
+        font-size:clamp(1.7rem,11.8vw,2.95rem);line-height:1.42;
+        max-width:none;text-wrap:pretty;letter-spacing:-.026em
+      }
+      .about-line{margin-top:.5em}
+      .about-line:last-child{margin-top:.95em}
+      .about-rule{margin-top:clamp(2.15rem,6vw,2.85rem);width:40px}
 
       .gallery-wrapper{
         height:auto;
@@ -1607,7 +1649,9 @@
       .preloader-count{font-size:clamp(3.75rem,24vw,5.5rem)}
       .nav{gap:.35rem;font-size:.6875rem;letter-spacing:.06em}
       .nav a{padding:.6rem .15rem;min-height:44px;min-width:44px}
-      .about-text{font-size:clamp(1.55rem,12vw,2.45rem)}
+      .about-text{font-size:clamp(1.55rem,11.5vw,2.55rem);line-height:1.4}
+      .about-line:last-child{margin-top:.85em}
+      .about-rule{width:36px;margin-top:1.85rem}
       .contact-email{font-size:clamp(1.4rem,10.5vw,2.35rem);letter-spacing:-.026em}
       .contact-links{gap:1rem;font-size:.75rem;letter-spacing:.16em}
       .project-panel__title{font-size:clamp(1.95rem,12vw,2.55rem)}
@@ -1627,7 +1671,7 @@
         --section-y:clamp(13rem,17vh,17.5rem)
       }
       .timeline{max-width:1480px}
-      .about-text{max-width:1020px;font-size:clamp(1.7rem,2.7vw,3.25rem)}
+      .about-text{max-width:min(24em,1080px);font-size:clamp(1.95rem,2.9vw,3.55rem)}
       .hero-name{font-size:clamp(4rem,14.2vw,20rem);letter-spacing:-.055em}
       .contact-email{font-size:clamp(2.65rem,10vw,10.5rem)}
       .project-panel{height:min(84vh,960px)}
@@ -1666,6 +1710,7 @@
       .preloader-name .pre-char{transform:none!important;opacity:1!important}
       .about-line__inner,.email-char{transform:none!important;opacity:1!important;filter:none!important}
       .about-text em::after{transform:scaleX(1)!important}
+      .about-rule{opacity:1!important;transform:scaleX(1)!important}
       .step.active .step-dot,.step.active .step-dot::after,.timeline-line-fill::after{animation:none!important}
       .step,.step:not(.is-passed):not(:hover),.step.is-passed:not(.active):not(:hover){opacity:1!important}
       .step-desc{max-height:none!important;opacity:1!important;transform:none!important;margin-top:1.1rem!important}
@@ -1714,6 +1759,7 @@
       .contact-glow{opacity:1!important}
       .contact-email::after{transform:scaleX(1)!important}
       .about-text em::after{transform:scaleX(1)!important}
+      .about-rule{opacity:1!important;transform:scaleX(1)!important}
       .step-desc{max-height:none!important;opacity:1!important;transform:none!important;margin-top:1.1rem!important}
       .step,.step:not(.is-passed){opacity:1!important}
       .step-label,.step-num{color:var(--accent)!important}
@@ -1824,7 +1870,7 @@
     </div>
   </section>
 
-  <!-- ABOUT -->
+  <!-- ABOUT — void well: manifesto pause between path and work -->
   <section id="about" class="about" aria-label="About">
     <div class="section-label section-label--center reveal">WHO</div>
     <p class="about-text reveal">
@@ -1834,6 +1880,7 @@
       In September, I move to Oulu to study Computer Science.<br>
       The story's just starting.
     </p>
+    <span class="about-rule" aria-hidden="true"></span>
   </section>
 
   <!-- WORK — HORIZONTAL GALLERY (desktop pin) / vertical stack (mobile) -->
@@ -1991,6 +2038,16 @@
         ch.style.opacity = '1';
         ch.style.transform = 'none';
         ch.style.filter = 'none';
+      });
+      /* About manifesto — underline + signature rule at rest */
+      var aboutP = document.querySelector('.about-text');
+      if (aboutP) aboutP.classList.add('is-revealed');
+      var aboutSec = document.getElementById('about');
+      if (aboutSec) aboutSec.classList.add('is-spoken');
+      document.querySelectorAll('.about-line__inner').forEach(function (ln) {
+        ln.style.opacity = '1';
+        ln.style.transform = 'none';
+        ln.style.filter = 'none';
       });
     }
 
@@ -2337,6 +2394,7 @@
 
     /* About: split <br> lines for sequential scroll reveal (DOM only, copy unchanged) */
     var aboutText = document.querySelector('.about-text');
+    var aboutSectionEl = document.getElementById('about');
     var aboutLineInners = [];
     if (aboutText) {
       var aboutHtml = aboutText.innerHTML;
@@ -2352,7 +2410,8 @@
         aboutText.appendChild(line);
         aboutLineInners.push(inner);
       });
-      gsap.set(aboutLineInners, { yPercent: 118, opacity: 0, filter: 'blur(8px)' });
+      /* Fog rise — deeper blur + longer mask travel for manifesto emergence */
+      gsap.set(aboutLineInners, { yPercent: 128, opacity: 0, filter: 'blur(12px)' });
       /* Lines drive the story — clear parent reveal transform so body isn't offset */
       aboutText.classList.remove('reveal');
       gsap.set(aboutText, { clearProps: 'transform,opacity' });
@@ -2656,26 +2715,38 @@
       if (emailChars.length) gsap.set(emailChars, { opacity: 1, yPercent: 0, filter: 'none', rotateX: 0 });
       if (emailEl) emailEl.classList.add('is-underlined');
       if (aboutText) aboutText.classList.add('is-revealed');
+      if (aboutSectionEl) aboutSectionEl.classList.add('is-spoken');
     }
 
-    /* ── About lines — handwritten stagger (romanjeanelie cadence) ── */
-    if (typeof ScrollTrigger !== 'undefined' && aboutLineInners.length && aboutText) {
-      gsap.to(aboutLineInners, {
+    /* ── About lines — manifesto stagger (fog rise → silver underline → signature rule) ──
+       Cadence: each line lands like a spoken sentence; "code" underline draws after the
+       full stanza settles; the quiet rule closes the well. */
+    if (
+      typeof ScrollTrigger !== 'undefined' &&
+      aboutLineInners.length &&
+      aboutText &&
+      !prm
+    ) {
+      var aboutRevealTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: aboutText,
+          start: 'top 76%'
+        }
+      });
+      aboutRevealTl.to(aboutLineInners, {
         yPercent: 0,
         opacity: 1,
         filter: 'blur(0px)',
-        duration: 1.28,
+        duration: 1.42,
         ease: 'expo.out',
-        stagger: 0.14,
-        scrollTrigger: {
-          trigger: aboutText,
-          start: 'top 78%'
-        },
-        onComplete: function () {
-          aboutText.classList.add('is-revealed');
-          gsap.set(aboutLineInners, { clearProps: 'filter' });
-        }
+        stagger: 0.17
       });
+      /* Beat of silence after last line — then silver pivot + signature rule */
+      aboutRevealTl.call(function () {
+        aboutText.classList.add('is-revealed');
+        if (aboutSectionEl) aboutSectionEl.classList.add('is-spoken');
+        gsap.set(aboutLineInners, { clearProps: 'filter' });
+      }, null, '+=0.22');
     }
 
     /* ── Contact grand finale — glow → label → email chars → underline → socials → footer ──
